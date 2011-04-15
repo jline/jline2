@@ -1768,7 +1768,10 @@ public class ConsoleReader
         while (true) {
             int i = readCharater();
 
-            if (i == -1 || i == '\n' || i == '\r') {
+            if(i == -1) {
+                return null;
+            }
+            if (i == '\n' || i == '\r') {
                 return buff.toString();
             }
 

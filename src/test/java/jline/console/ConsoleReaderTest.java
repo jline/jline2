@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
 import jline.TerminalFactory;
+import jline.TerminalFactory.Type;
 import jline.WindowsTerminal;
 import jline.console.history.History;
 import jline.console.history.MemoryHistory;
@@ -14,6 +15,7 @@ import org.junit.Test;
 
 import static jline.WindowsTerminal.WindowsKey.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 /**
@@ -68,6 +70,19 @@ public class ConsoleReaderTest
         assertNotNull(consoleReader);
         String line = consoleReader.readLine();
         assertEquals("Sample String", line);
+    }    
+    
+    @Test
+    public void testReadlineNull() throws Exception {
+
+       TerminalFactory.configure(Type.NONE);
+       TerminalFactory.reset();
+        ConsoleReader consoleReader = createConsole(new byte[]{});
+        assertFalse(consoleReader.getTerminal().isAnsiSupported());
+        assertNotNull(consoleReader);
+        String line = consoleReader.readLine();
+        assertEquals(null, line);
+        TerminalFactory.configure(Type.AUTO);
     }
 
     @Test
