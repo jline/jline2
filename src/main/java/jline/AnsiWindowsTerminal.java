@@ -64,6 +64,8 @@ public class AnsiWindowsTerminal
     }
 
     private static boolean detectAnsiSupport() {
+        AnsiConsole.systemInstall();
+
         OutputStream out = AnsiConsole.wrapOutputStream(new ByteArrayOutputStream());
         try {
             out.close();
