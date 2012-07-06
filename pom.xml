@@ -23,6 +23,7 @@
     <artifactId>jline</artifactId>
     <name>JLine</name>
     <version>2.8-SNAPSHOT</version>
+    <packaging>bundle</packaging>
 
     <licenses>
         <license>
@@ -100,8 +101,8 @@
         <dependency>
             <groupId>org.fusesource.jansi</groupId>
             <artifactId>jansi</artifactId>
-            <version>1.8</version>
-            <!--<scope>provided</scope>-->
+            <version>1.9</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -222,40 +223,34 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
-                <version>2.1.0</version>
-                <executions>
-                    <execution>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>manifest</goal>
-                        </goals>
-                        <configuration>
-                            <instructions>
-                                <Import-Package>!jline*,javax.swing;resolution:=optional,*</Import-Package>
-                                <DynamicImport-Package>*</DynamicImport-Package>
-                            </instructions>
-                        </configuration>
-                    </execution>
-                </executions>
+                <version>2.3.7</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Import-Package>javax.swing;resolution:=optional,*</Import-Package>
+                        <Export-Package>org.fusesource.jansi, jline.*</Export-Package>
+                        <Private-Package>org.fusesource.jansi.internal, org.fusesource.hawtjni.runtime</Private-Package>
+                    </instructions>
+                </configuration>
             </plugin>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
-                <configuration>
-                    <archive>
-                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
-                    </archive>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>test-jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+<!--             <plugin> -->
+<!--                 <groupId>org.apache.maven.plugins</groupId> -->
+<!--                 <artifactId>maven-jar-plugin</artifactId> -->
+<!--                 <version>2.4</version> -->
+<!--                 <configuration> -->
+<!--                     <archive> -->
+<!--                         <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile> -->
+<!--                     </archive> -->
+<!--                 </configuration> -->
+<!--                 <executions> -->
+<!--                     <execution> -->
+<!--                         <goals> -->
+<!--                             <goal>test-jar</goal> -->
+<!--                         </goals> -->
+<!--                     </execution> -->
+<!--                 </executions> -->
+<!--             </plugin> -->
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -264,6 +259,7 @@
             </plugin>
 
             <!-- include all the dependencies into the jar so it can run standalone -->
+            <!-- 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -299,6 +295,7 @@
                     </execution>
                 </executions>
             </plugin>
+            -->
 
             <!--
             mvn license:format -N
