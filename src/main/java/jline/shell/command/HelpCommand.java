@@ -65,7 +65,7 @@ public class HelpCommand<T extends ShellContext> extends ShellCommand<T> {
             System.out.println(entry);
         }
         System.out.println("");
-        System.out.println("Use 'PlatformAdmin help <Command>' for help about a command");
+        System.out.println("Use 'help <Command>' for help about a command");
         System.out.println("-----------------------------------------------");
     }
 
