@@ -49,6 +49,7 @@ import jline.internal.Configuration;
 import jline.internal.InputStreamReader;
 import jline.internal.Log;
 import jline.internal.NonBlockingInputStream;
+import jline.internal.NonBlockingReader;
 import jline.internal.Nullable;
 import jline.internal.Urls;
 import org.fusesource.jansi.AnsiOutputStream;
@@ -124,6 +125,7 @@ public class ConsoleReader
     private NonBlockingInputStream in;
     private long                   escapeTimeout;
     private Reader                 reader;
+    private NonBlockingReader      nonBlockingReader;
 
     /*
      * TODO: Please read the comments about this in setInput(), but this needs
@@ -264,6 +266,10 @@ public class ConsoleReader
         if (this.in != null) {
             this.in.shutdown();
         }
+        if (nonBlockingReader != null) {
+            nonBlockingReader.shutdown();
+            nonBlockingReader = null;
+        }
 
         final InputStream wrapped = terminal.wrapInIfNeeded( in );
 
@@ -279,6 +285,10 @@ public class ConsoleReader
     public void shutdown() {
         if (in != null) {
             in.shutdown();
+        }
+        if (nonBlockingReader != null) {
+            nonBlockingReader.shutdown();
+            nonBlockingReader = null;
         }
     }
 
@@ -1968,11 +1978,26 @@ public class ConsoleReader
 
     /**
      * Read a character from the console.
+     * Supports blocking and non-blocking reads.
      *
-     * @return the character, or -1 if an EOF is received.
+     * @param wait
+     *     <code>true</code> to wait for the next character to become available (blocking read), or
+     *     <code>false</code> to return immediately, whether or not a character is available (non-blocking read).
+     * @return
+     *     the character,
+     *     -1 if an EOF is received, or
+     *     -2 if no character is ready (occurs only when <code>wait</code> is <code>false</code>).
      */
-    public final int readCharacter() throws IOException {
-        int c = reader.read();
+    public final int readCharacter(boolean wait) throws IOException {
+        int c;
+        if (!wait && nonBlockingReader == null) {
+           nonBlockingReader = new NonBlockingReader(reader);
+        }
+        if (nonBlockingReader != null) {
+           c = nonBlockingReader.read(wait);
+        } else {
+           c = reader.read();
+        }
         if (c >= 0) {
             Log.trace("Keystroke: ", c);
             // clear any echo characters
@@ -1981,6 +2006,17 @@ public class ConsoleReader
             }
         }
         return c;
+    }
+
+    /**
+     * Read a character from the console.
+     *
+     * <p>This method has the same effect as calling <code>readCaracter(true)</code>.
+     *
+     * @return the character, or -1 if an EOF is received.
+     */
+    public final int readCharacter() throws IOException {
+       return readCharacter(true);
     }
 
     /**
