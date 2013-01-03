@@ -151,11 +151,10 @@ public class NonBlockingReader
                 catch (InterruptedException e) {
                    throw new IOException("Unexpected interruption.");
                 }
-                verifyNotShutdown();
             }
         }
-        // The blocking in.read() is called outside of the synchronized block, to allow
-        // other threads to call NonBlockingReader.read(false).
+        // The blocking in.read() is called here outside of the synchronized block,
+        // to allow other threads to call NonBlockingReader.read(false).
         return in.read();
     }
 
@@ -223,6 +222,7 @@ public class NonBlockingReader
         }
     }
 
+   // Reads from the underlying Reader, within the internal thread.
    private void threadRead() {
        try {
            pendingChar = in.read();
