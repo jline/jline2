@@ -30,7 +30,7 @@ import java.io.Reader;
  *
  * @author <a href="mailto:chdh@inventec.ch">Christian d'Heureuse</a>
  */
-public class NonBlockingReader
+public class NonBlockingReaderHelper
 {
     private Reader           in;                 // underlying reader
     private State            state;              // internal state
@@ -38,15 +38,15 @@ public class NonBlockingReader
     private IOException      pendingException;
     private int              pendingChar;
 
-    // Internal state of the NonBlockingReader.
+    // Internal state of the NonBlockingReaderHelper.
     // The states are documented in the class description of NonBlockingHeader.
     private enum State { READING, READY, IDLE }
 
     /**
-     * Creates a <code>NonBlockingReader</code>.
+     * Creates a <code>NonBlockingReaderHelper</code>.
      * The internal thread is started and the state is set to <code>IDLE</code>.
      */
-    public NonBlockingReader (Reader in) {
+    public NonBlockingReaderHelper (Reader in) {
         this.in = in;
         state = State.IDLE;
         Thread thread = new Thread() {
@@ -55,7 +55,7 @@ public class NonBlockingReader
             }
         };
         thread.setDaemon(true);
-        thread.setName("JLine NonBlockingReader thread");
+        thread.setName("JLine NonBlockingReaderHelper thread");
         thread.start();
     }
 
@@ -153,8 +153,8 @@ public class NonBlockingReader
                 }
             }
         }
-        // The blocking in.read() is called here outside of the synchronized block,
-        // to allow other threads to call NonBlockingReader.read(false).
+        // The blocking in.read() is called here, outside of the synchronized block,
+        // to allow other threads to call NonBlockingReaderHelper.read(false).
         return in.read();
     }
 
@@ -186,7 +186,7 @@ public class NonBlockingReader
 
     private synchronized void verifyNotShutdown() {
         if (isShutdown) {
-            throw new IllegalStateException("This NonBlockingReader has been shut down.");
+            throw new IllegalStateException("This NonBlockingReaderHelper has been shut down.");
         }
     }
 
@@ -222,7 +222,7 @@ public class NonBlockingReader
         }
     }
 
-   // Reads from the underlying Reader, within the internal thread.
+   // Reads from the underlying Reader, on the internal thread.
    private void threadRead() {
        try {
            pendingChar = in.read();

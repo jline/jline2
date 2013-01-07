@@ -49,7 +49,7 @@ import jline.internal.Configuration;
 import jline.internal.InputStreamReader;
 import jline.internal.Log;
 import jline.internal.NonBlockingInputStream;
-import jline.internal.NonBlockingReader;
+import jline.internal.NonBlockingReaderHelper;
 import jline.internal.Nullable;
 import jline.internal.Urls;
 import org.fusesource.jansi.AnsiOutputStream;
@@ -125,7 +125,7 @@ public class ConsoleReader
     private NonBlockingInputStream in;
     private long                   escapeTimeout;
     private Reader                 reader;
-    private NonBlockingReader      nonBlockingReader;
+    private NonBlockingReaderHelper NonBlockingReaderHelper;
 
     /*
      * TODO: Please read the comments about this in setInput(), but this needs
@@ -266,9 +266,9 @@ public class ConsoleReader
         if (this.in != null) {
             this.in.shutdown();
         }
-        if (nonBlockingReader != null) {
-            nonBlockingReader.shutdown();
-            nonBlockingReader = null;
+        if (NonBlockingReaderHelper != null) {
+            NonBlockingReaderHelper.shutdown();
+            NonBlockingReaderHelper = null;
         }
 
         final InputStream wrapped = terminal.wrapInIfNeeded( in );
@@ -286,9 +286,9 @@ public class ConsoleReader
         if (in != null) {
             in.shutdown();
         }
-        if (nonBlockingReader != null) {
-            nonBlockingReader.shutdown();
-            nonBlockingReader = null;
+        if (NonBlockingReaderHelper != null) {
+            NonBlockingReaderHelper.shutdown();
+            NonBlockingReaderHelper = null;
         }
     }
 
@@ -1990,11 +1990,11 @@ public class ConsoleReader
      */
     public final int readCharacter(boolean wait) throws IOException {
         int c;
-        if (!wait && nonBlockingReader == null) {
-           nonBlockingReader = new NonBlockingReader(reader);
+        if (!wait && NonBlockingReaderHelper == null) {
+           NonBlockingReaderHelper = new NonBlockingReaderHelper(reader);
         }
-        if (nonBlockingReader != null) {
-           c = nonBlockingReader.read(wait);
+        if (NonBlockingReaderHelper != null) {
+           c = NonBlockingReaderHelper.read(wait);
         } else {
            c = reader.read();
         }
