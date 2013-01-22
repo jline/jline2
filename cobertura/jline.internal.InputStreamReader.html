@@ -111,7 +111,7 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> BUFFER_SIZE = 8192;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;47</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;48</td>  <td class="nbHitsCovered">&nbsp;301</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">private</span> <span class="keyword">boolean</span> endOfInput = <span class="keyword">false</span>;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;48</td>  <td class="nbHitsCovered">&nbsp;602</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">private</span> <span class="keyword">boolean</span> endOfInput = <span class="keyword">false</span>;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;49</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;50</td>  <td class="nbHits">&nbsp;</td>
@@ -122,7 +122,7 @@
   <td class="src"><pre class="src">&nbsp;    CharsetDecoder decoder;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;53</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;54</td>  <td class="nbHitsCovered">&nbsp;301</td>  <td class="src"><pre class="src">&nbsp;    ByteBuffer bytes = ByteBuffer.allocate(BUFFER_SIZE);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;54</td>  <td class="nbHitsCovered">&nbsp;602</td>  <td class="src"><pre class="src">&nbsp;    ByteBuffer bytes = ByteBuffer.allocate(BUFFER_SIZE);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;55</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;56</td>  <td class="nbHits">&nbsp;</td>
@@ -193,15 +193,15 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> InputStreamReader(InputStream in, <span class="keyword">final</span> String enc)</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;92</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            <span class="keyword">throws</span> UnsupportedEncodingException {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;93</td>  <td class="nbHitsCovered">&nbsp;301</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">super</span>(in);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;94</td>  <td class="nbHitsUncovered"><a title="Line 94: Conditional coverage 50% (1/2).">&nbsp;301</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 94: Conditional coverage 50% (1/2).">        <span class="keyword">if</span> (enc == <span class="keyword">null</span>) {</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;93</td>  <td class="nbHitsCovered">&nbsp;602</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">super</span>(in);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;94</td>  <td class="nbHitsUncovered"><a title="Line 94: Conditional coverage 50% (1/2).">&nbsp;602</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 94: Conditional coverage 50% (1/2).">        <span class="keyword">if</span> (enc == <span class="keyword">null</span>) {</a></span></pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;95</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException();</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;96</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;97</td>  <td class="nbHitsCovered">&nbsp;301</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.in = in;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;97</td>  <td class="nbHitsCovered">&nbsp;602</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.in = in;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;98</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        <span class="keyword">try</span> {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;99</td>  <td class="nbHitsCovered">&nbsp;301</td>  <td class="src"><pre class="src">&nbsp;            decoder = Charset.forName(enc).newDecoder().onMalformedInput(</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;99</td>  <td class="nbHitsCovered">&nbsp;602</td>  <td class="src"><pre class="src">&nbsp;            decoder = Charset.forName(enc).newDecoder().onMalformedInput(</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;100</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                    CodingErrorAction.REPLACE).onUnmappableCharacter(</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;101</td>  <td class="nbHits">&nbsp;</td>
@@ -210,9 +210,9 @@
 <tr>  <td class="numLineCover">&nbsp;103</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">throw</span> (UnsupportedEncodingException)</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;104</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                    <span class="keyword">new</span> UnsupportedEncodingException(enc).initCause(e);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;105</td>  <td class="nbHitsCovered">&nbsp;301</td>  <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;106</td>  <td class="nbHitsCovered">&nbsp;301</td>  <td class="src"><pre class="src">&nbsp;        bytes.limit(0);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;107</td>  <td class="nbHitsCovered">&nbsp;301</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;105</td>  <td class="nbHitsCovered">&nbsp;602</td>  <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;106</td>  <td class="nbHitsCovered">&nbsp;602</td>  <td class="src"><pre class="src">&nbsp;        bytes.limit(0);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;107</td>  <td class="nbHitsCovered">&nbsp;602</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;108</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;109</td>  <td class="nbHits">&nbsp;</td>
@@ -356,15 +356,15 @@
   <td class="src"><pre class="src">&nbsp;    @Override</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;189</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">int</span> read() <span class="keyword">throws</span> IOException {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;190</td>  <td class="nbHitsCovered">&nbsp;8887</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">synchronized</span> (lock) {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;191</td>  <td class="nbHitsUncovered"><a title="Line 191: Conditional coverage 50% (1/2).">&nbsp;8887</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 191: Conditional coverage 50% (1/2).">            <span class="keyword">if</span> (!isOpen()) {</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;190</td>  <td class="nbHitsCovered">&nbsp;17774</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">synchronized</span> (lock) {</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;191</td>  <td class="nbHitsUncovered"><a title="Line 191: Conditional coverage 50% (1/2).">&nbsp;17774</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 191: Conditional coverage 50% (1/2).">            <span class="keyword">if</span> (!isOpen()) {</a></span></pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;192</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                <span class="keyword">throw</span> <span class="keyword">new</span> IOException(<span class="string">"InputStreamReader is closed."</span>);</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;193</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;194</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;195</td>  <td class="nbHitsCovered">&nbsp;8887</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">char</span> buf[] = <span class="keyword">new</span> <span class="keyword">char</span>[1];</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;196</td>  <td class="nbHitsCovered"><a title="Line 196: Conditional coverage 100% (2/2).">&nbsp;8887</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 196: Conditional coverage 100% (2/2).">            <span class="keyword">return</span> read(buf, 0, 1) != -1 ? buf[0] : -1;</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;195</td>  <td class="nbHitsCovered">&nbsp;17774</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">char</span> buf[] = <span class="keyword">new</span> <span class="keyword">char</span>[1];</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;196</td>  <td class="nbHitsCovered"><a title="Line 196: Conditional coverage 100% (2/2).">&nbsp;17774</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 196: Conditional coverage 100% (2/2).">            <span class="keyword">return</span> read(buf, 0, 1) != -1 ? buf[0] : -1;</a></pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;197</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        }</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;198</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
@@ -422,39 +422,39 @@
   <td class="src"><pre class="src">&nbsp;    @Override</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;225</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">int</span> read(<span class="keyword">char</span>[] buf, <span class="keyword">int</span> offset, <span class="keyword">int</span> length) <span class="keyword">throws</span> IOException {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;226</td>  <td class="nbHitsCovered">&nbsp;8887</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">synchronized</span> (lock) {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;227</td>  <td class="nbHitsUncovered"><a title="Line 227: Conditional coverage 50% (1/2).">&nbsp;8887</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 227: Conditional coverage 50% (1/2).">            <span class="keyword">if</span> (!isOpen()) {</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;226</td>  <td class="nbHitsCovered">&nbsp;17774</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">synchronized</span> (lock) {</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;227</td>  <td class="nbHitsUncovered"><a title="Line 227: Conditional coverage 50% (1/2).">&nbsp;17774</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 227: Conditional coverage 50% (1/2).">            <span class="keyword">if</span> (!isOpen()) {</a></span></pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;228</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                <span class="keyword">throw</span> <span class="keyword">new</span> IOException(<span class="string">"InputStreamReader is closed."</span>);</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;229</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;230</td>  <td class="nbHitsUncovered"><a title="Line 230: Conditional coverage 50% (3/6) [each condition: 50%, 50%, 50%].">&nbsp;8887</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 230: Conditional coverage 50% (3/6) [each condition: 50%, 50%, 50%].">            <span class="keyword">if</span> (offset &lt; 0 || offset &gt; buf.length - length || length &lt; 0) {</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;230</td>  <td class="nbHitsUncovered"><a title="Line 230: Conditional coverage 50% (3/6) [each condition: 50%, 50%, 50%].">&nbsp;17774</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 230: Conditional coverage 50% (3/6) [each condition: 50%, 50%, 50%].">            <span class="keyword">if</span> (offset &lt; 0 || offset &gt; buf.length - length || length &lt; 0) {</a></span></pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;231</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                <span class="keyword">throw</span> <span class="keyword">new</span> IndexOutOfBoundsException();</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;232</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;233</td>  <td class="nbHitsUncovered"><a title="Line 233: Conditional coverage 50% (1/2).">&nbsp;8887</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 233: Conditional coverage 50% (1/2).">            <span class="keyword">if</span> (length == 0) {</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;233</td>  <td class="nbHitsUncovered"><a title="Line 233: Conditional coverage 50% (1/2).">&nbsp;17774</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 233: Conditional coverage 50% (1/2).">            <span class="keyword">if</span> (length == 0) {</a></span></pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;234</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                <span class="keyword">return</span> 0;</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;235</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;236</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;237</td>  <td class="nbHitsCovered">&nbsp;8887</td>  <td class="src"><pre class="src">&nbsp;            CharBuffer out = CharBuffer.wrap(buf, offset, length);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;238</td>  <td class="nbHitsCovered">&nbsp;8887</td>  <td class="src"><pre class="src">&nbsp;            CoderResult result = CoderResult.UNDERFLOW;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;237</td>  <td class="nbHitsCovered">&nbsp;17774</td>  <td class="src"><pre class="src">&nbsp;            CharBuffer out = CharBuffer.wrap(buf, offset, length);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;238</td>  <td class="nbHitsCovered">&nbsp;17774</td>  <td class="src"><pre class="src">&nbsp;            CoderResult result = CoderResult.UNDERFLOW;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;239</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;240</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            <span class="comment">// bytes.remaining() indicates number of bytes in buffer</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;241</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            <span class="comment">// when 1-st time entered, it'll be equal to zero</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;242</td>  <td class="nbHitsUncovered"><a title="Line 242: Conditional coverage 50% (1/2).">&nbsp;8887</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 242: Conditional coverage 50% (1/2).">            <span class="keyword">boolean</span> needInput = !bytes.hasRemaining();</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;242</td>  <td class="nbHitsUncovered"><a title="Line 242: Conditional coverage 50% (1/2).">&nbsp;17774</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 242: Conditional coverage 50% (1/2).">            <span class="keyword">boolean</span> needInput = !bytes.hasRemaining();</a></span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;243</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;244</td>  <td class="nbHitsCovered"><a title="Line 244: Conditional coverage 100% (2/2).">&nbsp;17534</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 244: Conditional coverage 100% (2/2).">            <span class="keyword">while</span> (out.hasRemaining()) {</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;244</td>  <td class="nbHitsCovered"><a title="Line 244: Conditional coverage 100% (2/2).">&nbsp;35068</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 244: Conditional coverage 100% (2/2).">            <span class="keyword">while</span> (out.hasRemaining()) {</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;245</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                <span class="comment">// fill the buffer if needed</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;246</td>  <td class="nbHitsUncovered"><a title="Line 246: Conditional coverage 50% (1/2).">&nbsp;8891</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 246: Conditional coverage 50% (1/2).">                <span class="keyword">if</span> (needInput) {</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;246</td>  <td class="nbHitsUncovered"><a title="Line 246: Conditional coverage 50% (1/2).">&nbsp;17782</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 246: Conditional coverage 50% (1/2).">                <span class="keyword">if</span> (needInput) {</a></span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;247</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                    <span class="keyword">try</span> {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;248</td>  <td class="nbHitsUncovered"><a title="Line 248: Conditional coverage 50% (2/4) [each condition: 50%, 50%].">&nbsp;8891</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 248: Conditional coverage 50% (2/4) [each condition: 50%, 50%].">                        <span class="keyword">if</span> ((in.available() == 0) </a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;248</td>  <td class="nbHitsUncovered"><a title="Line 248: Conditional coverage 50% (2/4) [each condition: 50%, 50%].">&nbsp;17782</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 248: Conditional coverage 50% (2/4) [each condition: 50%, 50%].">                        <span class="keyword">if</span> ((in.available() == 0) </a></span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;249</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                            &amp;&amp; (out.position() &gt; offset)) {</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;250</td>  <td class="nbHits">&nbsp;</td>
@@ -465,42 +465,42 @@
 <tr>  <td class="numLineCover">&nbsp;253</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                    } <span class="keyword">catch</span> (IOException e) {</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;254</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                        <span class="comment">// available didn't work so just try the read</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;255</td>  <td class="nbHitsCovered">&nbsp;8891</td>  <td class="src"><pre class="src">&nbsp;                    }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;255</td>  <td class="nbHitsCovered">&nbsp;17782</td>  <td class="src"><pre class="src">&nbsp;                    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;256</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;257</td>  <td class="nbHitsCovered">&nbsp;8891</td>  <td class="src"><pre class="src">&nbsp;                    <span class="keyword">int</span> to_read = bytes.capacity() - bytes.limit();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;258</td>  <td class="nbHitsCovered">&nbsp;8891</td>  <td class="src"><pre class="src">&nbsp;                    <span class="keyword">int</span> off = bytes.arrayOffset() + bytes.limit();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;259</td>  <td class="nbHitsCovered">&nbsp;8891</td>  <td class="src"><pre class="src">&nbsp;                    <span class="keyword">int</span> was_red = in.read(bytes.array(), off, to_read);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;257</td>  <td class="nbHitsCovered">&nbsp;17782</td>  <td class="src"><pre class="src">&nbsp;                    <span class="keyword">int</span> to_read = bytes.capacity() - bytes.limit();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;258</td>  <td class="nbHitsCovered">&nbsp;17782</td>  <td class="src"><pre class="src">&nbsp;                    <span class="keyword">int</span> off = bytes.arrayOffset() + bytes.limit();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;259</td>  <td class="nbHitsCovered">&nbsp;17782</td>  <td class="src"><pre class="src">&nbsp;                    <span class="keyword">int</span> was_red = in.read(bytes.array(), off, to_read);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;260</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;261</td>  <td class="nbHitsCovered"><a title="Line 261: Conditional coverage 100% (2/2).">&nbsp;8891</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 261: Conditional coverage 100% (2/2).">                    <span class="keyword">if</span> (was_red == -1) {</a></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;262</td>  <td class="nbHitsCovered">&nbsp;244</td>  <td class="src"><pre class="src">&nbsp;                        endOfInput = <span class="keyword">true</span>;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;263</td>  <td class="nbHitsCovered">&nbsp;244</td>  <td class="src"><pre class="src">&nbsp;                        <span class="keyword">break</span>;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;264</td>  <td class="nbHitsUncovered"><a title="Line 264: Conditional coverage 50% (1/2).">&nbsp;8647</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 264: Conditional coverage 50% (1/2).">                    } <span class="keyword">else</span> <span class="keyword">if</span> (was_red == 0) {</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;261</td>  <td class="nbHitsCovered"><a title="Line 261: Conditional coverage 100% (2/2).">&nbsp;17782</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 261: Conditional coverage 100% (2/2).">                    <span class="keyword">if</span> (was_red == -1) {</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;262</td>  <td class="nbHitsCovered">&nbsp;488</td>  <td class="src"><pre class="src">&nbsp;                        endOfInput = <span class="keyword">true</span>;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;263</td>  <td class="nbHitsCovered">&nbsp;488</td>  <td class="src"><pre class="src">&nbsp;                        <span class="keyword">break</span>;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;264</td>  <td class="nbHitsUncovered"><a title="Line 264: Conditional coverage 50% (1/2).">&nbsp;17294</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 264: Conditional coverage 50% (1/2).">                    } <span class="keyword">else</span> <span class="keyword">if</span> (was_red == 0) {</a></span></pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;265</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                        <span class="keyword">break</span>;</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;266</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                    }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;267</td>  <td class="nbHitsCovered">&nbsp;8647</td>  <td class="src"><pre class="src">&nbsp;                    bytes.limit(bytes.limit() + was_red);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;268</td>  <td class="nbHitsCovered">&nbsp;8647</td>  <td class="src"><pre class="src">&nbsp;                    needInput = <span class="keyword">false</span>;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;267</td>  <td class="nbHitsCovered">&nbsp;17294</td>  <td class="src"><pre class="src">&nbsp;                    bytes.limit(bytes.limit() + was_red);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;268</td>  <td class="nbHitsCovered">&nbsp;17294</td>  <td class="src"><pre class="src">&nbsp;                    needInput = <span class="keyword">false</span>;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;269</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;270</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;271</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                <span class="comment">// decode bytes</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;272</td>  <td class="nbHitsCovered">&nbsp;8647</td>  <td class="src"><pre class="src">&nbsp;                result = decoder.decode(bytes, out, <span class="keyword">false</span>);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;272</td>  <td class="nbHitsCovered">&nbsp;17294</td>  <td class="src"><pre class="src">&nbsp;                result = decoder.decode(bytes, out, <span class="keyword">false</span>);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;273</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;274</td>  <td class="nbHitsUncovered"><a title="Line 274: Conditional coverage 50% (1/2).">&nbsp;8647</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 274: Conditional coverage 50% (1/2).">                <span class="keyword">if</span> (result.isUnderflow()) {</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;274</td>  <td class="nbHitsUncovered"><a title="Line 274: Conditional coverage 50% (1/2).">&nbsp;17294</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 274: Conditional coverage 50% (1/2).">                <span class="keyword">if</span> (result.isUnderflow()) {</a></span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;275</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                    <span class="comment">// compact the buffer if no space left</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;276</td>  <td class="nbHitsUncovered"><a title="Line 276: Conditional coverage 50% (1/2).">&nbsp;8647</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 276: Conditional coverage 50% (1/2).">                    <span class="keyword">if</span> (bytes.limit() == bytes.capacity()) {</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;276</td>  <td class="nbHitsUncovered"><a title="Line 276: Conditional coverage 50% (1/2).">&nbsp;17294</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 276: Conditional coverage 50% (1/2).">                    <span class="keyword">if</span> (bytes.limit() == bytes.capacity()) {</a></span></pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;277</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                        bytes.compact();</span></pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;278</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                        bytes.limit(bytes.position());</span></pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;279</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                        bytes.position(0);</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;280</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                    }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;281</td>  <td class="nbHitsCovered">&nbsp;8647</td>  <td class="src"><pre class="src">&nbsp;                    needInput = <span class="keyword">true</span>;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;281</td>  <td class="nbHitsCovered">&nbsp;17294</td>  <td class="src"><pre class="src">&nbsp;                    needInput = <span class="keyword">true</span>;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;282</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                } <span class="keyword">else</span> {</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;283</td>  <td class="nbHits">&nbsp;</td>
@@ -511,21 +511,21 @@
   <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;286</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;287</td>  <td class="nbHitsUncovered"><a title="Line 287: Conditional coverage 75% (3/4) [each condition: 50%, 100%].">&nbsp;8887</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 287: Conditional coverage 75% (3/4) [each condition: 50%, 100%].">            <span class="keyword">if</span> (result == CoderResult.UNDERFLOW &amp;&amp; endOfInput) {</a></span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;288</td>  <td class="nbHitsCovered">&nbsp;244</td>  <td class="src"><pre class="src">&nbsp;                result = decoder.decode(bytes, out, <span class="keyword">true</span>);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;289</td>  <td class="nbHitsCovered">&nbsp;244</td>  <td class="src"><pre class="src">&nbsp;                decoder.flush(out);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;290</td>  <td class="nbHitsCovered">&nbsp;244</td>  <td class="src"><pre class="src">&nbsp;                decoder.reset();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;287</td>  <td class="nbHitsUncovered"><a title="Line 287: Conditional coverage 75% (3/4) [each condition: 50%, 100%].">&nbsp;17774</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 287: Conditional coverage 75% (3/4) [each condition: 50%, 100%].">            <span class="keyword">if</span> (result == CoderResult.UNDERFLOW &amp;&amp; endOfInput) {</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;288</td>  <td class="nbHitsCovered">&nbsp;488</td>  <td class="src"><pre class="src">&nbsp;                result = decoder.decode(bytes, out, <span class="keyword">true</span>);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;289</td>  <td class="nbHitsCovered">&nbsp;488</td>  <td class="src"><pre class="src">&nbsp;                decoder.flush(out);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;290</td>  <td class="nbHitsCovered">&nbsp;488</td>  <td class="src"><pre class="src">&nbsp;                decoder.reset();</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;291</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;292</td>  <td class="nbHitsUncovered"><a title="Line 292: Conditional coverage 50% (1/2).">&nbsp;8887</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 292: Conditional coverage 50% (1/2).">            <span class="keyword">if</span> (result.isMalformed()) {</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;292</td>  <td class="nbHitsUncovered"><a title="Line 292: Conditional coverage 50% (1/2).">&nbsp;17774</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 292: Conditional coverage 50% (1/2).">            <span class="keyword">if</span> (result.isMalformed()) {</a></span></pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;293</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                <span class="keyword">throw</span> <span class="keyword">new</span> MalformedInputException(result.length());</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;294</td>  <td class="nbHitsUncovered"><a title="Line 294: Conditional coverage 50% (1/2).">&nbsp;8887</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 294: Conditional coverage 50% (1/2).">            } <span class="keyword">else</span> <span class="keyword">if</span> (result.isUnmappable()) {</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;294</td>  <td class="nbHitsUncovered"><a title="Line 294: Conditional coverage 50% (1/2).">&nbsp;17774</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 294: Conditional coverage 50% (1/2).">            } <span class="keyword">else</span> <span class="keyword">if</span> (result.isUnmappable()) {</a></span></pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;295</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                <span class="keyword">throw</span> <span class="keyword">new</span> UnmappableCharacterException(result.length());</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;296</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;297</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;298</td>  <td class="nbHitsCovered"><a title="Line 298: Conditional coverage 100% (2/2).">&nbsp;8887</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 298: Conditional coverage 100% (2/2).">            <span class="keyword">return</span> out.position() - offset == 0 ? -1 : out.position() - offset;</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;298</td>  <td class="nbHitsCovered"><a title="Line 298: Conditional coverage 100% (2/2).">&nbsp;17774</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 298: Conditional coverage 100% (2/2).">            <span class="keyword">return</span> out.position() - offset == 0 ? -1 : out.position() - offset;</a></pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;299</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        }</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;300</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
@@ -541,7 +541,7 @@
   <td class="src"><pre class="src">&nbsp;<span class="comment">     */</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;306</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">private</span> <span class="keyword">boolean</span> isOpen() {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;307</td>  <td class="nbHitsUncovered"><a title="Line 307: Conditional coverage 50% (1/2).">&nbsp;17774</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 307: Conditional coverage 50% (1/2).">        <span class="keyword">return</span> in != <span class="keyword">null</span>;</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;307</td>  <td class="nbHitsUncovered"><a title="Line 307: Conditional coverage 50% (1/2).">&nbsp;35548</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 307: Conditional coverage 50% (1/2).">        <span class="keyword">return</span> in != <span class="keyword">null</span>;</a></span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;308</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;309</td>  <td class="nbHits">&nbsp;</td>
@@ -595,6 +595,6 @@
   <td class="src"><pre class="src">&nbsp;}</pre></td></tr>
 </table>
 
-<div class="footer">Report generated by <a href="http://cobertura.sourceforge.net/" target="_top">Cobertura</a> 1.9.4.1 on 1/18/13 1:01 PM.</div>
+<div class="footer">Report generated by <a href="http://cobertura.sourceforge.net/" target="_top">Cobertura</a> 1.9.4.1 on 1/22/13 10:37 AM.</div>
 </body>
 </html>
