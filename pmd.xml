@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pmd version="4.3" timestamp="2013-01-22T19:28:52.154">
-<file name="/Users/jason/tmp/jline2/target/checkout/src/main/java/jline/AnsiWindowsTerminal.java">
+<pmd version="4.3" timestamp="2013-05-19T12:03:22.736">
+<file name="/Users/jason/ws/jline2-clean/target/checkout/src/main/java/jline/AnsiWindowsTerminal.java">
 <violation beginline="46" endline="49" begincolumn="15" endcolumn="13" rule="EmptyCatchBlock" ruleset="Basic Rules" package="jline" class="AnsiWindowsTerminal" method="wrapOutputStream" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
 </violation>
@@ -8,12 +8,12 @@ Avoid empty catch blocks
 Avoid empty catch blocks
 </violation>
 </file>
-<file name="/Users/jason/tmp/jline2/target/checkout/src/main/java/jline/TerminalFactory.java">
+<file name="/Users/jason/ws/jline2-clean/target/checkout/src/main/java/jline/TerminalFactory.java">
 <violation beginline="17" endline="17" begincolumn="1" endcolumn="36" rule="UnusedImports" ruleset="Import Statement Rules" package="jline" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#UnusedImports" priority="4">
 Avoid unused imports such as 'jline.internal.Preconditions'
 </violation>
 </file>
-<file name="/Users/jason/tmp/jline2/target/checkout/src/main/java/jline/WindowsTerminal.java">
+<file name="/Users/jason/ws/jline2-clean/target/checkout/src/main/java/jline/WindowsTerminal.java">
 <violation beginline="9" endline="267" begincolumn="1" endcolumn="2" rule="TooManyStaticImports" ruleset="Import Statement Rules" package="jline" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#TooManyStaticImports" priority="3">
 Too many static imports may lead to messy code
 </violation>
@@ -21,7 +21,7 @@ Too many static imports may lead to messy code
 Avoid unused imports such as 'jline.internal.Preconditions.checkNotNull'
 </violation>
 </file>
-<file name="/Users/jason/tmp/jline2/target/checkout/src/main/java/jline/console/ConsoleKeys.java">
+<file name="/Users/jason/ws/jline2-clean/target/checkout/src/main/java/jline/console/ConsoleKeys.java">
 <violation beginline="79" endline="81" begincolumn="19" endcolumn="17" rule="EmptyCatchBlock" ruleset="Basic Rules" package="jline.console" class="ConsoleKeys" method="loadKeys" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
 </violation>
@@ -35,105 +35,105 @@ Avoid empty if statements
 Avoid empty if statements
 </violation>
 </file>
-<file name="/Users/jason/tmp/jline2/target/checkout/src/main/java/jline/console/ConsoleReader.java">
+<file name="/Users/jason/ws/jline2-clean/target/checkout/src/main/java/jline/console/ConsoleReader.java">
 <violation beginline="135" endline="135" begincolumn="36" endcolumn="50" rule="UnusedPrivateField" ruleset="Unused Code Rules" package="jline.console" class="ConsoleReader" variable="isUnitTestInput" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedPrivateField" priority="3">
 Avoid unused private fields such as 'isUnitTestInput'.
 </violation>
-<violation beginline="671" endline="676" begincolumn="33" endcolumn="33" rule="JumbledIncrementer" ruleset="Basic Rules" package="jline.console" class="ConsoleReader" method="expandEvents" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#JumbledIncrementer" priority="3">
+<violation beginline="703" endline="708" begincolumn="33" endcolumn="33" rule="JumbledIncrementer" ruleset="Basic Rules" package="jline.console" class="ConsoleReader" method="expandEvents" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#JumbledIncrementer" priority="3">
 Avoid modifying an outer loop incrementer in an inner loop for update expression
 </violation>
-<violation beginline="759" endline="761" begincolumn="39" endcolumn="9" rule="EmptyIfStmt" ruleset="Basic Rules" package="jline.console" class="ConsoleReader" method="putString" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyIfStmt" priority="3">
+<violation beginline="788" endline="790" begincolumn="39" endcolumn="9" rule="EmptyIfStmt" ruleset="Basic Rules" package="jline.console" class="ConsoleReader" method="putString" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyIfStmt" priority="3">
 Avoid empty if statements
 </violation>
-<violation beginline="775" endline="776" begincolumn="55" endcolumn="9" rule="EmptyIfStmt" ruleset="Basic Rules" package="jline.console" class="ConsoleReader" method="drawBuffer" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyIfStmt" priority="3">
+<violation beginline="804" endline="805" begincolumn="55" endcolumn="9" rule="EmptyIfStmt" ruleset="Basic Rules" package="jline.console" class="ConsoleReader" method="drawBuffer" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyIfStmt" priority="3">
 Avoid empty if statements
 </violation>
-<violation beginline="926" endline="946" begincolumn="13" endcolumn="13" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="jline.console" class="ConsoleReader" method="backspace" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
+<violation beginline="955" endline="975" begincolumn="13" endcolumn="13" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="jline.console" class="ConsoleReader" method="backspace" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
 These nested if statements could be combined
 </violation>
-<violation beginline="1417" endline="1419" begincolumn="69" endcolumn="9" rule="EmptyWhileStmt" ruleset="Basic Rules" package="jline.console" class="ConsoleReader" method="previousWord" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyWhileStmt" priority="3">
+<violation beginline="1446" endline="1448" begincolumn="69" endcolumn="9" rule="EmptyWhileStmt" ruleset="Basic Rules" package="jline.console" class="ConsoleReader" method="previousWord" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyWhileStmt" priority="3">
 Avoid empty while statements
 </violation>
-<violation beginline="1421" endline="1423" begincolumn="70" endcolumn="9" rule="EmptyWhileStmt" ruleset="Basic Rules" package="jline.console" class="ConsoleReader" method="previousWord" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyWhileStmt" priority="3">
+<violation beginline="1450" endline="1452" begincolumn="70" endcolumn="9" rule="EmptyWhileStmt" ruleset="Basic Rules" package="jline.console" class="ConsoleReader" method="previousWord" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyWhileStmt" priority="3">
 Avoid empty while statements
 </violation>
-<violation beginline="1429" endline="1431" begincolumn="69" endcolumn="9" rule="EmptyWhileStmt" ruleset="Basic Rules" package="jline.console" class="ConsoleReader" method="nextWord" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyWhileStmt" priority="3">
+<violation beginline="1458" endline="1460" begincolumn="69" endcolumn="9" rule="EmptyWhileStmt" ruleset="Basic Rules" package="jline.console" class="ConsoleReader" method="nextWord" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyWhileStmt" priority="3">
 Avoid empty while statements
 </violation>
-<violation beginline="1433" endline="1435" begincolumn="70" endcolumn="9" rule="EmptyWhileStmt" ruleset="Basic Rules" package="jline.console" class="ConsoleReader" method="nextWord" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyWhileStmt" priority="3">
+<violation beginline="1462" endline="1464" begincolumn="70" endcolumn="9" rule="EmptyWhileStmt" ruleset="Basic Rules" package="jline.console" class="ConsoleReader" method="nextWord" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyWhileStmt" priority="3">
 Avoid empty while statements
 </violation>
-<violation beginline="1455" endline="1457" begincolumn="64" endcolumn="13" rule="EmptyWhileStmt" ruleset="Basic Rules" package="jline.console" class="ConsoleReader" method="unixWordRubout" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyWhileStmt" priority="3">
+<violation beginline="1484" endline="1486" begincolumn="64" endcolumn="13" rule="EmptyWhileStmt" ruleset="Basic Rules" package="jline.console" class="ConsoleReader" method="unixWordRubout" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyWhileStmt" priority="3">
 Avoid empty while statements
 </violation>
-<violation beginline="1458" endline="1460" begincolumn="65" endcolumn="13" rule="EmptyWhileStmt" ruleset="Basic Rules" package="jline.console" class="ConsoleReader" method="unixWordRubout" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyWhileStmt" priority="3">
+<violation beginline="1487" endline="1489" begincolumn="65" endcolumn="13" rule="EmptyWhileStmt" ruleset="Basic Rules" package="jline.console" class="ConsoleReader" method="unixWordRubout" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyWhileStmt" priority="3">
 Avoid empty while statements
 </violation>
-<violation beginline="1486" endline="1486" begincolumn="21" endcolumn="61" rule="UnusedPrivateMethod" ruleset="Unused Code Rules" package="jline.console" class="ConsoleReader" method="insert" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedPrivateMethod" priority="3">
+<violation beginline="1515" endline="1515" begincolumn="21" endcolumn="61" rule="UnusedPrivateMethod" ruleset="Unused Code Rules" package="jline.console" class="ConsoleReader" method="insert" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedPrivateMethod" priority="3">
 Avoid unused private methods such as 'insert(int,CharSequence)'.
 </violation>
-<violation beginline="1492" endline="1494" begincolumn="43" endcolumn="13" rule="EmptyIfStmt" ruleset="Basic Rules" package="jline.console" class="ConsoleReader" method="insert" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyIfStmt" priority="3">
+<violation beginline="1521" endline="1523" begincolumn="43" endcolumn="13" rule="EmptyIfStmt" ruleset="Basic Rules" package="jline.console" class="ConsoleReader" method="insert" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyIfStmt" priority="3">
 Avoid empty if statements
 </violation>
-<violation beginline="1763" endline="1765" begincolumn="59" endcolumn="9" rule="EmptyWhileStmt" ruleset="Basic Rules" package="jline.console" class="ConsoleReader" method="deletePreviousWord" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyWhileStmt" priority="3">
+<violation beginline="1792" endline="1794" begincolumn="59" endcolumn="9" rule="EmptyWhileStmt" ruleset="Basic Rules" package="jline.console" class="ConsoleReader" method="deletePreviousWord" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyWhileStmt" priority="3">
 Avoid empty while statements
 </violation>
-<violation beginline="1767" endline="1769" begincolumn="60" endcolumn="9" rule="EmptyWhileStmt" ruleset="Basic Rules" package="jline.console" class="ConsoleReader" method="deletePreviousWord" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyWhileStmt" priority="3">
+<violation beginline="1796" endline="1798" begincolumn="60" endcolumn="9" rule="EmptyWhileStmt" ruleset="Basic Rules" package="jline.console" class="ConsoleReader" method="deletePreviousWord" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyWhileStmt" priority="3">
 Avoid empty while statements
 </violation>
-<violation beginline="1775" endline="1777" begincolumn="57" endcolumn="9" rule="EmptyWhileStmt" ruleset="Basic Rules" package="jline.console" class="ConsoleReader" method="deleteNextWord" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyWhileStmt" priority="3">
+<violation beginline="1804" endline="1806" begincolumn="57" endcolumn="9" rule="EmptyWhileStmt" ruleset="Basic Rules" package="jline.console" class="ConsoleReader" method="deleteNextWord" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyWhileStmt" priority="3">
 Avoid empty while statements
 </violation>
-<violation beginline="1779" endline="1781" begincolumn="58" endcolumn="9" rule="EmptyWhileStmt" ruleset="Basic Rules" package="jline.console" class="ConsoleReader" method="deleteNextWord" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyWhileStmt" priority="3">
+<violation beginline="1808" endline="1810" begincolumn="58" endcolumn="9" rule="EmptyWhileStmt" ruleset="Basic Rules" package="jline.console" class="ConsoleReader" method="deleteNextWord" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyWhileStmt" priority="3">
 Avoid empty while statements
 </violation>
-<violation beginline="2093" endline="2095" begincolumn="78" endcolumn="9" rule="EmptyWhileStmt" ruleset="Basic Rules" package="jline.console" class="ConsoleReader" method="readCharacter" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyWhileStmt" priority="3">
+<violation beginline="2129" endline="2131" begincolumn="78" endcolumn="9" rule="EmptyWhileStmt" ruleset="Basic Rules" package="jline.console" class="ConsoleReader" method="readCharacter" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyWhileStmt" priority="3">
 Avoid empty while statements
 </violation>
-<violation beginline="2877" endline="2879" begincolumn="35" endcolumn="13" rule="EmptyIfStmt" ruleset="Basic Rules" package="jline.console" class="ConsoleReader" method="readLineSimple" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyIfStmt" priority="3">
+<violation beginline="2991" endline="2993" begincolumn="35" endcolumn="13" rule="EmptyIfStmt" ruleset="Basic Rules" package="jline.console" class="ConsoleReader" method="readLineSimple" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyIfStmt" priority="3">
 Avoid empty if statements
 </violation>
-<violation beginline="3112" endline="3112" begincolumn="18" endcolumn="42" rule="UnusedPrivateMethod" ruleset="Unused Code Rules" package="jline.console" class="ConsoleReader" method="print" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedPrivateMethod" priority="3">
+<violation beginline="3226" endline="3226" begincolumn="18" endcolumn="42" rule="UnusedPrivateMethod" ruleset="Unused Code Rules" package="jline.console" class="ConsoleReader" method="print" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedPrivateMethod" priority="3">
 Avoid unused private methods such as 'print(char...)'.
 </violation>
-<violation beginline="3196" endline="3209" begincolumn="13" endcolumn="5" rule="UnusedFormalParameter" ruleset="Unused Code Rules" package="jline.console" class="ConsoleReader" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedFormalParameter" priority="3">
+<violation beginline="3310" endline="3323" begincolumn="13" endcolumn="5" rule="UnusedFormalParameter" ruleset="Unused Code Rules" package="jline.console" class="ConsoleReader" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedFormalParameter" priority="3">
 Avoid unused method parameters such as 'num'.
 </violation>
-<violation beginline="3300" endline="3302" begincolumn="17" endcolumn="17" rule="EmptyCatchBlock" ruleset="Basic Rules" package="jline.console" class="ConsoleReader" method="paste" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
+<violation beginline="3414" endline="3416" begincolumn="17" endcolumn="17" rule="EmptyCatchBlock" ruleset="Basic Rules" package="jline.console" class="ConsoleReader" method="paste" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
 </violation>
 </file>
-<file name="/Users/jason/tmp/jline2/target/checkout/src/main/java/jline/console/KeyMap.java">
+<file name="/Users/jason/ws/jline2-clean/target/checkout/src/main/java/jline/console/KeyMap.java">
 <violation beginline="131" endline="133" begincolumn="67" endcolumn="25" rule="EmptyIfStmt" ruleset="Basic Rules" package="jline.console" class="KeyMap" method="bind" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyIfStmt" priority="3">
 Avoid empty if statements
 </violation>
 </file>
-<file name="/Users/jason/tmp/jline2/target/checkout/src/main/java/jline/console/completer/CandidateListCompletionHandler.java">
+<file name="/Users/jason/ws/jline2-clean/target/checkout/src/main/java/jline/console/completer/CandidateListCompletionHandler.java">
 <violation beginline="72" endline="74" begincolumn="82" endcolumn="9" rule="EmptyWhileStmt" ruleset="Basic Rules" package="jline.console.completer" class="CandidateListCompletionHandler" method="setBuffer" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyWhileStmt" priority="3">
 Avoid empty while statements
 </violation>
 </file>
-<file name="/Users/jason/tmp/jline2/target/checkout/src/main/java/jline/console/history/MemoryHistory.java">
+<file name="/Users/jason/ws/jline2-clean/target/checkout/src/main/java/jline/console/history/MemoryHistory.java">
 <violation beginline="111" endline="113" begincolumn="13" endcolumn="13" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="jline.console.history" class="MemoryHistory" method="add" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
 These nested if statements could be combined
 </violation>
 </file>
-<file name="/Users/jason/tmp/jline2/target/checkout/src/main/java/jline/internal/Configuration.java">
+<file name="/Users/jason/ws/jline2-clean/target/checkout/src/main/java/jline/internal/Configuration.java">
 <violation beginline="68" endline="70" begincolumn="13" endcolumn="13" rule="EmptyCatchBlock" ruleset="Basic Rules" package="jline.internal" class="Configuration" method="loadProperties" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
 </violation>
 </file>
-<file name="/Users/jason/tmp/jline2/target/checkout/src/main/java/jline/internal/InputStreamReader.java">
-<violation beginline="253" endline="255" begincolumn="23" endcolumn="21" rule="EmptyCatchBlock" ruleset="Basic Rules" package="jline.internal" class="InputStreamReader" method="read" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
+<file name="/Users/jason/ws/jline2-clean/target/checkout/src/main/java/jline/internal/InputStreamReader.java">
+<violation beginline="255" endline="257" begincolumn="23" endcolumn="21" rule="EmptyCatchBlock" ruleset="Basic Rules" package="jline.internal" class="InputStreamReader" method="read" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
 </violation>
 </file>
-<file name="/Users/jason/tmp/jline2/target/checkout/src/main/java/jline/internal/ShutdownHooks.java">
+<file name="/Users/jason/ws/jline2-clean/target/checkout/src/main/java/jline/internal/ShutdownHooks.java">
 <violation beginline="116" endline="118" begincolumn="9" endcolumn="9" rule="EmptyCatchBlock" ruleset="Basic Rules" package="jline.internal" class="ShutdownHooks" method="removeHook" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
 </violation>
 </file>
-<file name="/Users/jason/tmp/jline2/target/checkout/src/main/java/jline/internal/TerminalLineSettings.java">
+<file name="/Users/jason/ws/jline2-clean/target/checkout/src/main/java/jline/internal/TerminalLineSettings.java">
 <violation beginline="171" endline="171" begincolumn="20" endcolumn="41" rule="UnusedPrivateMethod" ruleset="Unused Code Rules" package="jline.internal" class="TerminalLineSettings" method="exec" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedPrivateMethod" priority="3">
 Avoid unused private methods such as 'exec(String)'.
 </violation>
@@ -141,7 +141,7 @@ Avoid unused private methods such as 'exec(String)'.
 Avoid empty catch blocks
 </violation>
 </file>
-<file name="/Users/jason/tmp/jline2/target/checkout/src/main/java/jline/internal/TestAccessible.java">
+<file name="/Users/jason/ws/jline2-clean/target/checkout/src/main/java/jline/internal/TestAccessible.java">
 <violation beginline="9" endline="33" begincolumn="1" endcolumn="1" rule="TooManyStaticImports" ruleset="Import Statement Rules" package="jline.internal" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#TooManyStaticImports" priority="3">
 Too many static imports may lead to messy code
 </violation>

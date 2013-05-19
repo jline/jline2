@@ -1404,6 +1404,17 @@
  visibility="public"
 >
 </method>
+<method name="isCopyPasteDetectionEnabled"
+ return="boolean"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
 <method name="isHistoryEnabled"
  return="boolean"
  abstract="false"
@@ -1533,6 +1544,23 @@
  deprecated="not deprecated"
  visibility="protected"
 >
+<exception name="IOException" type="java.io.IOException">
+</exception>
+</method>
+<method name="printForwardSearchStatus"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="searchTerm" type="java.lang.String">
+</parameter>
+<parameter name="match" type="java.lang.String">
+</parameter>
 <exception name="IOException" type="java.io.IOException">
 </exception>
 </method>
@@ -1819,6 +1847,51 @@
 <parameter name="startsWith" type="boolean">
 </parameter>
 </method>
+<method name="searchForwards"
+ return="int"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="searchTerm" type="java.lang.String">
+</parameter>
+<parameter name="startIndex" type="int">
+</parameter>
+</method>
+<method name="searchForwards"
+ return="int"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="searchTerm" type="java.lang.String">
+</parameter>
+</method>
+<method name="searchForwards"
+ return="int"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="searchTerm" type="java.lang.String">
+</parameter>
+<parameter name="startIndex" type="int">
+</parameter>
+<parameter name="startsWith" type="boolean">
+</parameter>
+</method>
 <method name="setAutoprintThreshold"
  return="void"
  abstract="false"
@@ -1869,6 +1942,19 @@
  visibility="public"
 >
 <parameter name="handler" type="jline.console.completer.CompletionHandler">
+</parameter>
+</method>
+<method name="setCopyPasteDetection"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="onoff" type="boolean">
 </parameter>
 </method>
 <method name="setCursorPosition"
@@ -2622,6 +2708,17 @@
  transient="false"
  volatile="false"
  value="18"
+ static="true"
+ final="true"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</field>
+<field name="CTRL_S"
+ type="char"
+ transient="false"
+ volatile="false"
+ value="19"
  static="true"
  final="true"
  deprecated="not deprecated"
