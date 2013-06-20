@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pmd version="4.3" timestamp="2013-06-20T12:33:25.208">
+<pmd version="4.3" timestamp="2013-06-20T12:55:18.469">
 <file name="/Users/jason/ws/jline2/src/main/java/jline/AnsiWindowsTerminal.java">
 <violation beginline="46" endline="49" begincolumn="15" endcolumn="13" rule="EmptyCatchBlock" ruleset="Basic Rules" package="jline" class="AnsiWindowsTerminal" method="wrapOutputStream" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
