@@ -44,25 +44,22 @@ public class StringsCompleter
         return strings;
     }
 
-    public int complete(final String buffer, final int cursor, final List<CharSequence> candidates) {
+    public int complete(final String buffer, final int cursor, final List<Completion> candidates) {
         // buffer could be null
         checkNotNull(candidates);
 
-        if (buffer == null) {
-            candidates.addAll(strings);
-        }
-        else {
-            for (String match : strings.tailSet(buffer)) {
-                if (!match.startsWith(buffer)) {
-                    break;
-                }
+        String prefix = buffer == null ? "" : buffer;
+		for (String match : strings.tailSet(prefix)) {
+			if (!match.startsWith(prefix)) {
+				break;
+			}
 
-                candidates.add(match);
-            }
-        }
+			candidates.add(new Completion(match));
+		}
 
         if (candidates.size() == 1) {
-            candidates.set(0, candidates.get(0) + " ");
+        	CharSequence value = candidates.get(0).getValue(); 
+			candidates.set(0, new Completion(value + " "));
         }
 
         return candidates.isEmpty() ? -1 : 0;
