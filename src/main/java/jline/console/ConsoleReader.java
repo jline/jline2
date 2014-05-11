@@ -40,6 +40,7 @@ import java.util.Stack;
 
 import jline.Terminal;
 import jline.TerminalFactory;
+import jline.UnixTerminal;
 import jline.console.completer.CandidateListCompletionHandler;
 import jline.console.completer.Completer;
 import jline.console.completer.CompletionHandler;
@@ -105,6 +106,8 @@ public class ConsoleReader
 
     private boolean bellEnabled = !Configuration.getBoolean(JLINE_NOBELL, true);
 
+    private boolean handleUserInterrupt = false;
+
     private Character mask;
 
     private Character echoCharacter;
@@ -161,6 +164,15 @@ public class ConsoleReader
 
     private boolean skipLF = false;
 
+    /**
+     * Set to true if the reader should attempt to detect copy-n-paste. The
+     * effect of this that an attempt is made to detect if tab is quickly
+     * followed by another character, then it is assumed that the tab was
+     * a literal tab as part of a copy-and-paste operation and is inserted as
+     * such.
+     */
+    private boolean copyPasteDetection = false;
+
     /*
      * Current internal state of the line reader
      */
@@ -178,6 +190,7 @@ public class ConsoleReader
          * In the middle of a emacs seach
          */
         SEARCH,
+        FORWARD_SEARCH,
         /**
          * VI "yank-to" operation ("y" during move mode)
          */
@@ -214,12 +227,13 @@ public class ConsoleReader
         this.appName = appName != null ? appName : "JLine";
         this.encoding = encoding != null ? encoding : Configuration.getEncoding();
         this.terminal = term != null ? term : TerminalFactory.get();
-        this.out = new OutputStreamWriter(terminal.wrapOutIfNeeded(out), this.encoding);
+        String outEncoding = terminal.getOutputEncoding() != null? terminal.getOutputEncoding() : this.encoding;
+        this.out = new OutputStreamWriter(terminal.wrapOutIfNeeded(out), outEncoding);
         setInput( in );
 
         this.inputrcUrl = getInputRc();
 
-        consoleKeys = new ConsoleKeys(appName, inputrcUrl);
+        consoleKeys = new ConsoleKeys(this.appName, inputrcUrl);
     }
 
     private URL getInputRc() throws IOException {
@@ -330,6 +344,23 @@ public class ConsoleReader
     }
 
     /**
+     * Enables or disables copy and paste detection. The effect of enabling this
+     * this setting is that when a tab is received immediately followed by another
+     * character, the tab will not be treated as a completion, but as a tab literal.
+     * @param onoff true if detection is enabled
+     */
+    public void setCopyPasteDetection(final boolean onoff) {
+        copyPasteDetection = onoff;
+    }
+
+    /**
+     * @return true if copy and paste detection is enabled.
+     */
+    public boolean isCopyPasteDetectionEnabled() {
+        return copyPasteDetection;
+    }
+
+    /**
      * Set whether the console bell is enabled.
      *
      * @param enabled true if enabled; false otherwise
@@ -347,6 +378,30 @@ public class ConsoleReader
      */
     public boolean getBellEnabled() {
         return bellEnabled;
+    }
+
+    /**
+     * Set whether user interrupts (ctrl-C) are handled by having JLine
+     * throw {@link UserInterruptException} from {@link #readLine}.
+     * Otherwise, the JVM will handle {@code SIGINT} as normal, which
+     * usually causes it to exit. The default is {@code false}.
+     *
+     * @since 2.10
+     */
+    public void setHandleUserInterrupt(boolean enabled)
+    {
+        this.handleUserInterrupt = enabled;
+    }
+
+    /**
+     * Get whether user interrupt handling is enabled
+     *
+     * @return true if enabled; false otherwise
+     * @since 2.10
+     */
+    public boolean getHandleUserInterrupt()
+    {
+        return handleUserInterrupt;
     }
 
     /**
@@ -520,6 +575,16 @@ public class ConsoleReader
         setBuffer(String.valueOf(buffer));
     }
 
+    private void setBufferKeepPos(final String buffer) throws IOException {
+        int pos = buf.cursor;
+        setBuffer(buffer);
+        setCursorPosition(pos);
+    }
+
+    private void setBufferKeepPos(final CharSequence buffer) throws IOException {
+        setBufferKeepPos(String.valueOf(buffer));
+    }
+
     /**
      * Output put the prompt + the current buffer
      */
@@ -558,7 +623,10 @@ public class ConsoleReader
 
         if (expandEvents) {
             str = expandEvents(str);
-            historyLine = str.replaceAll("\\!", "\\\\!");
+            // all post-expansion occurrences of '!' must have been escaped, so re-add escape to each
+            historyLine = str.replace("!", "\\!");
+            // only leading '^' results in expansion, so only re-add escape for that case
+            historyLine = historyLine.replaceAll("^\\^", "\\\\^");
         }
 
         // we only add it to the history if the buffer is not empty
@@ -587,20 +655,22 @@ public class ConsoleReader
      */
     protected String expandEvents(String str) throws IOException {
         StringBuilder sb = new StringBuilder();
-        boolean escaped = false;
         for (int i = 0; i < str.length(); i++) {
             char c = str.charAt(i);
-            if (escaped) {
-                sb.append(c);
-                escaped = false;
-                continue;
-            } else if (c == '\\') {
-                escaped = true;
-                continue;
-            } else {
-                escaped = false;
-            }
             switch (c) {
+                case '\\':
+                    // any '\!' should be considered an expansion escape, so skip expansion and strip the escape character
+                    // a leading '\^' should be considered an expansion escape, so skip expansion and strip the escape character
+                    // otherwise, add the escape
+                    if (i + 1 < str.length()) {
+                        char nextChar = str.charAt(i+1);
+                        if (nextChar == '!' || (nextChar == '^' && i == 0)) {
+                            c = nextChar;
+                            i++;
+                        }
+                    }
+                    sb.append(c);
+                    break;
                 case '!':
                     if (i + 1 < str.length()) {
                         c = str.charAt(++i);
@@ -629,6 +699,18 @@ public class ConsoleReader
                                     throw new IllegalArgumentException("!?" + sc + ": event not found");
                                 } else {
                                     rep = history.get(idx).toString();
+                                }
+                                break;
+                            case '$':
+                                if (history.size() == 0) {
+                                    throw new IllegalArgumentException("!$: event not found");
+                                }
+                                String previous = history.get(history.index() - 1).toString().trim();
+                                int lastSpace = previous.lastIndexOf(' ');
+                                if(lastSpace != -1) {
+                                    rep = previous.substring(lastSpace+1);
+                                } else {
+                                    rep = previous;
                                 }
                                 break;
                             case ' ':
@@ -664,14 +746,14 @@ public class ConsoleReader
                                     throw new IllegalArgumentException((neg ? "!-" : "!") + str.substring(i1, i) + ": event not found");
                                 }
                                 if (neg) {
-                                    if (idx < history.size()) {
+                                    if (idx > 0 && idx <= history.size()) {
                                         rep = (history.get(history.index() - idx)).toString();
                                     } else {
                                         throw new IllegalArgumentException((neg ? "!-" : "!") + str.substring(i1, i) + ": event not found");
                                     }
                                 } else {
-                                    if (idx >= history.index() - history.size() && idx < history.index()) {
-                                        rep = (history.get(idx)).toString();
+                                    if (idx > history.index() - history.size() && idx <= history.index()) {
+                                        rep = (history.get(idx - 1)).toString();
                                     } else {
                                         throw new IllegalArgumentException((neg ? "!-" : "!") + str.substring(i1, i) + ": event not found");
                                     }
@@ -717,9 +799,6 @@ public class ConsoleReader
                     sb.append(c);
                     break;
             }
-        }
-        if (escaped) {
-            sb.append('\\');
         }
         String result = sb.toString();
         if (!str.equals(result)) {
@@ -1125,10 +1204,13 @@ public class ConsoleReader
      * span of the input line.
      * @param startPos The start position
      * @param endPos The end position.
+     * @param isChange If true, then the delete is part of a change operationg
+     *    (e.g. "c$" is change-to-end-of line, so we first must delete to end 
+     *    of line to start the change
      * @return true if it succeeded, false otherwise
      * @throws IOException
      */
-    private boolean viDeleteTo(int startPos, int endPos) throws IOException {
+    private boolean viDeleteTo(int startPos, int endPos, boolean isChange) throws IOException {
         if (startPos == endPos) {
             return true;
         }
@@ -1143,6 +1225,15 @@ public class ConsoleReader
         buf.cursor = startPos;
         buf.buffer.delete(startPos, endPos);
         drawBuffer(endPos - startPos);
+        
+        // If we are doing a delete operation (e.g. "d$") then don't leave the
+        // cursor dangling off the end. In reality the "isChange" flag is silly
+        // what is really happening is that if we are in "move-mode" then the
+        // cursor can't be moved off the end of the line, but in "edit-mode" it
+        // is ok, but I have no easy way of knowing which mode we are in.
+        if (! isChange && startPos > 0 && startPos == buf.length()) {
+            moveCursor(-1);
+        }
         return true;
     }
 
@@ -1866,6 +1957,13 @@ public class ConsoleReader
         return finishBuffer();
     }
 
+    private void abort() throws IOException {
+        beep();
+        buf.clear();
+        println();
+        redrawLine();
+    }
+
     /**
      * Move the cursor <i>where</i> characters.
      *
@@ -2199,6 +2297,10 @@ public class ConsoleReader
                 return readLineSimple();
             }
 
+            if (handleUserInterrupt && (terminal instanceof UnixTerminal)) {
+                ((UnixTerminal) terminal).disableInterruptCharacter();
+            }
+
             String originalPrompt = this.prompt;
 
             state = State.NORMAL;
@@ -2212,10 +2314,10 @@ public class ConsoleReader
                 if (c == -1) {
                     return null;
                 }
-                sb.append( (char) c );
+                sb.appendCodePoint(c);
 
                 if (recording) {
-                    macro += (char) c;
+                    macro += new String(new int[]{c}, 0, 1);
                 }
 
                 Object o = getKeys().getBound( sb );
@@ -2320,36 +2422,55 @@ public class ConsoleReader
                 // Note that we have to do this first, because if there is a command
                 // not linked to a search command, we leave the search mode and fall
                 // through to the normal state.
-                if (state == State.SEARCH) {
+                if (state == State.SEARCH || state == State.FORWARD_SEARCH) {
                     int cursorDest = -1;
                     switch ( ((Operation) o )) {
                         case ABORT:
                             state = State.NORMAL;
+                            buf.clear();
+                            buf.buffer.append(searchTerm);
                             break;
 
                         case REVERSE_SEARCH_HISTORY:
-                        case HISTORY_SEARCH_BACKWARD:
+                            state = State.SEARCH;
                             if (searchTerm.length() == 0) {
                                 searchTerm.append(previousSearchTerm);
                             }
 
-                            if (searchIndex == -1) {
-                                searchIndex = searchBackwards(searchTerm.toString());
-                            } else {
+                            if (searchIndex > 0) {
                                 searchIndex = searchBackwards(searchTerm.toString(), searchIndex);
+                            }
+                            break;
+
+                        case FORWARD_SEARCH_HISTORY:
+                            state = State.FORWARD_SEARCH;
+                            if (searchTerm.length() == 0) {
+                                searchTerm.append(previousSearchTerm);
+                            }
+
+                            if (searchIndex > -1 && searchIndex < history.size() - 1) {
+                                searchIndex = searchForwards(searchTerm.toString(), searchIndex);
                             }
                             break;
 
                         case BACKWARD_DELETE_CHAR:
                             if (searchTerm.length() > 0) {
                                 searchTerm.deleteCharAt(searchTerm.length() - 1);
-                                searchIndex = searchBackwards(searchTerm.toString());
+                                if (state == State.SEARCH) {
+                                    searchIndex = searchBackwards(searchTerm.toString());
+                                } else {
+                                    searchIndex = searchForwards(searchTerm.toString());
+                                }
                             }
                             break;
 
                         case SELF_INSERT:
                             searchTerm.appendCodePoint(c);
-                            searchIndex = searchBackwards(searchTerm.toString());
+                            if (state == State.SEARCH) {
+                                searchIndex = searchBackwards(searchTerm.toString());
+                            } else {
+                                searchIndex = searchForwards(searchTerm.toString());
+                            }
                             break;
 
                         default:
@@ -2364,15 +2485,22 @@ public class ConsoleReader
                     }
 
                     // if we're still in search mode, print the search status
-                    if (state == State.SEARCH) {
+                    if (state == State.SEARCH || state == State.FORWARD_SEARCH) {
                         if (searchTerm.length() == 0) {
-                            printSearchStatus("", "");
+                            if (state == State.SEARCH) {
+                                printSearchStatus("", "");
+                            } else {
+                                printForwardSearchStatus("", "");
+                            }
                             searchIndex = -1;
                         } else {
                             if (searchIndex == -1) {
                                 beep();
-                            } else {
+                                printSearchStatus(searchTerm.toString(), "");
+                            } else if (state == State.SEARCH) {
                                 printSearchStatus(searchTerm.toString(), history.get(searchIndex).toString());
+                            } else {
+                                printForwardSearchStatus(searchTerm.toString(), history.get(searchIndex).toString());
                             }
                         }
                     }
@@ -2381,7 +2509,7 @@ public class ConsoleReader
                         restoreLine(originalPrompt, cursorDest);
                     }
                 }
-                if (state != State.SEARCH) {
+                if (state != State.SEARCH && state != State.FORWARD_SEARCH) {
                     /*
                      * If this is still false at the end of the switch, then
                      * we reset our repeatCount to 0.
@@ -2425,7 +2553,25 @@ public class ConsoleReader
 
                         switch ( op ) {
                             case COMPLETE: // tab
-                                success = complete();
+                                // There is an annoyance with tab completion in that
+                                // sometimes the user is actually pasting input in that
+                                // has physical tabs in it.  This attempts to look at how
+                                // quickly a character follows the tab, if the character
+                                // follows *immediately*, we assume it is a tab literal.
+                                boolean isTabLiteral = false;
+                                if (copyPasteDetection
+                                    && c == 9
+                                    && (!pushBackChar.isEmpty()
+                                        || (in.isNonBlockingEnabled() && in.peek(escapeTimeout) != -2))) {
+                                    isTabLiteral = true;
+                                }
+
+                                if (! isTabLiteral) {
+                                    success = complete();
+                                }
+                                else {
+                                    putString(sb);
+                                }
                                 break;
 
                             case POSSIBLE_COMPLETIONS:
@@ -2458,6 +2604,23 @@ public class ConsoleReader
 
                             case ACCEPT_LINE:
                                 return accept();
+
+                            case ABORT:
+                                if (searchTerm == null) {
+                                    abort();
+                                }
+                                break;
+
+                            case INTERRUPT:
+                                if (handleUserInterrupt) {
+                                    println();
+                                    flush();
+                                    String partialLine = buf.buffer.toString();
+                                    buf.clear();
+                                    history.moveToEnd();
+                                    throw new UserInterruptException(partialLine);
+                                }
+                                break;
 
                             /*
                              * VI_MOVE_ACCEPT_LINE is the result of an ENTER
@@ -2558,8 +2721,43 @@ public class ConsoleReader
                                 }
                                 break;
 
-                            case REVERSE_SEARCH_HISTORY:
                             case HISTORY_SEARCH_BACKWARD:
+                                searchTerm = new StringBuffer(buf.upToCursor());
+                                searchIndex = searchBackwards(searchTerm.toString(), history.index(), true);
+
+                                if (searchIndex == -1) {
+                                    beep();
+                                } else {
+                                    // Maintain cursor position while searching.
+                                    success = history.moveTo(searchIndex);
+                                    if (success) {
+                                        setBufferKeepPos(history.current());
+                                    }
+                                }
+                                break;
+
+                            case HISTORY_SEARCH_FORWARD:
+                                searchTerm = new StringBuffer(buf.upToCursor());
+                                int index = history.index() + 1;
+
+                                if (index == history.size()) {
+                                    history.moveToEnd();
+                                    setBufferKeepPos(searchTerm.toString());
+                                } else if (index < history.size()) {
+                                    searchIndex = searchForwards(searchTerm.toString(), index, true);
+                                    if (searchIndex == -1) {
+                                        beep();
+                                    } else {
+                                        // Maintain cursor position while searching.
+                                        success = history.moveTo(searchIndex);
+                                        if (success) {
+                                            setBufferKeepPos(history.current());
+                                        }
+                                    }
+                                }
+                                break;
+
+                            case REVERSE_SEARCH_HISTORY:
                                 if (searchTerm != null) {
                                     previousSearchTerm = searchTerm.toString();
                                 }
@@ -2575,6 +2773,25 @@ public class ConsoleReader
                                 } else {
                                     searchIndex = -1;
                                     printSearchStatus("", "");
+                                }
+                                break;
+
+                            case FORWARD_SEARCH_HISTORY:
+                                if (searchTerm != null) {
+                                    previousSearchTerm = searchTerm.toString();
+                                }
+                                searchTerm = new StringBuffer(buf.buffer);
+                                state = State.FORWARD_SEARCH;
+                                if (searchTerm.length() > 0) {
+                                    searchIndex = searchForwards(searchTerm.toString());
+                                    if (searchIndex == -1) {
+                                        beep();
+                                    }
+                                    printForwardSearchStatus(searchTerm.toString(),
+                                            searchIndex > -1 ? history.get(searchIndex).toString() : "");
+                                } else {
+                                    searchIndex = -1;
+                                    printForwardSearchStatus("", "");
                                 }
                                 break;
 
@@ -2771,6 +2988,11 @@ public class ConsoleReader
                                     state = State.VI_CHANGE_TO;
                                 }
                                 break;
+                            
+                            case VI_KILL_WHOLE_LINE:
+                                success = setCursorPosition(0) && killLine();
+                                consoleKeys.setKeyMap(KeyMap.VI_INSERT);
+                                break;
 
                             case VI_PUT:
                                 success = viPut(count);
@@ -2798,6 +3020,15 @@ public class ConsoleReader
                                         ? readCharacter()
                                         : pushBackChar.pop());
                                 break;
+                            
+                            case VI_DELETE_TO_EOL:
+                                success = viDeleteTo(buf.cursor, buf.buffer.length(), false);
+                                break;
+                                
+                            case VI_CHANGE_TO_EOL:
+                                success = viDeleteTo(buf.cursor, buf.buffer.length(), true);
+                                consoleKeys.setKeyMap(KeyMap.VI_INSERT);
+                                break;
 
                             case EMACS_EDITING_MODE:
                                 consoleKeys.setKeyMap(KeyMap.EMACS);
@@ -2813,10 +3044,10 @@ public class ConsoleReader
                          */
                         if (origState != State.NORMAL) {
                             if (origState == State.VI_DELETE_TO) {
-                                success = viDeleteTo(cursorStart, buf.cursor);
+                                success = viDeleteTo(cursorStart, buf.cursor, false);
                             }
                             else if (origState == State.VI_CHANGE_TO) {
-                                success = viDeleteTo(cursorStart, buf.cursor);
+                                success = viDeleteTo(cursorStart, buf.cursor, true);
                                 consoleKeys.setKeyMap(KeyMap.VI_INSERT);
                             }
                             else if (origState == State.VI_YANK_TO) {
@@ -2837,6 +3068,12 @@ public class ConsoleReader
                              */
                             repeatCount = 0;
                         }
+
+                        if (state != State.SEARCH && state != State.FORWARD_SEARCH) {
+                            previousSearchTerm = "";
+                            searchTerm = null;
+                            searchIndex = -1;
+                        }
                     }
                 }
                 if (!success) {
@@ -2849,6 +3086,9 @@ public class ConsoleReader
         finally {
             if (!terminal.isSupported()) {
                 afterReadLine();
+            }
+            if (handleUserInterrupt && (terminal instanceof UnixTerminal)) {
+                ((UnixTerminal) terminal).enableInterruptCharacter();
             }
         }
     }
@@ -3175,29 +3415,14 @@ public class ConsoleReader
      * @return true if successful
      */
     public final boolean delete() throws IOException {
-        return delete(1) == 1;
-    }
-
-    // FIXME: delete(int) only used by above + the return is always 1 and num is ignored
-
-    /**
-     * Issue <em>num</em> deletes.
-     *
-     * @return the number of characters backed up
-     */
-    private int delete(final int num) throws IOException {
-        // TODO: Try to use jansi for this
-
-        /* Commented out because of DWA-2949:
-        if (buf.cursor == 0) {
-            return 0;
+        if (buf.cursor == buf.buffer.length()) {
+          return false;
         }
-        */
 
         buf.buffer.delete(buf.cursor, buf.cursor + 1);
         drawBuffer(1);
 
-        return 1;
+        return true;
     }
 
     /**
@@ -3485,7 +3710,12 @@ public class ConsoleReader
 
         // backspace all text, including prompt
         buf.buffer.append(this.prompt);
-        buf.cursor += this.prompt.length();
+        int promptLength = 0;
+        if (this.prompt != null) {
+            promptLength = this.prompt.length();
+        }
+
+        buf.cursor += promptLength;
         setPrompt("");
         backspaceAll();
 
@@ -3501,10 +3731,17 @@ public class ConsoleReader
     }
 
     public void printSearchStatus(String searchTerm, String match) throws IOException {
-        String prompt = "(reverse-i-search)`" + searchTerm + "': ";
-        String buffer = match;
+        printSearchStatus(searchTerm, match, "(reverse-i-search)`");
+    }
+
+    public void printForwardSearchStatus(String searchTerm, String match) throws IOException {
+        printSearchStatus(searchTerm, match, "(i-search)`");
+    }
+
+    private void printSearchStatus(String searchTerm, String match, String searchLabel) throws IOException {
+        String prompt = searchLabel + searchTerm + "': ";
         int cursorDest = match.indexOf(searchTerm);
-        resetPromptLine(prompt, buffer, cursorDest);
+        resetPromptLine(prompt, match, cursorDest);
     }
 
     public void restoreLine(String originalPrompt, int cursorDest) throws IOException {
@@ -3543,6 +3780,52 @@ public class ConsoleReader
         ListIterator<History.Entry> it = history.entries(startIndex);
         while (it.hasPrevious()) {
             History.Entry e = it.previous();
+            if (startsWith) {
+                if (e.value().toString().startsWith(searchTerm)) {
+                    return e.index();
+                }
+            } else {
+                if (e.value().toString().contains(searchTerm)) {
+                    return e.index();
+                }
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Search forward in history from a given position.
+     *
+     * @param searchTerm substring to search for.
+     * @param startIndex the index from which on to search
+     * @return index where this substring has been found, or -1 else.
+     */
+    public int searchForwards(String searchTerm, int startIndex) {
+        return searchForwards(searchTerm, startIndex, false);
+    }
+    /**
+     * Search forwards in history from the current position.
+     *
+     * @param searchTerm substring to search for.
+     * @return index where the substring has been found, or -1 else.
+     */
+    public int searchForwards(String searchTerm) {
+        return searchForwards(searchTerm, history.index());
+    }
+
+    public int searchForwards(String searchTerm, int startIndex, boolean startsWith) {
+        if (startIndex >= history.size()) {
+            startIndex = history.size() - 1;
+        }
+
+        ListIterator<History.Entry> it = history.entries(startIndex);
+
+        if (searchIndex != -1 && it.hasNext()) {
+            it.next();
+        }
+
+        while (it.hasNext()) {
+            History.Entry e = it.next();
             if (startsWith) {
                 if (e.value().toString().startsWith(searchTerm)) {
                     return e.index();

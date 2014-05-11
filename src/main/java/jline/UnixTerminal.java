@@ -48,9 +48,10 @@ public class UnixTerminal
 
         setAnsiSupported(true);
 
-        // set the console to be character-buffered instead of line-buffered
-        // also make sure we're distinguishing carriage return from newline
-        settings.set("-icanon min 1 -icrnl -inlcr");
+        // Set the console to be character-buffered instead of line-buffered.
+        // Make sure we're distinguishing carriage return from newline.
+        // Allow ctrl-s keypress to be used (as forward search)
+        settings.set("-icanon min 1 -icrnl -inlcr -ixon");
 
         setEchoEnabled(false);
     }
@@ -64,9 +65,6 @@ public class UnixTerminal
     public void restore() throws Exception {
         settings.restore();
         super.restore();
-        // print a newline after the terminal exits.
-        // this should probably be a configurable.
-        System.out.println();
     }
 
     /**
@@ -99,8 +97,36 @@ public class UnixTerminal
             super.setEchoEnabled(enabled);
         }
         catch (Exception e) {
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
             Log.error("Failed to ", (enabled ? "enable" : "disable"), " echo", e);
         }
     }
 
+    public void disableInterruptCharacter()
+    {
+        try {
+            settings.set("intr undef");
+        }
+        catch (Exception e) {
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
+            Log.error("Failed to disable interrupt character", e);
+        }
+    }
+
+    public void enableInterruptCharacter()
+    {
+        try {
+            settings.set("intr ^C");
+        }
+        catch (Exception e) {
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
+            Log.error("Failed to enable interrupt character", e);
+        }
+    }
 }

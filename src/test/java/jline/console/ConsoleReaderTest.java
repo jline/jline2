@@ -25,6 +25,7 @@ import org.junit.Test;
 
 import static jline.console.ConsoleReaderTest.WindowsKey.*;
 import static org.junit.Assert.*;
+import static org.junit.Assume.*;
 
 /**
  * Tests for the {@link ConsoleReader}.
@@ -59,15 +60,18 @@ public class ConsoleReaderTest
         assertEquals(expected, line);
     }
 
+    private ConsoleReader createConsole() throws Exception {
+        return createConsole("");
+    }
+
     private ConsoleReader createConsole(String chars) throws Exception {
-        System.err.println(Configuration.getEncoding());
-        System.err.println(chars);
         return createConsole(chars.getBytes(Configuration.getEncoding()));
     }
 
     private ConsoleReader createConsole(byte[] bytes) throws Exception {
         return createConsole(null, bytes);
     }
+
     private ConsoleReader createConsole(String appName, byte[] bytes) throws Exception {
         InputStream in = new ByteArrayInputStream(bytes);
         output = new ByteArrayOutputStream();
@@ -113,9 +117,7 @@ public class ConsoleReaderTest
     @Test
     public void testDeleteOnWindowsTerminal() throws Exception {
         // test only works on Windows
-        if (!(TerminalFactory.get() instanceof WindowsTerminal)) {
-            return;
-        }
+        assumeTrue(TerminalFactory.get() instanceof WindowsTerminal);
 
         char[] characters = new char[]{
             'S', 's',
@@ -130,9 +132,7 @@ public class ConsoleReaderTest
     @Test
     public void testNumpadDeleteOnWindowsTerminal() throws Exception {
         // test only works on Windows
-        if (!(TerminalFactory.get() instanceof WindowsTerminal)) {
-            return;
-        }
+        assumeTrue(TerminalFactory.get() instanceof WindowsTerminal);
 
         char[] characters = new char[]{
             'S', 's',
@@ -147,9 +147,7 @@ public class ConsoleReaderTest
     @Test
     public void testHomeKeyOnWindowsTerminal() throws Exception {
         // test only works on Windows
-        if (!(TerminalFactory.get() instanceof WindowsTerminal)) {
-            return;
-        }
+        assumeTrue(TerminalFactory.get() instanceof WindowsTerminal);
 
         char[] characters = new char[]{
             'S', 's',
@@ -163,9 +161,7 @@ public class ConsoleReaderTest
     @Test
     public void testEndKeyOnWindowsTerminal() throws Exception {
         // test only works on Windows
-        if (!(TerminalFactory.get() instanceof WindowsTerminal)) {
-            return;
-        }
+        assumeTrue(TerminalFactory.get() instanceof WindowsTerminal);
 
         char[] characters = new char[]{
             'S', 's',
@@ -180,9 +176,7 @@ public class ConsoleReaderTest
     @Test
     public void testPageUpOnWindowsTerminal() throws Exception {
         // test only works on Windows
-        if (!(TerminalFactory.get() instanceof WindowsTerminal)) {
-            return;
-        }
+        assumeTrue(TerminalFactory.get() instanceof WindowsTerminal);
 
         char[] characters = new char[]{
             (char) SPECIAL_KEY_INDICATOR.code,
@@ -194,9 +188,7 @@ public class ConsoleReaderTest
     @Test
     public void testPageDownOnWindowsTerminal() throws Exception {
         // test only works on Windows
-        if (!(TerminalFactory.get() instanceof WindowsTerminal)) {
-            return;
-        }
+        assumeTrue(TerminalFactory.get() instanceof WindowsTerminal);
 
         char[] characters = new char[]{
             (char) SPECIAL_KEY_INDICATOR.code,
@@ -208,9 +200,7 @@ public class ConsoleReaderTest
     @Test
     public void testEscapeOnWindowsTerminal() throws Exception {
         // test only works on Windows
-        if (!(TerminalFactory.get() instanceof WindowsTerminal)) {
-            return;
-        }
+        assumeTrue(TerminalFactory.get() instanceof WindowsTerminal);
 
         char[] characters = new char[]{
             's', 's', 's',
@@ -223,9 +213,7 @@ public class ConsoleReaderTest
     @Test
     public void testInsertOnWindowsTerminal() throws Exception {
         // test only works on Windows
-        if (!(TerminalFactory.get() instanceof WindowsTerminal)) {
-            return;
-        }
+        assumeTrue(TerminalFactory.get() instanceof WindowsTerminal);
 
         char[] characters = new char[]{
             'o', 'p', 's',
@@ -239,7 +227,7 @@ public class ConsoleReaderTest
 
     @Test
     public void testExpansion() throws Exception {
-        ConsoleReader reader = new ConsoleReader();
+        ConsoleReader reader = createConsole();
         MemoryHistory history = new MemoryHistory();
         history.setMaxSize(3);
         history.add("foo");
@@ -263,6 +251,7 @@ public class ConsoleReaderTest
         assertEquals("mkdir monkey", reader.expandEvents("!mk"));
         try {
             reader.expandEvents("!mz");
+            fail("expected IllegalArgumentException");
         } catch (IllegalArgumentException e) {
             assertEquals("!mz: event not found", e.getMessage());
         }
@@ -272,17 +261,123 @@ public class ConsoleReaderTest
 
         assertEquals("mkdir monkey", reader.expandEvents("!-1"));
         assertEquals("cd c:\\", reader.expandEvents("!-2"));
-        assertEquals("cd c:\\", reader.expandEvents("!2"));
-        assertEquals("mkdir monkey", reader.expandEvents("!3"));
+        assertEquals("cd c:\\", reader.expandEvents("!3"));
+        assertEquals("mkdir monkey", reader.expandEvents("!4"));
         try {
             reader.expandEvents("!20");
+            fail("expected IllegalArgumentException");
         } catch (IllegalArgumentException e) {
             assertEquals("!20: event not found", e.getMessage());
         }
         try {
             reader.expandEvents("!-20");
+            fail("expected IllegalArgumentException");
         } catch (IllegalArgumentException e) {
             assertEquals("!-20: event not found", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testNumericExpansions() throws Exception {
+        ConsoleReader reader = createConsole();
+        MemoryHistory history = new MemoryHistory();
+        history.setMaxSize(3);
+
+        // Seed history with three entries:
+        // 1 history1
+        // 2 history2
+        // 3 history3
+        history.add("history1");
+        history.add("history2");
+        history.add("history3");
+        reader.setHistory(history);
+
+        // Validate !n
+        assertExpansionIllegalArgumentException(reader, "!0");
+        assertEquals("history1", reader.expandEvents("!1"));
+        assertEquals("history2", reader.expandEvents("!2"));
+        assertEquals("history3", reader.expandEvents("!3"));
+        assertExpansionIllegalArgumentException(reader, "!4");
+
+        // Validate !-n
+        assertExpansionIllegalArgumentException(reader, "!-0");
+        assertEquals("history3", reader.expandEvents("!-1"));
+        assertEquals("history2", reader.expandEvents("!-2"));
+        assertEquals("history1", reader.expandEvents("!-3"));
+        assertExpansionIllegalArgumentException(reader, "!-4");
+
+        // Validate !!
+        assertEquals("history3", reader.expandEvents("!!"));
+
+        // Add two new entries. Because maxSize=3, history is:
+        // 3 history3
+        // 4 history4
+        // 5 history5
+        history.add("history4");
+        history.add("history5");
+
+        // Validate !n
+        assertExpansionIllegalArgumentException(reader, "!0");
+        assertExpansionIllegalArgumentException(reader, "!1");
+        assertExpansionIllegalArgumentException(reader, "!2");
+        assertEquals("history3", reader.expandEvents("!3"));
+        assertEquals("history4", reader.expandEvents("!4"));
+        assertEquals("history5", reader.expandEvents("!5"));
+        assertExpansionIllegalArgumentException(reader, "!6");
+
+        // Validate !-n
+        assertExpansionIllegalArgumentException(reader, "!-0");
+        assertEquals("history5", reader.expandEvents("!-1"));
+        assertEquals("history4", reader.expandEvents("!-2"));
+        assertEquals("history3", reader.expandEvents("!-3"));
+        assertExpansionIllegalArgumentException(reader, "!-4");
+
+        // Validate !!
+        assertEquals("history5", reader.expandEvents("!!"));
+    }
+
+    @Test
+    public void testArgsExpansion() throws Exception {
+        ConsoleReader reader = createConsole();
+        MemoryHistory history = new MemoryHistory();
+        history.setMaxSize(3);
+        reader.setHistory(history);
+
+        // we can't go back to previous arguments if there are none
+        try {
+            reader.expandEvents("!$");
+            fail("expected IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            assertEquals("!$: event not found", e.getMessage());
+        }
+
+        // if no arguments were given, it should expand to the command itself
+        history.add("ls");
+        assertEquals("ls", reader.expandEvents("!$"));
+
+        // now we can expand to the last argument
+        history.add("ls /home");
+        assertEquals("/home", reader.expandEvents("!$"));
+
+        //we always take the last argument
+        history.add("ls /home /etc");
+        assertEquals("/etc", reader.expandEvents("!$"));
+
+        //make sure we don't add spaces accidentally
+        history.add("ls /home  /foo ");
+        assertEquals("/foo", reader.expandEvents("!$"));
+    }
+
+	/**
+	 * Validates that an 'event not found' IllegalArgumentException is thrown
+	 * for the expansion event.
+	 */
+    protected void assertExpansionIllegalArgumentException(ConsoleReader reader, String event) throws Exception {
+        try {
+            reader.expandEvents(event);
+            fail("Expected IllegalArgumentException for " + event);
+        } catch (IllegalArgumentException e) {
+            assertEquals(event + ": event not found", e.getMessage());
         }
     }
 
@@ -298,6 +393,106 @@ public class ConsoleReaderTest
 
         history.previous();
         assertEquals("foo \\! bar", history.current());
+
+        reader = createConsole("cd c:\\docs\r\n");
+        history = new MemoryHistory();
+        reader.setHistory(history);
+        reader.setExpandEvents(true);
+
+        line = reader.readLine();
+        assertEquals("cd c:\\docs", line);
+
+        history.previous();
+        assertEquals("cd c:\\docs", history.current());
+    }
+
+    @Test
+    public void testExpansionAndHistoryWithEscapes() throws Exception {
+
+        /*
+         * Tests the results of the ConsoleReader.readLine() call and the line
+         * stored in history. For each input, it tests the with-expansion and
+         * without-expansion case.
+         */
+
+        ConsoleReader reader = null;
+
+        // \! (escaped expansion v1)
+        reader = createConsole("echo ab\\!ef", true, "cd");
+        assertReadLine("echo ab!ef", reader);
+        assertHistory("echo ab\\!ef", reader);
+
+        reader = createConsole("echo ab\\!ef", false, "cd");
+        assertReadLine("echo ab\\!ef", reader);
+        assertHistory("echo ab\\!ef", reader);
+
+        // \!\! (escaped expansion v2)
+        reader = createConsole("echo ab\\!\\!ef", true, "cd");
+        assertReadLine("echo ab!!ef", reader);
+        assertHistory("echo ab\\!\\!ef", reader);
+
+        reader = createConsole("echo ab\\!\\!ef", false, "cd");
+        assertReadLine("echo ab\\!\\!ef", reader);
+        assertHistory("echo ab\\!\\!ef", reader);
+
+        // !! (expansion)
+        reader = createConsole("echo ab!!ef", true, "cd");
+        assertReadLine("echo abcdef", reader);
+        assertHistory("echo abcdef", reader);
+
+        reader = createConsole("echo ab!!ef", false, "cd");
+        assertReadLine("echo ab!!ef", reader);
+        assertHistory("echo ab!!ef", reader);
+
+        // \G (backslash no expansion)
+        reader = createConsole("echo abc\\Gdef", true, "cd");
+        assertReadLine("echo abc\\Gdef", reader);
+        assertHistory("echo abc\\Gdef", reader);
+
+        reader = createConsole("echo abc\\Gdef", false, "cd");
+        assertReadLine("echo abc\\Gdef", reader);
+        assertHistory("echo abc\\Gdef", reader);
+
+        // \^ (escaped expansion)
+        reader = createConsole("\\^abc^def", true, "echo abc");
+        assertReadLine("^abc^def", reader);
+        assertHistory("\\^abc^def", reader);
+
+        reader = createConsole("\\^abc^def", false, "echo abc");
+        assertReadLine("\\^abc^def", reader);
+        assertHistory("\\^abc^def", reader);
+
+        // ^^ (expansion)
+        reader = createConsole("^abc^def", true, "echo abc");
+        assertReadLine("echo def", reader);
+        assertHistory("echo def", reader);
+
+        reader = createConsole("^abc^def", false, "echo abc");
+        assertReadLine("^abc^def", reader);
+        assertHistory("^abc^def", reader);
+    }
+
+    private ConsoleReader createConsole(String input, boolean expandEvents, String... historyItems) throws Exception {
+        ConsoleReader consoleReader = createConsole(input + "\r\n");
+        MemoryHistory history = new MemoryHistory();
+        if (historyItems != null) {
+            for (String historyItem : historyItems) {
+                history.add(historyItem);
+            }
+        }
+        consoleReader.setHistory(history);
+        consoleReader.setExpandEvents(expandEvents);
+        return consoleReader;
+    }
+
+    private void assertReadLine(String expected, ConsoleReader consoleReader) throws Exception {
+        assertEquals(expected, consoleReader.readLine());
+    }
+
+    private void assertHistory(String expected, ConsoleReader consoleReader) {
+        History history = consoleReader.getHistory();
+        history.previous();
+        assertEquals(expected, history.current());
     }
 
     @Test

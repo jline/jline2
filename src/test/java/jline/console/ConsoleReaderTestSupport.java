@@ -16,6 +16,7 @@ import jline.TerminalSupport;
 import org.junit.Before;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Provides support for console reader tests.
@@ -23,11 +24,22 @@ import static org.junit.Assert.assertEquals;
 public abstract class ConsoleReaderTestSupport
 {
     protected ConsoleReader console;
+    protected ByteArrayOutputStream consoleOutputStream;
 
     @Before
     public void setUp() throws Exception {
-        console = new ConsoleReader(null, new ByteArrayOutputStream(), new TerminalSupport(true) { });
+        consoleOutputStream = new ByteArrayOutputStream();
+        console = new ConsoleReader(null, consoleOutputStream, new TerminalSupport(true) { });
         console.setKeyMap(KeyMap.EMACS);
+    }
+
+    protected void assertConsoleOutputContains(Character c) {
+        String output = consoleOutputStream.toString();
+        assertTrue(output.contains(c.toString()));
+    }
+
+    protected void assertBeeped() {
+        assertConsoleOutputContains(ConsoleReader.KEYBOARD_BELL);
     }
 
     protected void assertBuffer(final String expected, final Buffer buffer) throws IOException {
@@ -105,6 +117,7 @@ public abstract class ConsoleReaderTestSupport
             case BACKWARD_WORD:        return "\u001Bb";
             case BEGINNING_OF_LINE:    return "\033[H";
             case END_OF_LINE:          return "\u0005";
+            case KILL_WORD:            return "\u001Bd";
             case UNIX_WORD_RUBOUT:     return "\u0017";
             case ACCEPT_LINE:          return "\n";
             case PREVIOUS_HISTORY:     return "\033[A";

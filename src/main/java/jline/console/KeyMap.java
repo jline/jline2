@@ -167,10 +167,17 @@ public class KeyMap {
         bind( map, "\340\121", Operation.END_OF_HISTORY );
         bind( map, "\340\122", Operation.OVERWRITE_MODE );
         bind( map, "\340\123", Operation.DELETE_CHAR );
+
+        bind( map, "\000\107", Operation.BEGINNING_OF_LINE );
+        bind( map, "\000\110", Operation.PREVIOUS_HISTORY );
+        bind( map, "\000\111", Operation.BEGINNING_OF_HISTORY );
         bind( map, "\000\110", Operation.PREVIOUS_HISTORY );
         bind( map, "\000\113", Operation.BACKWARD_CHAR );
         bind( map, "\000\115", Operation.FORWARD_CHAR );
+        bind( map, "\000\117", Operation.END_OF_LINE );
         bind( map, "\000\120", Operation.NEXT_HISTORY );
+        bind( map, "\000\121", Operation.END_OF_HISTORY );
+        bind( map, "\000\122", Operation.OVERWRITE_MODE );
         bind( map, "\000\123", Operation.DELETE_CHAR );
 
         bind( map, "\033[A", Operation.PREVIOUS_HISTORY );
@@ -180,13 +187,15 @@ public class KeyMap {
         bind( map, "\033[H", Operation.BEGINNING_OF_LINE );
         bind( map, "\033[F", Operation.END_OF_LINE );
 
-        bind( map, "\033[OA", Operation.PREVIOUS_HISTORY );
-        bind( map, "\033[OB", Operation.NEXT_HISTORY );
-        bind( map, "\033[OC", Operation.FORWARD_CHAR );
-        bind( map, "\033[OD", Operation.BACKWARD_CHAR );
-        bind( map, "\033[OH", Operation.BEGINNING_OF_LINE );
-        bind( map, "\033[OF", Operation.END_OF_LINE );
+        bind( map, "\033OA", Operation.PREVIOUS_HISTORY );
+        bind( map, "\033OB", Operation.NEXT_HISTORY );
+        bind( map, "\033OC", Operation.FORWARD_CHAR );
+        bind( map, "\033OD", Operation.BACKWARD_CHAR );
+        bind( map, "\033OH", Operation.BEGINNING_OF_LINE );
+        bind( map, "\033OF", Operation.END_OF_LINE );
 
+        bind( map, "\033[1~", Operation.BEGINNING_OF_LINE);
+        bind( map, "\033[4~", Operation.END_OF_LINE);
         bind( map, "\033[3~", Operation.DELETE_CHAR);
 
         // MINGW32
@@ -246,7 +255,7 @@ public class KeyMap {
                         Operation.SET_MARK,                 /* Control-@ */
                         Operation.BEGINNING_OF_LINE,        /* Control-A */
                         Operation.BACKWARD_CHAR,            /* Control-B */
-                        null,                               /* Control-C */
+                        Operation.INTERRUPT,                /* Control-C */
                         Operation.EXIT_OR_DELETE_CHAR,      /* Control-D */
                         Operation.END_OF_LINE,              /* Control-E */
                         Operation.FORWARD_CHAR,             /* Control-F */
@@ -291,6 +300,7 @@ public class KeyMap {
     public static final char CTRL_J = (char) 10;
     public static final char CTRL_M = (char) 13;
     public static final char CTRL_R = (char) 18;
+    public static final char CTRL_S = (char) 19;
     public static final char CTRL_U = (char) 21;
     public static final char CTRL_X = (char) 24;
     public static final char CTRL_Y = (char) 25;
@@ -409,7 +419,7 @@ public class KeyMap {
                         null,                               /* Control-@ */
                         null,                               /* Control-A */
                         null,                               /* Control-B */
-                        null,                               /* Control-C */
+                        Operation.INTERRUPT,                /* Control-C */
                         /* 
                          * ^D is supposed to move down half a screen. In bash
                          * appears to be ignored.
@@ -494,8 +504,8 @@ public class KeyMap {
                         null,                               /* @ */
                         Operation.VI_APPEND_EOL,            /* A */
                         Operation.VI_PREV_WORD,             /* B */
-                        Operation.VI_CHANGE_TO,             /* C */
-                        Operation.VI_DELETE_TO,             /* D */
+                        Operation.VI_CHANGE_TO_EOL,         /* C */
+                        Operation.VI_DELETE_TO_EOL,         /* D */
                         Operation.VI_END_WORD,              /* E */
                         Operation.VI_CHAR_SEARCH,           /* F */
                         /* I need to read up on what this does */
@@ -512,7 +522,7 @@ public class KeyMap {
                         null,                               /* Q */
                         /* TODO */
                         Operation.VI_REPLACE,               /* R */
-                        Operation.VI_SUBST,                 /* S */
+                        Operation.VI_KILL_WHOLE_LINE,       /* S */
                         Operation.VI_CHAR_SEARCH,           /* T */
                         /* TODO */
                         Operation.REVERT_LINE,              /* U */

@@ -1,3 +1,13 @@
+<!--
+
+    Copyright (c) 2002-2012, the original author or authors.
+
+    This software is distributable under the BSD license. See the terms of the
+    BSD license in the documentation provided with this software.
+
+    http://www.opensource.org/licenses/bsd-license.php
+
+-->
 Description
 -----------
 
@@ -29,7 +39,7 @@ Use the following definition to use JLine in your maven project:
     <dependency>
       <groupId>jline</groupId>
       <artifactId>jline</artifactId>
-      <version>2.9</version>
+      <version>2.11</version>
     </dependency>
 
 Building
