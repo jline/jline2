@@ -11,6 +11,8 @@ package jline;
 import jline.internal.Log;
 import jline.internal.TerminalLineSettings;
 
+import java.io.IOException;
+
 /**
  * Terminal that is used for unix platforms. Terminal initialization
  * is handled by issuing the <em>stty</em> command against the
@@ -30,6 +32,13 @@ public class UnixTerminal
 {
     private final TerminalLineSettings settings = new TerminalLineSettings();
 
+    /**
+     * Set the console to be character-buffered instead of line-buffered.
+     * Make sure we're distinguishing carriage return from newline.
+     * Allow ctrl-s keypress to be used (as forward search).
+     */
+    private static final String STTY_SETTINGS = "-icanon min 1 -icrnl -inlcr -ixon";
+
     public UnixTerminal() throws Exception {
         super(true);
     }
@@ -48,10 +57,7 @@ public class UnixTerminal
 
         setAnsiSupported(true);
 
-        // Set the console to be character-buffered instead of line-buffered.
-        // Make sure we're distinguishing carriage return from newline.
-        // Allow ctrl-s keypress to be used (as forward search)
-        settings.set("-icanon min 1 -icrnl -inlcr -ixon");
+        settings.set(STTY_SETTINGS);
 
         setEchoEnabled(false);
     }
@@ -128,5 +134,16 @@ public class UnixTerminal
             }
             Log.error("Failed to enable interrupt character", e);
         }
+    }
+
+    public void continueSignal() {
+        try {
+            settings.set(STTY_SETTINGS);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        setEchoEnabled(false);
     }
 }

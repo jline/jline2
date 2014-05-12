@@ -26,6 +26,9 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.lang.reflect.Proxy;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
@@ -225,6 +228,9 @@ public class ConsoleReader
         this.appName = appName != null ? appName : "JLine";
         this.encoding = encoding != null ? encoding : Configuration.getEncoding();
         this.terminal = term != null ? term : TerminalFactory.get();
+        if (terminal instanceof UnixTerminal) {
+            manageInterruption();
+        }
         String outEncoding = terminal.getOutputEncoding() != null? terminal.getOutputEncoding() : this.encoding;
         this.out = new OutputStreamWriter(terminal.wrapOutIfNeeded(out), outEncoding);
         setInput( in );
@@ -3838,4 +3844,33 @@ public class ConsoleReader
         flush(); // helps with step debugging
     }
 
+    private void manageInterruption() {
+        // Check that sun.misc.SignalHandler and sun.misc.Signal exists
+        try {
+            Class<?> signalClass = Class.forName("sun.misc.Signal");
+            Class<?> signalHandlerClass = Class.forName("sun.misc.SignalHandler");
+            // Implement signal handler
+            Object signalHandler = Proxy.newProxyInstance(getClass().getClassLoader(),
+                new Class<?>[]{signalHandlerClass}, new InvocationHandler() {
+                    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                        // only method we are proxying is handle()
+                        ((UnixTerminal) terminal).continueSignal();
+                        try {
+                            drawLine();
+                            flush();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        return null;
+                    }
+                });
+            // Register the signal handler, this code is equivalent to:
+            // Signal.handle(new Signal("CONT"), signalHandler);
+            signalClass.getMethod("handle", signalClass, signalHandlerClass).invoke(null, signalClass.getConstructor(String.class).newInstance("CONT"), signalHandler);
+        } catch (ClassNotFoundException cnfe) {
+            // sun.misc Signal handler classes don't exist
+        } catch (Exception e) {
+            // Ignore this one too, if the above failed, the signal API is incompatible with what we're expecting
+        }
+    }
 }
