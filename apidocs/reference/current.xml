@@ -57,6 +57,17 @@
  visibility="public"
 >
 </method>
+<method name="getOutputEncoding"
+ return="java.lang.String"
+ abstract="true"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
 <method name="getWidth"
  return="int"
  abstract="true"
@@ -488,6 +499,17 @@
 </constructor>
 <method name="getHeight"
  return="int"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="getOutputEncoding"
+ return="java.lang.String"
  abstract="false"
  native="false"
  synchronized="false"
@@ -2100,6 +2122,32 @@
  visibility="public"
 >
 </method>
+<method name="yank"
+ return="boolean"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<exception name="IOException" type="java.io.IOException">
+</exception>
+</method>
+<method name="yankPop"
+ return="boolean"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<exception name="IOException" type="java.io.IOException">
+</exception>
+</method>
 <field name="BACKSPACE"
  type="char"
  transient="false"
@@ -2326,6 +2374,17 @@
 >
 <parameter name="b" type="boolean">
 </parameter>
+</method>
+<method name="upToCursor"
+ return="java.lang.String"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
 </method>
 <method name="write"
  return="void"
@@ -2847,6 +2906,114 @@
 >
 </field>
 </class>
+<class name="KillRing"
+ extends="java.lang.Object"
+ abstract="false"
+ static="false"
+ final="true"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<constructor name="KillRing"
+ type="jline.console.KillRing"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="size" type="int">
+</parameter>
+</constructor>
+<constructor name="KillRing"
+ type="jline.console.KillRing"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</constructor>
+<method name="add"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="str" type="java.lang.String">
+</parameter>
+</method>
+<method name="addBackwards"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="str" type="java.lang.String">
+</parameter>
+</method>
+<method name="lastYank"
+ return="boolean"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="resetLastKill"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="resetLastYank"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="yank"
+ return="java.lang.String"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="yankPop"
+ return="java.lang.String"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+</class>
 <class name="Operation"
  extends="java.lang.Enum"
  abstract="false"
@@ -3183,7 +3350,37 @@
 <parameter name="pos" type="int">
 </parameter>
 </method>
+<method name="isEscapeChar"
+ return="boolean"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="buffer" type="java.lang.CharSequence">
+</parameter>
+<parameter name="pos" type="int">
+</parameter>
+</method>
 <method name="isEscaped"
+ return="boolean"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="buffer" type="java.lang.CharSequence">
+</parameter>
+<parameter name="pos" type="int">
+</parameter>
+</method>
+<method name="isQuoteChar"
  return="boolean"
  abstract="false"
  native="false"
@@ -3918,6 +4115,8 @@
  deprecated="not deprecated"
  visibility="public"
 >
+<implements name="java.lang.Iterable">
+</implements>
 <method name="add"
  return="void"
  abstract="true"
@@ -5110,6 +5309,8 @@
  deprecated="not deprecated"
  visibility="public"
 >
+<implements name="java.lang.Runnable">
+</implements>
 <constructor name="NonBlockingInputStream"
  type="jline.internal.NonBlockingInputStream"
  static="false"

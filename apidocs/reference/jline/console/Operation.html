@@ -169,6 +169,7 @@
           <li class="api apilevel-"><a href="../../jline/console/ConsoleReader.html">ConsoleReader</a></li>
           <li class="api apilevel-"><a href="../../jline/console/CursorBuffer.html">CursorBuffer</a></li>
           <li class="api apilevel-"><a href="../../jline/console/KeyMap.html">KeyMap</a></li>
+          <li class="api apilevel-"><a href="../../jline/console/KillRing.html">KillRing</a></li>
       </ul>
     </li>
               
@@ -1068,35 +1069,49 @@ Summary:
     
     <tr class=" api apilevel-" >
         <td class="jd-descrcol"><a href="../../jline/console/Operation.html">Operation</a>&nbsp;</td>
-        <td class="jd-linkcol">VI_CHAR_SEARCH&nbsp;</td>
+        <td class="jd-linkcol">VI_CHANGE_TO_EOL&nbsp;</td>
         <td class="jd-descrcol" width="100%">&nbsp;</td>
     </tr>
     
     
     <tr class="alt-color api apilevel-" >
+        <td class="jd-descrcol"><a href="../../jline/console/Operation.html">Operation</a>&nbsp;</td>
+        <td class="jd-linkcol">VI_CHAR_SEARCH&nbsp;</td>
+        <td class="jd-descrcol" width="100%">&nbsp;</td>
+    </tr>
+    
+    
+    <tr class=" api apilevel-" >
         <td class="jd-descrcol"><a href="../../jline/console/Operation.html">Operation</a>&nbsp;</td>
         <td class="jd-linkcol">VI_COLUMN&nbsp;</td>
         <td class="jd-descrcol" width="100%">&nbsp;</td>
     </tr>
     
     
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-descrcol"><a href="../../jline/console/Operation.html">Operation</a>&nbsp;</td>
         <td class="jd-linkcol">VI_COMPLETE&nbsp;</td>
         <td class="jd-descrcol" width="100%">&nbsp;</td>
     </tr>
     
     
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-descrcol"><a href="../../jline/console/Operation.html">Operation</a>&nbsp;</td>
         <td class="jd-linkcol">VI_DELETE&nbsp;</td>
         <td class="jd-descrcol" width="100%">&nbsp;</td>
     </tr>
     
     
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-descrcol"><a href="../../jline/console/Operation.html">Operation</a>&nbsp;</td>
         <td class="jd-linkcol">VI_DELETE_TO&nbsp;</td>
+        <td class="jd-descrcol" width="100%">&nbsp;</td>
+    </tr>
+    
+    
+    <tr class=" api apilevel-" >
+        <td class="jd-descrcol"><a href="../../jline/console/Operation.html">Operation</a>&nbsp;</td>
+        <td class="jd-linkcol">VI_DELETE_TO_EOL&nbsp;</td>
         <td class="jd-descrcol" width="100%">&nbsp;</td>
     </tr>
     
@@ -1201,166 +1216,173 @@ Summary:
     
     <tr class="alt-color api apilevel-" >
         <td class="jd-descrcol"><a href="../../jline/console/Operation.html">Operation</a>&nbsp;</td>
-        <td class="jd-linkcol">VI_MATCH&nbsp;</td>
+        <td class="jd-linkcol">VI_KILL_WHOLE_LINE&nbsp;</td>
         <td class="jd-descrcol" width="100%">&nbsp;</td>
     </tr>
     
     
     <tr class=" api apilevel-" >
+        <td class="jd-descrcol"><a href="../../jline/console/Operation.html">Operation</a>&nbsp;</td>
+        <td class="jd-linkcol">VI_MATCH&nbsp;</td>
+        <td class="jd-descrcol" width="100%">&nbsp;</td>
+    </tr>
+    
+    
+    <tr class="alt-color api apilevel-" >
         <td class="jd-descrcol"><a href="../../jline/console/Operation.html">Operation</a>&nbsp;</td>
         <td class="jd-linkcol">VI_MOVEMENT_MODE&nbsp;</td>
         <td class="jd-descrcol" width="100%">&nbsp;</td>
     </tr>
     
     
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-descrcol"><a href="../../jline/console/Operation.html">Operation</a>&nbsp;</td>
         <td class="jd-linkcol">VI_MOVE_ACCEPT_LINE&nbsp;</td>
         <td class="jd-descrcol" width="100%">&nbsp;</td>
     </tr>
     
     
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-descrcol"><a href="../../jline/console/Operation.html">Operation</a>&nbsp;</td>
         <td class="jd-linkcol">VI_NEXT_HISTORY&nbsp;</td>
         <td class="jd-descrcol" width="100%">&nbsp;</td>
     </tr>
     
     
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-descrcol"><a href="../../jline/console/Operation.html">Operation</a>&nbsp;</td>
         <td class="jd-linkcol">VI_NEXT_WORD&nbsp;</td>
         <td class="jd-descrcol" width="100%">&nbsp;</td>
     </tr>
     
     
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-descrcol"><a href="../../jline/console/Operation.html">Operation</a>&nbsp;</td>
         <td class="jd-linkcol">VI_OVERSTRIKE&nbsp;</td>
         <td class="jd-descrcol" width="100%">&nbsp;</td>
     </tr>
     
     
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-descrcol"><a href="../../jline/console/Operation.html">Operation</a>&nbsp;</td>
         <td class="jd-linkcol">VI_OVERSTRIKE_DELETE&nbsp;</td>
         <td class="jd-descrcol" width="100%">&nbsp;</td>
     </tr>
     
     
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-descrcol"><a href="../../jline/console/Operation.html">Operation</a>&nbsp;</td>
         <td class="jd-linkcol">VI_PREVIOUS_HISTORY&nbsp;</td>
         <td class="jd-descrcol" width="100%">&nbsp;</td>
     </tr>
     
     
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-descrcol"><a href="../../jline/console/Operation.html">Operation</a>&nbsp;</td>
         <td class="jd-linkcol">VI_PREV_WORD&nbsp;</td>
         <td class="jd-descrcol" width="100%">&nbsp;</td>
     </tr>
     
     
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-descrcol"><a href="../../jline/console/Operation.html">Operation</a>&nbsp;</td>
         <td class="jd-linkcol">VI_PUT&nbsp;</td>
         <td class="jd-descrcol" width="100%">&nbsp;</td>
     </tr>
     
     
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-descrcol"><a href="../../jline/console/Operation.html">Operation</a>&nbsp;</td>
         <td class="jd-linkcol">VI_REDO&nbsp;</td>
         <td class="jd-descrcol" width="100%">&nbsp;</td>
     </tr>
     
     
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-descrcol"><a href="../../jline/console/Operation.html">Operation</a>&nbsp;</td>
         <td class="jd-linkcol">VI_REPLACE&nbsp;</td>
         <td class="jd-descrcol" width="100%">&nbsp;</td>
     </tr>
     
     
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-descrcol"><a href="../../jline/console/Operation.html">Operation</a>&nbsp;</td>
         <td class="jd-linkcol">VI_RUBOUT&nbsp;</td>
         <td class="jd-descrcol" width="100%">&nbsp;</td>
     </tr>
     
     
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-descrcol"><a href="../../jline/console/Operation.html">Operation</a>&nbsp;</td>
         <td class="jd-linkcol">VI_SEARCH&nbsp;</td>
         <td class="jd-descrcol" width="100%">&nbsp;</td>
     </tr>
     
     
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-descrcol"><a href="../../jline/console/Operation.html">Operation</a>&nbsp;</td>
         <td class="jd-linkcol">VI_SEARCH_AGAIN&nbsp;</td>
         <td class="jd-descrcol" width="100%">&nbsp;</td>
     </tr>
     
     
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-descrcol"><a href="../../jline/console/Operation.html">Operation</a>&nbsp;</td>
         <td class="jd-linkcol">VI_SET_MARK&nbsp;</td>
         <td class="jd-descrcol" width="100%">&nbsp;</td>
     </tr>
     
     
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-descrcol"><a href="../../jline/console/Operation.html">Operation</a>&nbsp;</td>
         <td class="jd-linkcol">VI_SUBST&nbsp;</td>
         <td class="jd-descrcol" width="100%">&nbsp;</td>
     </tr>
     
     
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-descrcol"><a href="../../jline/console/Operation.html">Operation</a>&nbsp;</td>
         <td class="jd-linkcol">VI_TILDE_EXPAND&nbsp;</td>
         <td class="jd-descrcol" width="100%">&nbsp;</td>
     </tr>
     
     
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-descrcol"><a href="../../jline/console/Operation.html">Operation</a>&nbsp;</td>
         <td class="jd-linkcol">VI_YANK_ARG&nbsp;</td>
         <td class="jd-descrcol" width="100%">&nbsp;</td>
     </tr>
     
     
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-descrcol"><a href="../../jline/console/Operation.html">Operation</a>&nbsp;</td>
         <td class="jd-linkcol">VI_YANK_TO&nbsp;</td>
         <td class="jd-descrcol" width="100%">&nbsp;</td>
     </tr>
     
     
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-descrcol"><a href="../../jline/console/Operation.html">Operation</a>&nbsp;</td>
         <td class="jd-linkcol">YANK&nbsp;</td>
         <td class="jd-descrcol" width="100%">&nbsp;</td>
     </tr>
     
     
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-descrcol"><a href="../../jline/console/Operation.html">Operation</a>&nbsp;</td>
         <td class="jd-linkcol">YANK_LAST_ARG&nbsp;</td>
         <td class="jd-descrcol" width="100%">&nbsp;</td>
     </tr>
     
     
-    <tr class="alt-color api apilevel-" >
+    <tr class=" api apilevel-" >
         <td class="jd-descrcol"><a href="../../jline/console/Operation.html">Operation</a>&nbsp;</td>
         <td class="jd-linkcol">YANK_NTH_ARG&nbsp;</td>
         <td class="jd-descrcol" width="100%">&nbsp;</td>
     </tr>
     
     
-    <tr class=" api apilevel-" >
+    <tr class="alt-color api apilevel-" >
         <td class="jd-descrcol"><a href="../../jline/console/Operation.html">Operation</a>&nbsp;</td>
         <td class="jd-linkcol">YANK_POP&nbsp;</td>
         <td class="jd-descrcol" width="100%">&nbsp;</td>
@@ -4760,6 +4782,36 @@ From interface
 
 
 
+<A NAME="VI_CHANGE_TO_EOL"></A>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+        static 
+        final 
+        <a href="../../jline/console/Operation.html">Operation</a>
+      </span>
+        VI_CHANGE_TO_EOL
+    </h4>
+      <div class="api-level">
+        
+
+
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p></p></div>
+
+    
+    </div>
+</div>
+
+
+
 <A NAME="VI_CHAR_SEARCH"></A>
 
 <div class="jd-details api apilevel-"> 
@@ -4891,6 +4943,36 @@ From interface
         <a href="../../jline/console/Operation.html">Operation</a>
       </span>
         VI_DELETE_TO
+    </h4>
+      <div class="api-level">
+        
+
+
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p></p></div>
+
+    
+    </div>
+</div>
+
+
+
+<A NAME="VI_DELETE_TO_EOL"></A>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+        static 
+        final 
+        <a href="../../jline/console/Operation.html">Operation</a>
+      </span>
+        VI_DELETE_TO_EOL
     </h4>
       <div class="api-level">
         
@@ -5311,6 +5393,36 @@ From interface
         <a href="../../jline/console/Operation.html">Operation</a>
       </span>
         VI_INSERT_COMMENT
+    </h4>
+      <div class="api-level">
+        
+
+
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p></p></div>
+
+    
+    </div>
+</div>
+
+
+
+<A NAME="VI_KILL_WHOLE_LINE"></A>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+        static 
+        final 
+        <a href="../../jline/console/Operation.html">Operation</a>
+      </span>
+        VI_KILL_WHOLE_LINE
     </h4>
       <div class="api-level">
         

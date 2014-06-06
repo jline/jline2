@@ -52,7 +52,7 @@
 <a class="jxr_linenumber" name="42" href="#42">42</a>  
 <a class="jxr_linenumber" name="43" href="#43">43</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String FALSE = <span class="jxr_string">"false"</span>;
 <a class="jxr_linenumber" name="44" href="#44">44</a>  
-<a class="jxr_linenumber" name="45" href="#45">45</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> InheritableThreadLocal&lt;Terminal&gt; holder = <strong class="jxr_keyword">new</strong> InheritableThreadLocal&lt;Terminal&gt;();
+<a class="jxr_linenumber" name="45" href="#45">45</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <a href="../jline/Terminal.html">Terminal</a> term = <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="46" href="#46">46</a>  
 <a class="jxr_linenumber" name="47" href="#47">47</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">synchronized</strong> <a href="../jline/Terminal.html">Terminal</a> create() {
 <a class="jxr_linenumber" name="48" href="#48">48</a>          <strong class="jxr_keyword">if</strong> (Log.TRACE) {
@@ -119,11 +119,11 @@
 <a class="jxr_linenumber" name="109" href="#109">109</a>     }
 <a class="jxr_linenumber" name="110" href="#110">110</a> 
 <a class="jxr_linenumber" name="111" href="#111">111</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">synchronized</strong> <strong class="jxr_keyword">void</strong> reset() {
-<a class="jxr_linenumber" name="112" href="#112">112</a>         holder.remove();
+<a class="jxr_linenumber" name="112" href="#112">112</a>         term = <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="113" href="#113">113</a>     }
 <a class="jxr_linenumber" name="114" href="#114">114</a> 
 <a class="jxr_linenumber" name="115" href="#115">115</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">synchronized</strong> <strong class="jxr_keyword">void</strong> resetIf(<strong class="jxr_keyword">final</strong> <a href="../jline/Terminal.html">Terminal</a> t) {
-<a class="jxr_linenumber" name="116" href="#116">116</a>         <strong class="jxr_keyword">if</strong> (holder.get() == t) {
+<a class="jxr_linenumber" name="116" href="#116">116</a>         <strong class="jxr_keyword">if</strong>(t == term) {
 <a class="jxr_linenumber" name="117" href="#117">117</a>             reset();
 <a class="jxr_linenumber" name="118" href="#118">118</a>         }
 <a class="jxr_linenumber" name="119" href="#119">119</a>     }
@@ -164,28 +164,26 @@
 <a class="jxr_linenumber" name="154" href="#154">154</a>     }
 <a class="jxr_linenumber" name="155" href="#155">155</a> 
 <a class="jxr_linenumber" name="156" href="#156">156</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">synchronized</strong> <a href="../jline/Terminal.html">Terminal</a> get() {
-<a class="jxr_linenumber" name="157" href="#157">157</a>         <a href="../jline/Terminal.html">Terminal</a> t = holder.get();
-<a class="jxr_linenumber" name="158" href="#158">158</a>         <strong class="jxr_keyword">if</strong> (t == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="159" href="#159">159</a>             t = create();
-<a class="jxr_linenumber" name="160" href="#160">160</a>             holder.set(t);
-<a class="jxr_linenumber" name="161" href="#161">161</a>         }
-<a class="jxr_linenumber" name="162" href="#162">162</a>         <strong class="jxr_keyword">return</strong> t;
-<a class="jxr_linenumber" name="163" href="#163">163</a>     }
-<a class="jxr_linenumber" name="164" href="#164">164</a> 
-<a class="jxr_linenumber" name="165" href="#165">165</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../jline/Terminal.html">Terminal</a> getFlavor(<strong class="jxr_keyword">final</strong> <a href="../jline/TerminalFactory.html">Flavor</a> flavor) <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="166" href="#166">166</a>         Class&lt;? <strong class="jxr_keyword">extends</strong> Terminal&gt; type = FLAVORS.get(flavor);
-<a class="jxr_linenumber" name="167" href="#167">167</a>         <strong class="jxr_keyword">if</strong> (type != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="168" href="#168">168</a>             <strong class="jxr_keyword">return</strong> type.newInstance();
-<a class="jxr_linenumber" name="169" href="#169">169</a>         }
-<a class="jxr_linenumber" name="170" href="#170">170</a> 
-<a class="jxr_linenumber" name="171" href="#171">171</a>         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> InternalError();
-<a class="jxr_linenumber" name="172" href="#172">172</a>     }
-<a class="jxr_linenumber" name="173" href="#173">173</a> 
-<a class="jxr_linenumber" name="174" href="#174">174</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> registerFlavor(<strong class="jxr_keyword">final</strong> <a href="../jline/TerminalFactory.html">Flavor</a> flavor, <strong class="jxr_keyword">final</strong> Class&lt;? <strong class="jxr_keyword">extends</strong> Terminal&gt; type) {
-<a class="jxr_linenumber" name="175" href="#175">175</a>         FLAVORS.put(flavor, type);
-<a class="jxr_linenumber" name="176" href="#176">176</a>     }
-<a class="jxr_linenumber" name="177" href="#177">177</a> 
-<a class="jxr_linenumber" name="178" href="#178">178</a> }
+<a class="jxr_linenumber" name="157" href="#157">157</a>         <strong class="jxr_keyword">if</strong> (term == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="158" href="#158">158</a>             term = create();
+<a class="jxr_linenumber" name="159" href="#159">159</a>         }
+<a class="jxr_linenumber" name="160" href="#160">160</a>         <strong class="jxr_keyword">return</strong> term;
+<a class="jxr_linenumber" name="161" href="#161">161</a>     }
+<a class="jxr_linenumber" name="162" href="#162">162</a> 
+<a class="jxr_linenumber" name="163" href="#163">163</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../jline/Terminal.html">Terminal</a> getFlavor(<strong class="jxr_keyword">final</strong> <a href="../jline/TerminalFactory.html">Flavor</a> flavor) <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="164" href="#164">164</a>         Class&lt;? <strong class="jxr_keyword">extends</strong> Terminal&gt; type = FLAVORS.get(flavor);
+<a class="jxr_linenumber" name="165" href="#165">165</a>         <strong class="jxr_keyword">if</strong> (type != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="166" href="#166">166</a>             <strong class="jxr_keyword">return</strong> type.newInstance();
+<a class="jxr_linenumber" name="167" href="#167">167</a>         }
+<a class="jxr_linenumber" name="168" href="#168">168</a> 
+<a class="jxr_linenumber" name="169" href="#169">169</a>         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> InternalError();
+<a class="jxr_linenumber" name="170" href="#170">170</a>     }
+<a class="jxr_linenumber" name="171" href="#171">171</a> 
+<a class="jxr_linenumber" name="172" href="#172">172</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> registerFlavor(<strong class="jxr_keyword">final</strong> <a href="../jline/TerminalFactory.html">Flavor</a> flavor, <strong class="jxr_keyword">final</strong> Class&lt;? <strong class="jxr_keyword">extends</strong> Terminal&gt; type) {
+<a class="jxr_linenumber" name="173" href="#173">173</a>         FLAVORS.put(flavor, type);
+<a class="jxr_linenumber" name="174" href="#174">174</a>     }
+<a class="jxr_linenumber" name="175" href="#175">175</a> 
+<a class="jxr_linenumber" name="176" href="#176">176</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

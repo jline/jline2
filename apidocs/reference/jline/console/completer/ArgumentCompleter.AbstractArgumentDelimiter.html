@@ -555,7 +555,43 @@ Summary:
             boolean</nobr>
         </td>
         <td class="jd-linkcol" width="100%"><nobr>
+        <span class="sympad"><a href="../../../jline/console/completer/ArgumentCompleter.AbstractArgumentDelimiter.html#isEscapeChar(java.lang.CharSequence, int)">isEscapeChar</a></span>(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/CharSequence.html">CharSequence</a> buffer, int pos)</nobr>
+        
+        <div class="jd-descrdiv">Check if this character is a valid escape char (i.e.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol"><nobr>
+            
+            
+            
+            
+            
+            boolean</nobr>
+        </td>
+        <td class="jd-linkcol" width="100%"><nobr>
         <span class="sympad"><a href="../../../jline/console/completer/ArgumentCompleter.AbstractArgumentDelimiter.html#isEscaped(java.lang.CharSequence, int)">isEscaped</a></span>(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/CharSequence.html">CharSequence</a> buffer, int pos)</nobr>
+        
+        <div class="jd-descrdiv">Check if a character is escaped (i.e.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol"><nobr>
+            
+            
+            
+            
+            
+            boolean</nobr>
+        </td>
+        <td class="jd-linkcol" width="100%"><nobr>
+        <span class="sympad"><a href="../../../jline/console/completer/ArgumentCompleter.AbstractArgumentDelimiter.html#isQuoteChar(java.lang.CharSequence, int)">isQuoteChar</a></span>(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/CharSequence.html">CharSequence</a> buffer, int pos)</nobr>
         
   </td></tr>
 
@@ -1162,6 +1198,37 @@ From interface
 </div>
 
 
+<A NAME="isEscapeChar(java.lang.CharSequence, int)"></A>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        boolean
+      </span>
+      <span class="sympad">isEscapeChar</span>
+      <span class="normal">(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/CharSequence.html">CharSequence</a> buffer, int pos)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Check if this character is a valid escape char (i.e. one that has not been escaped)</p></div>
+
+    </div>
+</div>
+
+
 <A NAME="isEscaped(java.lang.CharSequence, int)"></A>
 
 <div class="jd-details api apilevel-"> 
@@ -1175,6 +1242,56 @@ From interface
         boolean
       </span>
       <span class="sympad">isEscaped</span>
+      <span class="normal">(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/CharSequence.html">CharSequence</a> buffer, int pos)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Check if a character is escaped (i.e. if the previous character is an escape)</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>buffer</td>
+          <td>the buffer to check in</td>
+        </tr>
+        <tr>
+          <th>pos</td>
+          <td>the position of the character to check</td>
+        </tr>
+      </table>
+  </div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Returns</h5>
+      <ul class="nolist"><li>true if the character at the specified position in the given buffer is an escape character and the character immediately preceding it is not an
+         escape character.
+</li></ul>
+  </div>
+
+    </div>
+</div>
+
+
+<A NAME="isQuoteChar(java.lang.CharSequence, int)"></A>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        boolean
+      </span>
+      <span class="sympad">isQuoteChar</span>
       <span class="normal">(<a href="http://download.oracle.com/javase/6/docs/api/index.html?java/lang/CharSequence.html">CharSequence</a> buffer, int pos)</span>
     </h4>
       <div class="api-level">

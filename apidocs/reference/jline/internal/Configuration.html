@@ -475,6 +475,8 @@ Summary:
         <td class="jd-linkcol" width="100%"><nobr>
         <span class="sympad"><a href="../../jline/internal/Configuration.html#getEncoding()">getEncoding</a></span>()</nobr>
         
+        <div class="jd-descrdiv">Get the default encoding.</div>
+  
   </td></tr>
 
 
@@ -1092,7 +1094,13 @@ From class
       </div>
     <div class="jd-details-descr">
       
-  <div class="jd-tagdata jd-tagdescr"><p></p></div>
+  <div class="jd-tagdata jd-tagdescr"><p>Get the default encoding.  Will first look at the LC_CTYPE environment variable, then the input.encoding
+ system property, then the default charset according to the JVM.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Returns</h5>
+      <ul class="nolist"><li>The default encoding to use when none is specified.
+</li></ul>
+  </div>
 
     </div>
 </div>

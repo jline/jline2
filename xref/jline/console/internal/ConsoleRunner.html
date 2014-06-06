@@ -47,7 +47,7 @@
 <a class="jxr_linenumber" name="37" href="#37">37</a>      <em class="jxr_comment">// FIXME: This is really ugly... re-write this</em>
 <a class="jxr_linenumber" name="38" href="#38">38</a>  
 <a class="jxr_linenumber" name="39" href="#39">39</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> main(<strong class="jxr_keyword">final</strong> String[] args) <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="40" href="#40">40</a>          List&lt;String&gt; argList = Arrays.asList(args);
+<a class="jxr_linenumber" name="40" href="#40">40</a>          List&lt;String&gt; argList = <strong class="jxr_keyword">new</strong> ArrayList(Arrays.asList(args));
 <a class="jxr_linenumber" name="41" href="#41">41</a>          <strong class="jxr_keyword">if</strong> (argList.size() == 0) {
 <a class="jxr_linenumber" name="42" href="#42">42</a>              usage();
 <a class="jxr_linenumber" name="43" href="#43">43</a>              <strong class="jxr_keyword">return</strong>;

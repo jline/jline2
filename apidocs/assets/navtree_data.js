@@ -3,7 +3,7 @@ var NAVTREE_DATA =
 , "" ], [ "Classes", null, [ [ "AnsiWindowsTerminal", "jline/AnsiWindowsTerminal.html", null, "" ], [ "NoInterruptUnixTerminal", "jline/NoInterruptUnixTerminal.html", null, "" ], [ "TerminalFactory", "jline/TerminalFactory.html", null, "" ], [ "TerminalSupport", "jline/TerminalSupport.html", null, "" ], [ "UnixTerminal", "jline/UnixTerminal.html", null, "" ], [ "UnsupportedTerminal", "jline/UnsupportedTerminal.html", null, "" ], [ "WindowsTerminal", "jline/WindowsTerminal.html", null, "" ] ]
 , "" ], [ "Enums", null, [ [ "TerminalFactory.Flavor", "jline/TerminalFactory.Flavor.html", null, "" ], [ "TerminalFactory.Type", "jline/TerminalFactory.Type.html", null, "" ], [ "WindowsTerminal.ConsoleMode", "jline/WindowsTerminal.ConsoleMode.html", null, "" ] ]
 , "" ] ]
-, "" ], [ "jline.console", "jline/console/package-summary.html", [ [ "Classes", null, [ [ "ConsoleKeys", "jline/console/ConsoleKeys.html", null, "" ], [ "ConsoleReader", "jline/console/ConsoleReader.html", null, "" ], [ "CursorBuffer", "jline/console/CursorBuffer.html", null, "" ], [ "KeyMap", "jline/console/KeyMap.html", null, "" ] ]
+, "" ], [ "jline.console", "jline/console/package-summary.html", [ [ "Classes", null, [ [ "ConsoleKeys", "jline/console/ConsoleKeys.html", null, "" ], [ "ConsoleReader", "jline/console/ConsoleReader.html", null, "" ], [ "CursorBuffer", "jline/console/CursorBuffer.html", null, "" ], [ "KeyMap", "jline/console/KeyMap.html", null, "" ], [ "KillRing", "jline/console/KillRing.html", null, "" ] ]
 , "" ], [ "Enums", null, [ [ "Operation", "jline/console/Operation.html", null, "" ] ]
 , "" ], [ "Exceptions", null, [ [ "UserInterruptException", "jline/console/UserInterruptException.html", null, "" ] ]
 , "" ] ]
