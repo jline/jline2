@@ -25,6 +25,7 @@ import org.junit.Test;
 
 import static jline.console.ConsoleReaderTest.WindowsKey.*;
 import static org.junit.Assert.*;
+import static org.junit.Assume.*;
 
 /**
  * Tests for the {@link ConsoleReader}.
@@ -116,9 +117,7 @@ public class ConsoleReaderTest
     @Test
     public void testDeleteOnWindowsTerminal() throws Exception {
         // test only works on Windows
-        if (!(TerminalFactory.get() instanceof WindowsTerminal)) {
-            return;
-        }
+        assumeTrue(TerminalFactory.get() instanceof WindowsTerminal);
 
         char[] characters = new char[]{
             'S', 's',
@@ -133,9 +132,7 @@ public class ConsoleReaderTest
     @Test
     public void testNumpadDeleteOnWindowsTerminal() throws Exception {
         // test only works on Windows
-        if (!(TerminalFactory.get() instanceof WindowsTerminal)) {
-            return;
-        }
+        assumeTrue(TerminalFactory.get() instanceof WindowsTerminal);
 
         char[] characters = new char[]{
             'S', 's',
@@ -150,9 +147,7 @@ public class ConsoleReaderTest
     @Test
     public void testHomeKeyOnWindowsTerminal() throws Exception {
         // test only works on Windows
-        if (!(TerminalFactory.get() instanceof WindowsTerminal)) {
-            return;
-        }
+        assumeTrue(TerminalFactory.get() instanceof WindowsTerminal);
 
         char[] characters = new char[]{
             'S', 's',
@@ -166,9 +161,7 @@ public class ConsoleReaderTest
     @Test
     public void testEndKeyOnWindowsTerminal() throws Exception {
         // test only works on Windows
-        if (!(TerminalFactory.get() instanceof WindowsTerminal)) {
-            return;
-        }
+        assumeTrue(TerminalFactory.get() instanceof WindowsTerminal);
 
         char[] characters = new char[]{
             'S', 's',
@@ -183,9 +176,7 @@ public class ConsoleReaderTest
     @Test
     public void testPageUpOnWindowsTerminal() throws Exception {
         // test only works on Windows
-        if (!(TerminalFactory.get() instanceof WindowsTerminal)) {
-            return;
-        }
+        assumeTrue(TerminalFactory.get() instanceof WindowsTerminal);
 
         char[] characters = new char[]{
             (char) SPECIAL_KEY_INDICATOR.code,
@@ -197,9 +188,7 @@ public class ConsoleReaderTest
     @Test
     public void testPageDownOnWindowsTerminal() throws Exception {
         // test only works on Windows
-        if (!(TerminalFactory.get() instanceof WindowsTerminal)) {
-            return;
-        }
+        assumeTrue(TerminalFactory.get() instanceof WindowsTerminal);
 
         char[] characters = new char[]{
             (char) SPECIAL_KEY_INDICATOR.code,
@@ -211,9 +200,7 @@ public class ConsoleReaderTest
     @Test
     public void testEscapeOnWindowsTerminal() throws Exception {
         // test only works on Windows
-        if (!(TerminalFactory.get() instanceof WindowsTerminal)) {
-            return;
-        }
+        assumeTrue(TerminalFactory.get() instanceof WindowsTerminal);
 
         char[] characters = new char[]{
             's', 's', 's',
@@ -226,9 +213,7 @@ public class ConsoleReaderTest
     @Test
     public void testInsertOnWindowsTerminal() throws Exception {
         // test only works on Windows
-        if (!(TerminalFactory.get() instanceof WindowsTerminal)) {
-            return;
-        }
+        assumeTrue(TerminalFactory.get() instanceof WindowsTerminal);
 
         char[] characters = new char[]{
             'o', 'p', 's',
@@ -351,6 +336,38 @@ public class ConsoleReaderTest
         assertEquals("history5", reader.expandEvents("!!"));
     }
 
+    @Test
+    public void testArgsExpansion() throws Exception {
+        ConsoleReader reader = createConsole();
+        MemoryHistory history = new MemoryHistory();
+        history.setMaxSize(3);
+        reader.setHistory(history);
+
+        // we can't go back to previous arguments if there are none
+        try {
+            reader.expandEvents("!$");
+            fail("expected IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            assertEquals("!$: event not found", e.getMessage());
+        }
+
+        // if no arguments were given, it should expand to the command itself
+        history.add("ls");
+        assertEquals("ls", reader.expandEvents("!$"));
+
+        // now we can expand to the last argument
+        history.add("ls /home");
+        assertEquals("/home", reader.expandEvents("!$"));
+
+        //we always take the last argument
+        history.add("ls /home /etc");
+        assertEquals("/etc", reader.expandEvents("!$"));
+
+        //make sure we don't add spaces accidentally
+        history.add("ls /home  /foo ");
+        assertEquals("/foo", reader.expandEvents("!$"));
+    }
+
 	/**
 	 * Validates that an 'event not found' IllegalArgumentException is thrown
 	 * for the expansion event.
@@ -362,6 +379,22 @@ public class ConsoleReaderTest
         } catch (IllegalArgumentException e) {
             assertEquals(event + ": event not found", e.getMessage());
         }
+    }
+
+    @Test
+    public void testIllegalExpansionDoesntCrashReadLine() throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        InputStream in = new ByteArrayInputStream("!f\r\n".getBytes());
+        ConsoleReader reader = new ConsoleReader(in, baos);
+        reader.setExpandEvents(true);
+        reader.setBellEnabled(true);
+        MemoryHistory history = new MemoryHistory();
+        reader.setHistory(history);
+
+        String line = reader.readLine();
+
+        assertEquals("", line);
+        assertEquals(0, history.size());
     }
 
     @Test

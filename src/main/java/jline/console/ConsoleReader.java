@@ -146,6 +146,8 @@ public class ConsoleReader
      */
     private String yankBuffer = "";
 
+    private KillRing killRing = new KillRing();
+
     private String encoding;
 
     private boolean recording;
@@ -225,7 +227,8 @@ public class ConsoleReader
         this.appName = appName != null ? appName : "JLine";
         this.encoding = encoding != null ? encoding : Configuration.getEncoding();
         this.terminal = term != null ? term : TerminalFactory.get();
-        this.out = new OutputStreamWriter(terminal.wrapOutIfNeeded(out), this.encoding);
+        String outEncoding = terminal.getOutputEncoding() != null? terminal.getOutputEncoding() : this.encoding;
+        this.out = new OutputStreamWriter(terminal.wrapOutIfNeeded(out), outEncoding);
         setInput( in );
 
         this.inputrcUrl = getInputRc();
@@ -473,7 +476,20 @@ public class ConsoleReader
             return false;
         }
 
-        backspaceAll();
+        StringBuilder killed = new StringBuilder();
+
+        while (buf.cursor > 0) {
+            char c = buf.current();
+            if (c == 0) {
+                break;
+            }
+
+            killed.append(c);
+            backspace();
+        }
+
+        String copy = killed.reverse().toString();
+        killRing.addBackwards(copy);
 
         return true;
     }
@@ -611,11 +627,18 @@ public class ConsoleReader
         String historyLine = str;
 
         if (expandEvents) {
-            str = expandEvents(str);
-            // all post-expansion occurrences of '!' must have been escaped, so re-add escape to each
-            historyLine = str.replace("!", "\\!");
-            // only leading '^' results in expansion, so only re-add escape for that case
-            historyLine = historyLine.replaceAll("^\\^", "\\\\^");
+            try {
+                str = expandEvents(str);
+                // all post-expansion occurrences of '!' must have been escaped, so re-add escape to each
+                historyLine = str.replace("!", "\\!");
+                // only leading '^' results in expansion, so only re-add escape for that case
+                historyLine = historyLine.replaceAll("^\\^", "\\\\^");
+            } catch(IllegalArgumentException e) {
+                Log.error("Could not expand event", e);
+                beep();
+                buf.clear();
+                str = "";
+            }
         }
 
         // we only add it to the history if the buffer is not empty
@@ -688,6 +711,18 @@ public class ConsoleReader
                                     throw new IllegalArgumentException("!?" + sc + ": event not found");
                                 } else {
                                     rep = history.get(idx).toString();
+                                }
+                                break;
+                            case '$':
+                                if (history.size() == 0) {
+                                    throw new IllegalArgumentException("!$: event not found");
+                                }
+                                String previous = history.get(history.index() - 1).toString().trim();
+                                int lastSpace = previous.lastIndexOf(' ');
+                                if(lastSpace != -1) {
+                                    rep = previous.substring(lastSpace+1);
+                                } else {
+                                    rep = previous;
                                 }
                                 break;
                             case ' ':
@@ -1499,19 +1534,40 @@ public class ConsoleReader
      * @throws IOException
      */
     private boolean unixWordRubout(int count) throws IOException {
-        for (; count > 0; --count) {
-            if (buf.cursor == 0)
-                return false;
+        boolean success = true;
+        StringBuilder killed = new StringBuilder();
 
-            while (isWhitespace(buf.current()) && backspace()) {
-                // nothing
+        for (; count > 0; --count) {
+            if (buf.cursor == 0) {
+                success = false;
+                break;
             }
-            while (!isWhitespace(buf.current()) && backspace()) {
-                // nothing
+
+            while (isWhitespace(buf.current())) {
+                char c = buf.current();
+                if (c == 0) {
+                    break;
+                }
+
+                killed.append(c);
+                backspace();
+            }
+
+            while (!isWhitespace(buf.current())) {
+                char c = buf.current();
+                if (c == 0) {
+                    break;
+                }
+
+                killed.append(c);
+                backspace();
             }
         }
 
-        return true;
+        String copy = killed.reverse().toString();
+        killRing.addBackwards(copy);
+
+        return success;
     }
 
     private String insertComment(boolean isViMode) throws IOException {
@@ -1811,25 +1867,54 @@ public class ConsoleReader
     }
 
     private boolean deletePreviousWord() throws IOException {
-        while (isDelimiter(buf.current()) && backspace()) {
-            // nothing
+        StringBuilder killed = new StringBuilder();
+        char c;
+
+        while (isDelimiter((c = buf.current()))) {
+            if (c == 0) {
+                break;
+            }
+
+            killed.append(c);
+            backspace();
         }
 
-        while (!isDelimiter(buf.current()) && backspace()) {
-            // nothing
+        while (!isDelimiter((c = buf.current()))) {
+            if (c == 0) {
+                break;
+            }
+
+            killed.append(c);
+            backspace();
         }
 
+        String copy = killed.reverse().toString();
+        killRing.addBackwards(copy);
         return true;
     }
 
     private boolean deleteNextWord() throws IOException {
-        while (isDelimiter(buf.nextChar()) && delete()) {
+        StringBuilder killed = new StringBuilder();
+        char c;
 
+        while (isDelimiter((c = buf.nextChar()))) {
+            if (c == 0) {
+                break;
+            }
+            killed.append(c);
+            delete();
         }
 
-        while (!isDelimiter(buf.nextChar()) && delete()) {
-            // nothing
+        while (!isDelimiter((c = buf.nextChar()))) {
+            if (c == 0) {
+                break;
+            }
+            killed.append(c);
+            delete();
         }
+
+        String copy = killed.toString();
+        killRing.add(copy);
 
         return true;
     }
@@ -2272,6 +2357,22 @@ public class ConsoleReader
                 }
 
                 Object o = getKeys().getBound( sb );
+                /*
+                 * The kill ring keeps record of whether or not the
+                 * previous command was a yank or a kill. We reset
+                 * that state here if needed.
+                 */
+                if (!recording && !(o instanceof KeyMap)) {
+                    if (o != Operation.YANK_POP && o != Operation.YANK) {
+                        killRing.resetLastYank();
+                    }
+                    if (o != Operation.KILL_LINE && o != Operation.KILL_WHOLE_LINE
+                        && o != Operation.BACKWARD_KILL_WORD && o != Operation.KILL_WORD
+                        && o != Operation.UNIX_LINE_DISCARD && o != Operation.UNIX_WORD_RUBOUT) {
+                        killRing.resetLastKill();
+                    }
+                }
+
                 if (o == Operation.DO_LOWERCASE_VERSION) {
                     sb.setLength( sb.length() - 1);
                     sb.append( Character.toLowerCase( (char) c ));
@@ -2482,7 +2583,6 @@ public class ConsoleReader
 
                     if (o instanceof Operation) {
                         Operation op = (Operation)o;
-
                         /*
                          * Current location of the cursor (prior to the operation).
                          * These are used by vi *-to operation (e.g. delete-to)
@@ -2533,6 +2633,14 @@ public class ConsoleReader
                                 success = setCursorPosition(0);
                                 break;
 
+                            case YANK:
+                                success = yank();
+                                break;
+
+                            case YANK_POP:
+                                success = yankPop();
+                                break;
+
                             case KILL_LINE: // CTRL-K
                                 success = killLine();
                                 break;
@@ -2543,6 +2651,7 @@ public class ConsoleReader
 
                             case CLEAR_SCREEN: // CTRL-L
                                 success = clearScreen();
+                                redrawLine();
                                 break;
 
                             case OVERWRITE_MODE:
@@ -2655,9 +2764,11 @@ public class ConsoleReader
                             case BACKWARD_KILL_WORD:
                                 success = deletePreviousWord();
                                 break;
+
                             case KILL_WORD:
                                 success = deleteNextWord();
                                 break;
+
                             case BEGINNING_OF_HISTORY:
                                 success = history.moveToFirst();
                                 if (success) {
@@ -2875,6 +2986,10 @@ public class ConsoleReader
                                 else {
                                     success = setCursorPosition(0);
                                 }
+                                break;
+
+                            case VI_FIRST_PRINT:
+                                success = setCursorPosition(0) && viNextWord(1);
                                 break;
 
                             case VI_PREV_WORD:
@@ -3366,29 +3481,14 @@ public class ConsoleReader
      * @return true if successful
      */
     public final boolean delete() throws IOException {
-        return delete(1) == 1;
-    }
-
-    // FIXME: delete(int) only used by above + the return is always 1 and num is ignored
-
-    /**
-     * Issue <em>num</em> deletes.
-     *
-     * @return the number of characters backed up
-     */
-    private int delete(final int num) throws IOException {
-        // TODO: Try to use jansi for this
-
-        /* Commented out because of DWA-2949:
-        if (buf.cursor == 0) {
-            return 0;
+        if (buf.cursor == buf.buffer.length()) {
+          return false;
         }
-        */
 
         buf.buffer.delete(buf.cursor, buf.cursor + 1);
         drawBuffer(1);
 
-        return 1;
+        return true;
     }
 
     /**
@@ -3404,13 +3504,46 @@ public class ConsoleReader
             return false;
         }
 
-        int num = buf.buffer.length() - cp;
+        int num = len - cp;
         clearAhead(num, 0);
 
-        for (int i = 0; i < num; i++) {
-            buf.buffer.deleteCharAt(len - i - 1);
+        char[] killed = new char[num];
+        buf.buffer.getChars(cp, (cp + num), killed, 0);
+        buf.buffer.delete(cp, (cp + num));
+
+        String copy = new String(killed);
+        killRing.add(copy);
+
+        return true;
+    }
+
+    public boolean yank() throws IOException {
+        String yanked = killRing.yank();
+
+        if (yanked == null) {
+            return false;
+        }
+        putString(yanked);
+        return true;
+    }
+
+    public boolean yankPop() throws IOException {
+        if (!killRing.lastYank()) {
+            return false;
+        }
+        String current = killRing.yank();
+        if (current == null) {
+            // This shouldn't happen.
+            return false;
+        }
+        backspace(current.length());
+        String yanked = killRing.yankPop();
+        if (yanked == null) {
+            // This shouldn't happen.
+            return false;
         }
 
+        putString(yanked);
         return true;
     }
 
@@ -3427,8 +3560,6 @@ public class ConsoleReader
 
         // then send the ANSI code to go to position 1,1
         printAnsiSequence("1;1H");
-
-        redrawLine();
 
         return true;
     }
