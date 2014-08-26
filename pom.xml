@@ -21,8 +21,8 @@
     </parent>
 
     <groupId>jline</groupId>
-    <artifactId>jline</artifactId>
-    <name>JLine</name>
+    <artifactId>jline2</artifactId>
+    <name>JLine2</name>
     <version>2.10-SNAPSHOT</version>
 
     <licenses>
@@ -56,10 +56,12 @@
     </mailingLists>
 
     <distributionManagement>
-        <site>
-            <id>github-project-site</id>
-            <url>gitsite:git@github.com/jline/jline2.git</url>
-        </site>
+        <repository>
+            <id>conjars</id>
+            <name>Concurrent Conjars repository</name>
+            <url>http://conjars.org/repo</url>
+            <layout>default</layout>
+        </repository>
     </distributionManagement>
 
     <developers>
