@@ -38,16 +38,25 @@ public final class TerminalLineSettings
 
     public static final String DEFAULT_SH = "sh";
 
-    private String sttyCommand;
+    private static String sttyCommand;
 
-    private String shCommand;
+    private static String shCommand;
 
-    private String config;
-    private String initialConfig;
+    private static String config;
+    private static String initialConfig;
 
-    private long configLastFetched;
+    private static long configLastFetched;
 
-    public TerminalLineSettings() throws IOException, InterruptedException {
+    private static boolean initialized = false;
+
+    public static void initialize() throws IOException, InterruptedException {
+        if (initialized)
+            return;
+        saveLineSettings();
+        initialized = true;
+    }
+
+    private static void saveLineSettings() throws IOException, InterruptedException {
         sttyCommand = Configuration.getString(JLINE_STTY, DEFAULT_STTY);
         shCommand = Configuration.getString(JLINE_SH, DEFAULT_SH);
         initialConfig = get("-g").trim();
@@ -62,19 +71,22 @@ public final class TerminalLineSettings
         }
     }
 
-    public String getConfig() {
+    public static void restore() throws IOException, InterruptedException {
+        if (!initialized)
+            return;
+        set(initialConfig);
+        initialized = false;
+    }
+
+    public static String getConfig() {
         return config;
     }
 
-    public void restore() throws IOException, InterruptedException {
-        set(initialConfig);
-    }
-
-    public String get(final String args) throws IOException, InterruptedException {
+    public static String get(final String args) throws IOException, InterruptedException {
         return stty(args);
     }
 
-    public void set(final String args) throws IOException, InterruptedException {
+    public static void set(final String args) throws IOException, InterruptedException {
         stty(args);
     }
 
@@ -86,7 +98,7 @@ public final class TerminalLineSettings
      * @param name the stty property.
      * @return the stty property value.
      */
-    public int getProperty(String name) {
+    public static int getProperty(String name) {
         checkNotNull(name);
         long currentTime = System.currentTimeMillis();
         try {
@@ -109,7 +121,7 @@ public final class TerminalLineSettings
             configLastFetched = currentTime;
         }
 
-        return this.getProperty(name, config);
+        return getProperty(name, config);
     }
 
     /**
@@ -176,17 +188,17 @@ public final class TerminalLineSettings
         }
     }
 
-    private String stty(final String args) throws IOException, InterruptedException {
+    private static String stty(final String args) throws IOException, InterruptedException {
         checkNotNull(args);
         return exec(String.format("%s %s < /dev/tty", sttyCommand, args));
     }
 
-    private String exec(final String cmd) throws IOException, InterruptedException {
+    private static String exec(final String cmd) throws IOException, InterruptedException {
         checkNotNull(cmd);
         return exec(shCommand, "-c", cmd);
     }
 
-    private String exec(final String... cmd) throws IOException, InterruptedException {
+    private static String exec(final String... cmd) throws IOException, InterruptedException {
         checkNotNull(cmd);
 
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
