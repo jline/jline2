@@ -8,16 +8,28 @@
  */
 package jline;
 
+import jline.internal.Configuration;
+import java.lang.System;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 
+import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.powermock.api.easymock.PowerMock.mockStaticPartial;
+import static org.powermock.api.easymock.PowerMock.replayAll;
+import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 /**
  * Tests for the {@link TerminalFactory}.
  */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({TerminalFactory.class, Configuration.class})
 public class TerminalFactoryTest
 {
     @Before
@@ -47,6 +59,51 @@ public class TerminalFactoryTest
         try {
             TerminalFactory.configure(UnsupportedTerminal.class.getName());
             Terminal t = TerminalFactory.get();
+            assertNotNull(t);
+            assertEquals(UnsupportedTerminal.class.getName(), t.getClass().getName());
+        } finally {
+            TerminalFactory.configure(TerminalFactory.AUTO);
+        }
+    }
+
+    @Test
+    public void testConfigureDumbTerminalEmacs() {
+        mockStaticPartial(System.class, "getenv");
+        mockStaticPartial(Configuration.class, "getOsName");
+
+        String osString = System.getProperty("os.name").toLowerCase();
+        String expectedTerminalClassName = osString.contains("windows") ?
+                                           "jline.AnsiWindowsTerminal" :
+                                           "jline.UnixTerminal";
+        expect(Configuration.getOsName()).andReturn(osString);
+
+        expect(System.getenv("TERM")).andReturn("dumb");
+        expect(System.getenv("EMACS")).andReturn("t");
+        expect(System.getenv("INSIDE_EMACS")).andReturn("24.3.1,comint");
+        replayAll();
+        try {
+            TerminalFactory.configure(TerminalFactory.AUTO);
+            Terminal t = TerminalFactory.get();
+            verifyAll();
+            assertNotNull(t);
+            assertEquals(expectedTerminalClassName, t.getClass().getName());
+        } finally {
+            TerminalFactory.configure(TerminalFactory.AUTO);
+        }
+    }
+
+    @Test
+    public void testConfigureDumbTerminalNoEmacs() {
+        mockStaticPartial(System.class, "getenv");
+
+        expect(System.getenv("TERM")).andReturn("dumb");
+        expect(System.getenv("EMACS")).andReturn(null);
+        expect(System.getenv("INSIDE_EMACS")).andReturn(null);
+        replayAll();
+        try {
+            TerminalFactory.configure(TerminalFactory.AUTO);
+            Terminal t = TerminalFactory.get();
+            verifyAll();
             assertNotNull(t);
             assertEquals(UnsupportedTerminal.class.getName(), t.getClass().getName());
         } finally {

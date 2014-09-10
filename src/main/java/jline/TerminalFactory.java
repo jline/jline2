@@ -52,12 +52,12 @@ public class TerminalFactory
 
         String type = Configuration.getString(JLINE_TERMINAL, AUTO);
         if ("dumb".equals(System.getenv("TERM"))) {
-            // emacs communicate with shell through a 'dumb' terminal
+            // emacs communicates with shell through a 'dumb' terminal
             // but sets these env variables to let programs know
             // it is ok to send ANSI control sequences
             String emacs = System.getenv("EMACS");
             String insideEmacs = System.getenv("INSIDE_EMACS");
-            if (!emacs && !insideEmacs) {
+            if (emacs == null || insideEmacs == null) {
                 type = "none";
                 Log.debug("$TERM=dumb; setting type=", type);
             }
