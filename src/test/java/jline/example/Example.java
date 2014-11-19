@@ -12,11 +12,13 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
 import jline.console.ConsoleReader;
 import jline.console.completer.Completer;
 import jline.console.completer.FileNameCompleter;
 import jline.console.completer.StringsCompleter;
+import jline.console.history.History.Entry;
 
 public class Example
 {
@@ -42,14 +44,16 @@ public class Example
     }
 
     public static void main(String[] args) throws IOException {
-        try {
+        String username = System.getProperty("user.name");
+        
+    	try {
             Character mask = null;
             String trigger = null;
             boolean color = false;
 
             ConsoleReader reader = new ConsoleReader();
 
-            reader.setPrompt("prompt> ");
+            reader.setPrompt(username + "> ");
 
             if ((args == null) || (args.length == 0)) {
                 usage();
@@ -108,6 +112,18 @@ public class Example
                 if (line.equalsIgnoreCase("quit") || line.equalsIgnoreCase("exit")) {
                     break;
                 }
+                
+                if (line.equals("history")) {
+                	ListIterator<Entry> entries = reader.getHistory().entries();
+                	while (entries.hasNext()) {
+                		reader.println(entries.next().value());
+                	}
+                }
+                
+                if (line.equals("history --verbose")) {
+                	reader.print(reader.getHistory().toString());
+                }
+                
                 if (line.equalsIgnoreCase("cls")) {
                     reader.clearScreen();
                 }
