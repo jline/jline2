@@ -234,7 +234,7 @@ public class MemoryHistory
             if (!source.hasPrevious()) {
                 throw new NoSuchElementException();
             }
-            return new EntryImpl(offset + source.previousIndex(), source.previous(), timestampsSource.next());
+            return new EntryImpl(offset + source.previousIndex(), source.previous(), timestampsSource.previous());
         }
 
         public int nextIndex() {
