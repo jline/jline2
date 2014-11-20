@@ -38,7 +38,7 @@ public class FileHistory
     implements PersistentHistory, Flushable
 {
     private final File file;
-
+    
     public FileHistory(final File file) throws IOException {
         this.file = checkNotNull(file);
         load(file);
@@ -61,13 +61,50 @@ public class FileHistory
         load(new InputStreamReader(input));
     }
 
+    private static final int TIMESTAMP = 1;
+    private static final int ITEM = 2;
+    private static final int E_TIMESTAMP = 3;
+    private static final int E_ITEM = 4;
+    
     public void load(final Reader reader) throws IOException {
         checkNotNull(reader);
-        BufferedReader input = new BufferedReader(reader);
+        BufferedReader inputReader = new BufferedReader(reader);
 
-        String item;
-        while ((item = input.readLine()) != null) {
-            internalAdd(item);
+        String input;
+        long timestamp = 0;
+        int state = TIMESTAMP;
+        
+        while ((input = inputReader.readLine()) != null) {
+        	int event;
+        	if (input.startsWith("#")) {
+        		event = E_TIMESTAMP;
+        	} else {
+        		event = E_ITEM;
+        	}
+        	
+        	switch (state) {
+			case TIMESTAMP:
+				switch (event) {
+				case E_TIMESTAMP:
+					timestamp = Long.parseLong(input.substring(1));
+					state = ITEM;
+					continue;
+				case E_ITEM:
+					//this is for backward compatibility
+					internalAdd(input);
+					continue;
+				}
+			case ITEM:
+				switch (event) {
+				case E_TIMESTAMP:
+					timestamp = Long.parseLong(input.substring(1));
+					continue;
+				case E_ITEM:
+					internalAdd(input, timestamp);
+					state = TIMESTAMP;
+					continue;
+				}
+			}
         }
     }
 
@@ -87,7 +124,8 @@ public class FileHistory
         PrintStream out = new PrintStream(new BufferedOutputStream(new FileOutputStream(file)));
         try {
             for (Entry entry : this) {
-                out.println(entry.value());
+                out.println("#" + entry.timestamp());
+            	out.println(entry.value());
             }
         }
         finally {

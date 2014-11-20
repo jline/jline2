@@ -143,6 +143,13 @@ public class MemoryHistory
         
         maybeResize();
     }
+    
+    protected void internalAdd(CharSequence item, long timestamp) {
+        items.add(item);
+        timestamps.add(timestamp);
+        
+        maybeResize();
+    }
 
     public void replace(final CharSequence item) {
         items.removeLast();
