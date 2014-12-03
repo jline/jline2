@@ -30,7 +30,8 @@ public class MemoryHistory
 
     private final LinkedList<CharSequence> items = new LinkedList<CharSequence>();
     private final LinkedList<Long> timestamps = new LinkedList<Long>();
-
+    private final TimeSource timeSource;
+    
     private int maxSize = DEFAULT_MAX_SIZE;
 
     private boolean ignoreDuplicates = true;
@@ -51,7 +52,24 @@ public class MemoryHistory
 
     private int index = 0;
 
-    public void setMaxSize(final int maxSize) {
+    public MemoryHistory() {
+		this(new TimeSource() {
+			
+			@Override
+			public long currentTimeMillis() {
+				return System.currentTimeMillis();
+			}
+		});
+	}
+    
+    /*
+     * The visibility of this constructor been reduced for testing
+     */
+    MemoryHistory(TimeSource timeSource) {
+		this.timeSource = timeSource;
+	}
+
+	public void setMaxSize(final int maxSize) {
         this.maxSize = maxSize;
         maybeResize();
     }
@@ -139,7 +157,7 @@ public class MemoryHistory
 
     protected void internalAdd(CharSequence item) {
         items.add(item);
-        timestamps.add(System.currentTimeMillis());
+        timestamps.add(timeSource.currentTimeMillis());
         
         maybeResize();
     }
