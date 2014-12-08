@@ -20,9 +20,9 @@
     </parent>
 
     <groupId>jline</groupId>
-    <artifactId>jline</artifactId>
+    <artifactId>jline-om</artifactId>
     <name>JLine</name>
-    <version>2.13-SNAPSHOT</version>
+    <version>2.13.0.1-SNAPSHOT</version>
 
     <licenses>
         <license>
