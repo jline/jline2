@@ -47,15 +47,15 @@ public final class TerminalLineSettings
 
     private long configLastFetched;
 
-    public TerminalLineSettings() throws IOException, InterruptedException {
+    public TerminalLineSettings() throws IOException, InterruptedException {        
         sttyCommand = Configuration.getString(JLINE_STTY, DEFAULT_STTY);
-        shCommand = Configuration.getString(JLINE_SH, DEFAULT_SH);
+        shCommand = Configuration.getString(JLINE_SH, DEFAULT_SH);        
         initialConfig = get("-g").trim();
         config = get("-a");
         configLastFetched = System.currentTimeMillis();
 
         Log.debug("Config: ", config);
-
+        
         // sanity check
         if (config.length() == 0) {
             throw new IOException(MessageFormat.format("Unrecognized stty code: {0}", config));
@@ -178,7 +178,7 @@ public final class TerminalLineSettings
 
     private String stty(final String args) throws IOException, InterruptedException {
         checkNotNull(args);
-        return exec(String.format("%s %s < /dev/tty", sttyCommand, args));
+        return exec(String.format("%s %s", sttyCommand, args));
     }
 
     private String exec(final String cmd) throws IOException, InterruptedException {
@@ -193,8 +193,8 @@ public final class TerminalLineSettings
 
         Log.trace("Running: ", cmd);
 
-        Process p = Runtime.getRuntime().exec(cmd);
-
+        Process p = new ProcessBuilder().redirectInput(ProcessBuilder.Redirect.INHERIT).command(cmd).start();
+        
         InputStream in = null;
         InputStream err = null;
         OutputStream out = null;
