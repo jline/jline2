@@ -34,22 +34,15 @@ public final class TerminalLineSettings
 
     public static final String DEFAULT_STTY = "stty";
 
-    public static final String JLINE_SH = "jline.sh";
 
-    public static final String DEFAULT_SH = "sh";
-
-    private String sttyCommand;
-
-    private String shCommand;
-
+    private final String sttyCommand;
     private String config;
-    private String initialConfig;
+    private final String initialConfig;
 
     private long configLastFetched;
 
     public TerminalLineSettings() throws IOException, InterruptedException {        
-        sttyCommand = Configuration.getString(JLINE_STTY, DEFAULT_STTY);
-        shCommand = Configuration.getString(JLINE_SH, DEFAULT_SH);        
+        sttyCommand = Configuration.getString(JLINE_STTY, DEFAULT_STTY);     
         initialConfig = get("-g").trim();
         config = get("-a");
         configLastFetched = System.currentTimeMillis();
@@ -109,7 +102,7 @@ public final class TerminalLineSettings
             configLastFetched = currentTime;
         }
 
-        return this.getProperty(name, config);
+        return TerminalLineSettings.getProperty(name, config);
     }
 
     /**
@@ -178,12 +171,7 @@ public final class TerminalLineSettings
 
     private String stty(final String args) throws IOException, InterruptedException {
         checkNotNull(args);
-        return exec(String.format("%s %s", sttyCommand, args));
-    }
-
-    private String exec(final String cmd) throws IOException, InterruptedException {
-        checkNotNull(cmd);
-        return exec(shCommand, "-c", cmd);
+        return exec(sttyCommand, args);
     }
 
     private String exec(final String... cmd) throws IOException, InterruptedException {
