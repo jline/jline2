@@ -237,152 +237,155 @@
 <a class="jxr_linenumber" name="227" href="#227">227</a>                 <strong class="jxr_keyword">if</strong> (keyEvent.uchar &gt; 0) {
 <a class="jxr_linenumber" name="228" href="#228">228</a>                     <em class="jxr_comment">// support some C1 control sequences: ALT + [@-_] (and [a-z]?) =&gt; ESC &lt;ascii&gt;</em>
 <a class="jxr_linenumber" name="229" href="#229">229</a>                     <em class="jxr_comment">// http://en.wikipedia.org/wiki/C0_and_C1_control_codes#C1_set</em>
-<a class="jxr_linenumber" name="230" href="#230">230</a>                     <strong class="jxr_keyword">int</strong> altState = KEY_EVENT_RECORD.LEFT_ALT_PRESSED | KEY_EVENT_RECORD.RIGHT_ALT_PRESSED;
-<a class="jxr_linenumber" name="231" href="#231">231</a>                     <strong class="jxr_keyword">if</strong> (((keyEvent.uchar &gt;= '@' &amp;&amp; keyEvent.uchar &lt;= '_') || (keyEvent.uchar &gt;= 'a' &amp;&amp; keyEvent.uchar &lt;= 'z'))
-<a class="jxr_linenumber" name="232" href="#232">232</a>                         &amp;&amp; (keyEvent.controlKeyState &amp; altState) != 0) {
-<a class="jxr_linenumber" name="233" href="#233">233</a>                         sb.append('\u001B'); <em class="jxr_comment">// ESC</em>
-<a class="jxr_linenumber" name="234" href="#234">234</a>                     }
-<a class="jxr_linenumber" name="235" href="#235">235</a> 
-<a class="jxr_linenumber" name="236" href="#236">236</a>                     sb.append(keyEvent.uchar);
-<a class="jxr_linenumber" name="237" href="#237">237</a>                     <strong class="jxr_keyword">continue</strong>;
-<a class="jxr_linenumber" name="238" href="#238">238</a>                 }
-<a class="jxr_linenumber" name="239" href="#239">239</a>                 <em class="jxr_comment">// virtual keycodes: http://msdn.microsoft.com/en-us/library/windows/desktop/dd375731(v=vs.85).aspx</em>
-<a class="jxr_linenumber" name="240" href="#240">240</a>                 <em class="jxr_comment">// just add support for basic editing keys (no control state, no numpad keys)</em>
-<a class="jxr_linenumber" name="241" href="#241">241</a>                 String escapeSequence = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="242" href="#242">242</a>                 <strong class="jxr_keyword">switch</strong> (keyEvent.keyCode) {
-<a class="jxr_linenumber" name="243" href="#243">243</a>                 <strong class="jxr_keyword">case</strong> 0x21: <em class="jxr_comment">// VK_PRIOR PageUp</em>
-<a class="jxr_linenumber" name="244" href="#244">244</a>                     escapeSequence = <span class="jxr_string">"\u001B[5~"</span>;
-<a class="jxr_linenumber" name="245" href="#245">245</a>                     <strong class="jxr_keyword">break</strong>;
-<a class="jxr_linenumber" name="246" href="#246">246</a>                 <strong class="jxr_keyword">case</strong> 0x22: <em class="jxr_comment">// VK_NEXT PageDown</em>
-<a class="jxr_linenumber" name="247" href="#247">247</a>                     escapeSequence = <span class="jxr_string">"\u001B[6~"</span>;
+<a class="jxr_linenumber" name="230" href="#230">230</a>                     <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> altState = KEY_EVENT_RECORD.LEFT_ALT_PRESSED | KEY_EVENT_RECORD.RIGHT_ALT_PRESSED;
+<a class="jxr_linenumber" name="231" href="#231">231</a>                     <em class="jxr_comment">// Pressing "Alt Gr" is translated to Alt-Ctrl, hence it has to be checked that Ctrl is _not_ pressed,</em>
+<a class="jxr_linenumber" name="232" href="#232">232</a>                     <em class="jxr_comment">// otherwise inserting of "Alt Gr" codes on non-US keyboards would yield errors</em>
+<a class="jxr_linenumber" name="233" href="#233">233</a>                     <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> ctrlState = KEY_EVENT_RECORD.LEFT_CTRL_PRESSED | KEY_EVENT_RECORD.RIGHT_CTRL_PRESSED;
+<a class="jxr_linenumber" name="234" href="#234">234</a>                     <strong class="jxr_keyword">if</strong> (((keyEvent.uchar &gt;= '@' &amp;&amp; keyEvent.uchar &lt;= '_') || (keyEvent.uchar &gt;= 'a' &amp;&amp; keyEvent.uchar &lt;= 'z'))
+<a class="jxr_linenumber" name="235" href="#235">235</a>                         &amp;&amp; ((keyEvent.controlKeyState &amp; altState) != 0) &amp;&amp; ((keyEvent.controlKeyState &amp; ctrlState) == 0)) {
+<a class="jxr_linenumber" name="236" href="#236">236</a>                         sb.append('\u001B'); <em class="jxr_comment">// ESC</em>
+<a class="jxr_linenumber" name="237" href="#237">237</a>                     }
+<a class="jxr_linenumber" name="238" href="#238">238</a> 
+<a class="jxr_linenumber" name="239" href="#239">239</a>                     sb.append(keyEvent.uchar);
+<a class="jxr_linenumber" name="240" href="#240">240</a>                     <strong class="jxr_keyword">continue</strong>;
+<a class="jxr_linenumber" name="241" href="#241">241</a>                 }
+<a class="jxr_linenumber" name="242" href="#242">242</a>                 <em class="jxr_comment">// virtual keycodes: http://msdn.microsoft.com/en-us/library/windows/desktop/dd375731(v=vs.85).aspx</em>
+<a class="jxr_linenumber" name="243" href="#243">243</a>                 <em class="jxr_comment">// just add support for basic editing keys (no control state, no numpad keys)</em>
+<a class="jxr_linenumber" name="244" href="#244">244</a>                 String escapeSequence = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="245" href="#245">245</a>                 <strong class="jxr_keyword">switch</strong> (keyEvent.keyCode) {
+<a class="jxr_linenumber" name="246" href="#246">246</a>                 <strong class="jxr_keyword">case</strong> 0x21: <em class="jxr_comment">// VK_PRIOR PageUp</em>
+<a class="jxr_linenumber" name="247" href="#247">247</a>                     escapeSequence = <span class="jxr_string">"\u001B[5~"</span>;
 <a class="jxr_linenumber" name="248" href="#248">248</a>                     <strong class="jxr_keyword">break</strong>;
-<a class="jxr_linenumber" name="249" href="#249">249</a>                 <strong class="jxr_keyword">case</strong> 0x23: <em class="jxr_comment">// VK_END</em>
-<a class="jxr_linenumber" name="250" href="#250">250</a>                     escapeSequence = <span class="jxr_string">"\u001B[4~"</span>;
+<a class="jxr_linenumber" name="249" href="#249">249</a>                 <strong class="jxr_keyword">case</strong> 0x22: <em class="jxr_comment">// VK_NEXT PageDown</em>
+<a class="jxr_linenumber" name="250" href="#250">250</a>                     escapeSequence = <span class="jxr_string">"\u001B[6~"</span>;
 <a class="jxr_linenumber" name="251" href="#251">251</a>                     <strong class="jxr_keyword">break</strong>;
-<a class="jxr_linenumber" name="252" href="#252">252</a>                 <strong class="jxr_keyword">case</strong> 0x24: <em class="jxr_comment">// VK_HOME</em>
-<a class="jxr_linenumber" name="253" href="#253">253</a>                     escapeSequence = <span class="jxr_string">"\u001B[1~"</span>;
+<a class="jxr_linenumber" name="252" href="#252">252</a>                 <strong class="jxr_keyword">case</strong> 0x23: <em class="jxr_comment">// VK_END</em>
+<a class="jxr_linenumber" name="253" href="#253">253</a>                     escapeSequence = <span class="jxr_string">"\u001B[4~"</span>;
 <a class="jxr_linenumber" name="254" href="#254">254</a>                     <strong class="jxr_keyword">break</strong>;
-<a class="jxr_linenumber" name="255" href="#255">255</a>                 <strong class="jxr_keyword">case</strong> 0x25: <em class="jxr_comment">// VK_LEFT</em>
-<a class="jxr_linenumber" name="256" href="#256">256</a>                     escapeSequence = <span class="jxr_string">"\u001B[D"</span>;
+<a class="jxr_linenumber" name="255" href="#255">255</a>                 <strong class="jxr_keyword">case</strong> 0x24: <em class="jxr_comment">// VK_HOME</em>
+<a class="jxr_linenumber" name="256" href="#256">256</a>                     escapeSequence = <span class="jxr_string">"\u001B[1~"</span>;
 <a class="jxr_linenumber" name="257" href="#257">257</a>                     <strong class="jxr_keyword">break</strong>;
-<a class="jxr_linenumber" name="258" href="#258">258</a>                 <strong class="jxr_keyword">case</strong> 0x26: <em class="jxr_comment">// VK_UP</em>
-<a class="jxr_linenumber" name="259" href="#259">259</a>                     escapeSequence = <span class="jxr_string">"\u001B[A"</span>;
+<a class="jxr_linenumber" name="258" href="#258">258</a>                 <strong class="jxr_keyword">case</strong> 0x25: <em class="jxr_comment">// VK_LEFT</em>
+<a class="jxr_linenumber" name="259" href="#259">259</a>                     escapeSequence = <span class="jxr_string">"\u001B[D"</span>;
 <a class="jxr_linenumber" name="260" href="#260">260</a>                     <strong class="jxr_keyword">break</strong>;
-<a class="jxr_linenumber" name="261" href="#261">261</a>                 <strong class="jxr_keyword">case</strong> 0x27: <em class="jxr_comment">// VK_RIGHT</em>
-<a class="jxr_linenumber" name="262" href="#262">262</a>                     escapeSequence = <span class="jxr_string">"\u001B[C"</span>;
+<a class="jxr_linenumber" name="261" href="#261">261</a>                 <strong class="jxr_keyword">case</strong> 0x26: <em class="jxr_comment">// VK_UP</em>
+<a class="jxr_linenumber" name="262" href="#262">262</a>                     escapeSequence = <span class="jxr_string">"\u001B[A"</span>;
 <a class="jxr_linenumber" name="263" href="#263">263</a>                     <strong class="jxr_keyword">break</strong>;
-<a class="jxr_linenumber" name="264" href="#264">264</a>                 <strong class="jxr_keyword">case</strong> 0x28: <em class="jxr_comment">// VK_DOWN</em>
-<a class="jxr_linenumber" name="265" href="#265">265</a>                     escapeSequence = <span class="jxr_string">"\u001B[B"</span>;
+<a class="jxr_linenumber" name="264" href="#264">264</a>                 <strong class="jxr_keyword">case</strong> 0x27: <em class="jxr_comment">// VK_RIGHT</em>
+<a class="jxr_linenumber" name="265" href="#265">265</a>                     escapeSequence = <span class="jxr_string">"\u001B[C"</span>;
 <a class="jxr_linenumber" name="266" href="#266">266</a>                     <strong class="jxr_keyword">break</strong>;
-<a class="jxr_linenumber" name="267" href="#267">267</a>                 <strong class="jxr_keyword">case</strong> 0x2D: <em class="jxr_comment">// VK_INSERT</em>
-<a class="jxr_linenumber" name="268" href="#268">268</a>                     escapeSequence = <span class="jxr_string">"\u001B[2~"</span>;
+<a class="jxr_linenumber" name="267" href="#267">267</a>                 <strong class="jxr_keyword">case</strong> 0x28: <em class="jxr_comment">// VK_DOWN</em>
+<a class="jxr_linenumber" name="268" href="#268">268</a>                     escapeSequence = <span class="jxr_string">"\u001B[B"</span>;
 <a class="jxr_linenumber" name="269" href="#269">269</a>                     <strong class="jxr_keyword">break</strong>;
-<a class="jxr_linenumber" name="270" href="#270">270</a>                 <strong class="jxr_keyword">case</strong> 0x2E: <em class="jxr_comment">// VK_DELETE</em>
-<a class="jxr_linenumber" name="271" href="#271">271</a>                     escapeSequence = <span class="jxr_string">"\u001B[3~"</span>;
+<a class="jxr_linenumber" name="270" href="#270">270</a>                 <strong class="jxr_keyword">case</strong> 0x2D: <em class="jxr_comment">// VK_INSERT</em>
+<a class="jxr_linenumber" name="271" href="#271">271</a>                     escapeSequence = <span class="jxr_string">"\u001B[2~"</span>;
 <a class="jxr_linenumber" name="272" href="#272">272</a>                     <strong class="jxr_keyword">break</strong>;
-<a class="jxr_linenumber" name="273" href="#273">273</a>                 <strong class="jxr_keyword">default</strong>:
-<a class="jxr_linenumber" name="274" href="#274">274</a>                     <strong class="jxr_keyword">break</strong>;
-<a class="jxr_linenumber" name="275" href="#275">275</a>                 }
-<a class="jxr_linenumber" name="276" href="#276">276</a>                 <strong class="jxr_keyword">if</strong> (escapeSequence != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="277" href="#277">277</a>                     <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> k = 0; k &lt; keyEvent.repeatCount; k++) {
-<a class="jxr_linenumber" name="278" href="#278">278</a>                         sb.append(escapeSequence);
-<a class="jxr_linenumber" name="279" href="#279">279</a>                     }
-<a class="jxr_linenumber" name="280" href="#280">280</a>                 }
-<a class="jxr_linenumber" name="281" href="#281">281</a>             } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="282" href="#282">282</a>                 <em class="jxr_comment">// key up event</em>
-<a class="jxr_linenumber" name="283" href="#283">283</a>                 <em class="jxr_comment">// support ALT+NumPad input method</em>
-<a class="jxr_linenumber" name="284" href="#284">284</a>                 <strong class="jxr_keyword">if</strong> (keyEvent.keyCode == 0x12<em class="jxr_comment">/*<em class="jxr_comment">VK_MENU ALT key*/</em> &amp;&amp; keyEvent.uchar &gt; 0) {</em>
-<a class="jxr_linenumber" name="285" href="#285">285</a>                     sb.append(keyEvent.uchar);
-<a class="jxr_linenumber" name="286" href="#286">286</a>                 }
-<a class="jxr_linenumber" name="287" href="#287">287</a>             }
-<a class="jxr_linenumber" name="288" href="#288">288</a>         }
-<a class="jxr_linenumber" name="289" href="#289">289</a>         <strong class="jxr_keyword">return</strong> sb.toString().getBytes();
-<a class="jxr_linenumber" name="290" href="#290">290</a>     }
-<a class="jxr_linenumber" name="291" href="#291">291</a> 
-<a class="jxr_linenumber" name="292" href="#292">292</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">int</strong> getConsoleOutputCodepage() {
-<a class="jxr_linenumber" name="293" href="#293">293</a>         <strong class="jxr_keyword">return</strong> Kernel32.GetConsoleOutputCP();
-<a class="jxr_linenumber" name="294" href="#294">294</a>     }
-<a class="jxr_linenumber" name="295" href="#295">295</a> 
-<a class="jxr_linenumber" name="296" href="#296">296</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">int</strong> getWindowsTerminalWidth() {
-<a class="jxr_linenumber" name="297" href="#297">297</a>         <strong class="jxr_keyword">return</strong> WindowsSupport.getWindowsTerminalWidth();
-<a class="jxr_linenumber" name="298" href="#298">298</a>     }
-<a class="jxr_linenumber" name="299" href="#299">299</a> 
-<a class="jxr_linenumber" name="300" href="#300">300</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">int</strong> getWindowsTerminalHeight() {
-<a class="jxr_linenumber" name="301" href="#301">301</a>         <strong class="jxr_keyword">return</strong> WindowsSupport.getWindowsTerminalHeight();
-<a class="jxr_linenumber" name="302" href="#302">302</a>     }
-<a class="jxr_linenumber" name="303" href="#303">303</a> 
-<a class="jxr_linenumber" name="304" href="#304">304</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="305" href="#305">305</a> <em class="jxr_javadoccomment">     * Console mode</em>
-<a class="jxr_linenumber" name="306" href="#306">306</a> <em class="jxr_javadoccomment">     * &lt;p/&gt;</em>
-<a class="jxr_linenumber" name="307" href="#307">307</a> <em class="jxr_javadoccomment">     * Constants copied &lt;tt&gt;wincon.h&lt;/tt&gt;.</em>
-<a class="jxr_linenumber" name="308" href="#308">308</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="309" href="#309">309</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> enum <a href="../jline/WindowsTerminal.html">ConsoleMode</a>
-<a class="jxr_linenumber" name="310" href="#310">310</a>     {
-<a class="jxr_linenumber" name="311" href="#311">311</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="312" href="#312">312</a> <em class="jxr_javadoccomment">         * The ReadFile or ReadConsole function returns only when a carriage return</em>
-<a class="jxr_linenumber" name="313" href="#313">313</a> <em class="jxr_javadoccomment">         * character is read. If this mode is disable, the functions return when one</em>
-<a class="jxr_linenumber" name="314" href="#314">314</a> <em class="jxr_javadoccomment">         * or more characters are available.</em>
-<a class="jxr_linenumber" name="315" href="#315">315</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="316" href="#316">316</a>         ENABLE_LINE_INPUT(2),
-<a class="jxr_linenumber" name="317" href="#317">317</a> 
-<a class="jxr_linenumber" name="318" href="#318">318</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="319" href="#319">319</a> <em class="jxr_javadoccomment">         * Characters read by the ReadFile or ReadConsole function are written to</em>
-<a class="jxr_linenumber" name="320" href="#320">320</a> <em class="jxr_javadoccomment">         * the active screen buffer as they are read. This mode can be used only if</em>
-<a class="jxr_linenumber" name="321" href="#321">321</a> <em class="jxr_javadoccomment">         * the ENABLE_LINE_INPUT mode is also enabled.</em>
-<a class="jxr_linenumber" name="322" href="#322">322</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="323" href="#323">323</a>         ENABLE_ECHO_INPUT(4),
-<a class="jxr_linenumber" name="324" href="#324">324</a> 
-<a class="jxr_linenumber" name="325" href="#325">325</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="326" href="#326">326</a> <em class="jxr_javadoccomment">         * CTRL+C is processed by the system and is not placed in the input buffer.</em>
-<a class="jxr_linenumber" name="327" href="#327">327</a> <em class="jxr_javadoccomment">         * If the input buffer is being read by ReadFile or ReadConsole, other</em>
-<a class="jxr_linenumber" name="328" href="#328">328</a> <em class="jxr_javadoccomment">         * control keys are processed by the system and are not returned in the</em>
-<a class="jxr_linenumber" name="329" href="#329">329</a> <em class="jxr_javadoccomment">         * ReadFile or ReadConsole buffer. If the ENABLE_LINE_INPUT mode is also</em>
-<a class="jxr_linenumber" name="330" href="#330">330</a> <em class="jxr_javadoccomment">         * enabled, backspace, carriage return, and linefeed characters are handled</em>
-<a class="jxr_linenumber" name="331" href="#331">331</a> <em class="jxr_javadoccomment">         * by the system.</em>
-<a class="jxr_linenumber" name="332" href="#332">332</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="333" href="#333">333</a>         ENABLE_PROCESSED_INPUT(1),
-<a class="jxr_linenumber" name="334" href="#334">334</a> 
-<a class="jxr_linenumber" name="335" href="#335">335</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="336" href="#336">336</a> <em class="jxr_javadoccomment">         * User interactions that change the size of the console screen buffer are</em>
-<a class="jxr_linenumber" name="337" href="#337">337</a> <em class="jxr_javadoccomment">         * reported in the console's input buffee. Information about these events</em>
-<a class="jxr_linenumber" name="338" href="#338">338</a> <em class="jxr_javadoccomment">         * can be read from the input buffer by applications using</em>
-<a class="jxr_linenumber" name="339" href="#339">339</a> <em class="jxr_javadoccomment">         * theReadConsoleInput function, but not by those using ReadFile</em>
-<a class="jxr_linenumber" name="340" href="#340">340</a> <em class="jxr_javadoccomment">         * orReadConsole.</em>
-<a class="jxr_linenumber" name="341" href="#341">341</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="342" href="#342">342</a>         ENABLE_WINDOW_INPUT(8),
-<a class="jxr_linenumber" name="343" href="#343">343</a> 
-<a class="jxr_linenumber" name="344" href="#344">344</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="345" href="#345">345</a> <em class="jxr_javadoccomment">         * If the mouse pointer is within the borders of the console window and the</em>
-<a class="jxr_linenumber" name="346" href="#346">346</a> <em class="jxr_javadoccomment">         * window has the keyboard focus, mouse events generated by mouse movement</em>
-<a class="jxr_linenumber" name="347" href="#347">347</a> <em class="jxr_javadoccomment">         * and button presses are placed in the input buffer. These events are</em>
-<a class="jxr_linenumber" name="348" href="#348">348</a> <em class="jxr_javadoccomment">         * discarded by ReadFile or ReadConsole, even when this mode is enabled.</em>
-<a class="jxr_linenumber" name="349" href="#349">349</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="350" href="#350">350</a>         ENABLE_MOUSE_INPUT(16),
-<a class="jxr_linenumber" name="351" href="#351">351</a> 
-<a class="jxr_linenumber" name="352" href="#352">352</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="353" href="#353">353</a> <em class="jxr_javadoccomment">         * When enabled, text entered in a console window will be inserted at the</em>
-<a class="jxr_linenumber" name="354" href="#354">354</a> <em class="jxr_javadoccomment">         * current cursor location and all text following that location will not be</em>
-<a class="jxr_linenumber" name="355" href="#355">355</a> <em class="jxr_javadoccomment">         * overwritten. When disabled, all following text will be overwritten. An OR</em>
-<a class="jxr_linenumber" name="356" href="#356">356</a> <em class="jxr_javadoccomment">         * operation must be performed with this flag and the ENABLE_EXTENDED_FLAGS</em>
-<a class="jxr_linenumber" name="357" href="#357">357</a> <em class="jxr_javadoccomment">         * flag to enable this functionality.</em>
-<a class="jxr_linenumber" name="358" href="#358">358</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="359" href="#359">359</a>         ENABLE_PROCESSED_OUTPUT(1),
-<a class="jxr_linenumber" name="360" href="#360">360</a> 
-<a class="jxr_linenumber" name="361" href="#361">361</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="362" href="#362">362</a> <em class="jxr_javadoccomment">         * This flag enables the user to use the mouse to select and edit text. To</em>
-<a class="jxr_linenumber" name="363" href="#363">363</a> <em class="jxr_javadoccomment">         * enable this option, use the OR to combine this flag with</em>
-<a class="jxr_linenumber" name="364" href="#364">364</a> <em class="jxr_javadoccomment">         * ENABLE_EXTENDED_FLAGS.</em>
-<a class="jxr_linenumber" name="365" href="#365">365</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="366" href="#366">366</a>         ENABLE_WRAP_AT_EOL_OUTPUT(2),;
-<a class="jxr_linenumber" name="367" href="#367">367</a> 
-<a class="jxr_linenumber" name="368" href="#368">368</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> code;
-<a class="jxr_linenumber" name="369" href="#369">369</a> 
-<a class="jxr_linenumber" name="370" href="#370">370</a>         <a href="../jline/WindowsTerminal.html">ConsoleMode</a>(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> code) {
-<a class="jxr_linenumber" name="371" href="#371">371</a>             <strong class="jxr_keyword">this</strong>.code = code;
-<a class="jxr_linenumber" name="372" href="#372">372</a>         }
-<a class="jxr_linenumber" name="373" href="#373">373</a>     }
-<a class="jxr_linenumber" name="374" href="#374">374</a> 
-<a class="jxr_linenumber" name="375" href="#375">375</a> }
+<a class="jxr_linenumber" name="273" href="#273">273</a>                 <strong class="jxr_keyword">case</strong> 0x2E: <em class="jxr_comment">// VK_DELETE</em>
+<a class="jxr_linenumber" name="274" href="#274">274</a>                     escapeSequence = <span class="jxr_string">"\u001B[3~"</span>;
+<a class="jxr_linenumber" name="275" href="#275">275</a>                     <strong class="jxr_keyword">break</strong>;
+<a class="jxr_linenumber" name="276" href="#276">276</a>                 <strong class="jxr_keyword">default</strong>:
+<a class="jxr_linenumber" name="277" href="#277">277</a>                     <strong class="jxr_keyword">break</strong>;
+<a class="jxr_linenumber" name="278" href="#278">278</a>                 }
+<a class="jxr_linenumber" name="279" href="#279">279</a>                 <strong class="jxr_keyword">if</strong> (escapeSequence != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="280" href="#280">280</a>                     <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> k = 0; k &lt; keyEvent.repeatCount; k++) {
+<a class="jxr_linenumber" name="281" href="#281">281</a>                         sb.append(escapeSequence);
+<a class="jxr_linenumber" name="282" href="#282">282</a>                     }
+<a class="jxr_linenumber" name="283" href="#283">283</a>                 }
+<a class="jxr_linenumber" name="284" href="#284">284</a>             } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="285" href="#285">285</a>                 <em class="jxr_comment">// key up event</em>
+<a class="jxr_linenumber" name="286" href="#286">286</a>                 <em class="jxr_comment">// support ALT+NumPad input method</em>
+<a class="jxr_linenumber" name="287" href="#287">287</a>                 <strong class="jxr_keyword">if</strong> (keyEvent.keyCode == 0x12<em class="jxr_comment">/*<em class="jxr_comment">VK_MENU ALT key*/</em> &amp;&amp; keyEvent.uchar &gt; 0) {</em>
+<a class="jxr_linenumber" name="288" href="#288">288</a>                     sb.append(keyEvent.uchar);
+<a class="jxr_linenumber" name="289" href="#289">289</a>                 }
+<a class="jxr_linenumber" name="290" href="#290">290</a>             }
+<a class="jxr_linenumber" name="291" href="#291">291</a>         }
+<a class="jxr_linenumber" name="292" href="#292">292</a>         <strong class="jxr_keyword">return</strong> sb.toString().getBytes();
+<a class="jxr_linenumber" name="293" href="#293">293</a>     }
+<a class="jxr_linenumber" name="294" href="#294">294</a> 
+<a class="jxr_linenumber" name="295" href="#295">295</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">int</strong> getConsoleOutputCodepage() {
+<a class="jxr_linenumber" name="296" href="#296">296</a>         <strong class="jxr_keyword">return</strong> Kernel32.GetConsoleOutputCP();
+<a class="jxr_linenumber" name="297" href="#297">297</a>     }
+<a class="jxr_linenumber" name="298" href="#298">298</a> 
+<a class="jxr_linenumber" name="299" href="#299">299</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">int</strong> getWindowsTerminalWidth() {
+<a class="jxr_linenumber" name="300" href="#300">300</a>         <strong class="jxr_keyword">return</strong> WindowsSupport.getWindowsTerminalWidth();
+<a class="jxr_linenumber" name="301" href="#301">301</a>     }
+<a class="jxr_linenumber" name="302" href="#302">302</a> 
+<a class="jxr_linenumber" name="303" href="#303">303</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">int</strong> getWindowsTerminalHeight() {
+<a class="jxr_linenumber" name="304" href="#304">304</a>         <strong class="jxr_keyword">return</strong> WindowsSupport.getWindowsTerminalHeight();
+<a class="jxr_linenumber" name="305" href="#305">305</a>     }
+<a class="jxr_linenumber" name="306" href="#306">306</a> 
+<a class="jxr_linenumber" name="307" href="#307">307</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="308" href="#308">308</a> <em class="jxr_javadoccomment">     * Console mode</em>
+<a class="jxr_linenumber" name="309" href="#309">309</a> <em class="jxr_javadoccomment">     * &lt;p/&gt;</em>
+<a class="jxr_linenumber" name="310" href="#310">310</a> <em class="jxr_javadoccomment">     * Constants copied &lt;tt&gt;wincon.h&lt;/tt&gt;.</em>
+<a class="jxr_linenumber" name="311" href="#311">311</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="312" href="#312">312</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> enum <a href="../jline/WindowsTerminal.html">ConsoleMode</a>
+<a class="jxr_linenumber" name="313" href="#313">313</a>     {
+<a class="jxr_linenumber" name="314" href="#314">314</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="315" href="#315">315</a> <em class="jxr_javadoccomment">         * The ReadFile or ReadConsole function returns only when a carriage return</em>
+<a class="jxr_linenumber" name="316" href="#316">316</a> <em class="jxr_javadoccomment">         * character is read. If this mode is disable, the functions return when one</em>
+<a class="jxr_linenumber" name="317" href="#317">317</a> <em class="jxr_javadoccomment">         * or more characters are available.</em>
+<a class="jxr_linenumber" name="318" href="#318">318</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="319" href="#319">319</a>         ENABLE_LINE_INPUT(2),
+<a class="jxr_linenumber" name="320" href="#320">320</a> 
+<a class="jxr_linenumber" name="321" href="#321">321</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="322" href="#322">322</a> <em class="jxr_javadoccomment">         * Characters read by the ReadFile or ReadConsole function are written to</em>
+<a class="jxr_linenumber" name="323" href="#323">323</a> <em class="jxr_javadoccomment">         * the active screen buffer as they are read. This mode can be used only if</em>
+<a class="jxr_linenumber" name="324" href="#324">324</a> <em class="jxr_javadoccomment">         * the ENABLE_LINE_INPUT mode is also enabled.</em>
+<a class="jxr_linenumber" name="325" href="#325">325</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="326" href="#326">326</a>         ENABLE_ECHO_INPUT(4),
+<a class="jxr_linenumber" name="327" href="#327">327</a> 
+<a class="jxr_linenumber" name="328" href="#328">328</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="329" href="#329">329</a> <em class="jxr_javadoccomment">         * CTRL+C is processed by the system and is not placed in the input buffer.</em>
+<a class="jxr_linenumber" name="330" href="#330">330</a> <em class="jxr_javadoccomment">         * If the input buffer is being read by ReadFile or ReadConsole, other</em>
+<a class="jxr_linenumber" name="331" href="#331">331</a> <em class="jxr_javadoccomment">         * control keys are processed by the system and are not returned in the</em>
+<a class="jxr_linenumber" name="332" href="#332">332</a> <em class="jxr_javadoccomment">         * ReadFile or ReadConsole buffer. If the ENABLE_LINE_INPUT mode is also</em>
+<a class="jxr_linenumber" name="333" href="#333">333</a> <em class="jxr_javadoccomment">         * enabled, backspace, carriage return, and linefeed characters are handled</em>
+<a class="jxr_linenumber" name="334" href="#334">334</a> <em class="jxr_javadoccomment">         * by the system.</em>
+<a class="jxr_linenumber" name="335" href="#335">335</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="336" href="#336">336</a>         ENABLE_PROCESSED_INPUT(1),
+<a class="jxr_linenumber" name="337" href="#337">337</a> 
+<a class="jxr_linenumber" name="338" href="#338">338</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="339" href="#339">339</a> <em class="jxr_javadoccomment">         * User interactions that change the size of the console screen buffer are</em>
+<a class="jxr_linenumber" name="340" href="#340">340</a> <em class="jxr_javadoccomment">         * reported in the console's input buffee. Information about these events</em>
+<a class="jxr_linenumber" name="341" href="#341">341</a> <em class="jxr_javadoccomment">         * can be read from the input buffer by applications using</em>
+<a class="jxr_linenumber" name="342" href="#342">342</a> <em class="jxr_javadoccomment">         * theReadConsoleInput function, but not by those using ReadFile</em>
+<a class="jxr_linenumber" name="343" href="#343">343</a> <em class="jxr_javadoccomment">         * orReadConsole.</em>
+<a class="jxr_linenumber" name="344" href="#344">344</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="345" href="#345">345</a>         ENABLE_WINDOW_INPUT(8),
+<a class="jxr_linenumber" name="346" href="#346">346</a> 
+<a class="jxr_linenumber" name="347" href="#347">347</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="348" href="#348">348</a> <em class="jxr_javadoccomment">         * If the mouse pointer is within the borders of the console window and the</em>
+<a class="jxr_linenumber" name="349" href="#349">349</a> <em class="jxr_javadoccomment">         * window has the keyboard focus, mouse events generated by mouse movement</em>
+<a class="jxr_linenumber" name="350" href="#350">350</a> <em class="jxr_javadoccomment">         * and button presses are placed in the input buffer. These events are</em>
+<a class="jxr_linenumber" name="351" href="#351">351</a> <em class="jxr_javadoccomment">         * discarded by ReadFile or ReadConsole, even when this mode is enabled.</em>
+<a class="jxr_linenumber" name="352" href="#352">352</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="353" href="#353">353</a>         ENABLE_MOUSE_INPUT(16),
+<a class="jxr_linenumber" name="354" href="#354">354</a> 
+<a class="jxr_linenumber" name="355" href="#355">355</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="356" href="#356">356</a> <em class="jxr_javadoccomment">         * When enabled, text entered in a console window will be inserted at the</em>
+<a class="jxr_linenumber" name="357" href="#357">357</a> <em class="jxr_javadoccomment">         * current cursor location and all text following that location will not be</em>
+<a class="jxr_linenumber" name="358" href="#358">358</a> <em class="jxr_javadoccomment">         * overwritten. When disabled, all following text will be overwritten. An OR</em>
+<a class="jxr_linenumber" name="359" href="#359">359</a> <em class="jxr_javadoccomment">         * operation must be performed with this flag and the ENABLE_EXTENDED_FLAGS</em>
+<a class="jxr_linenumber" name="360" href="#360">360</a> <em class="jxr_javadoccomment">         * flag to enable this functionality.</em>
+<a class="jxr_linenumber" name="361" href="#361">361</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="362" href="#362">362</a>         ENABLE_PROCESSED_OUTPUT(1),
+<a class="jxr_linenumber" name="363" href="#363">363</a> 
+<a class="jxr_linenumber" name="364" href="#364">364</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="365" href="#365">365</a> <em class="jxr_javadoccomment">         * This flag enables the user to use the mouse to select and edit text. To</em>
+<a class="jxr_linenumber" name="366" href="#366">366</a> <em class="jxr_javadoccomment">         * enable this option, use the OR to combine this flag with</em>
+<a class="jxr_linenumber" name="367" href="#367">367</a> <em class="jxr_javadoccomment">         * ENABLE_EXTENDED_FLAGS.</em>
+<a class="jxr_linenumber" name="368" href="#368">368</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="369" href="#369">369</a>         ENABLE_WRAP_AT_EOL_OUTPUT(2),;
+<a class="jxr_linenumber" name="370" href="#370">370</a> 
+<a class="jxr_linenumber" name="371" href="#371">371</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> code;
+<a class="jxr_linenumber" name="372" href="#372">372</a> 
+<a class="jxr_linenumber" name="373" href="#373">373</a>         <a href="../jline/WindowsTerminal.html">ConsoleMode</a>(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> code) {
+<a class="jxr_linenumber" name="374" href="#374">374</a>             <strong class="jxr_keyword">this</strong>.code = code;
+<a class="jxr_linenumber" name="375" href="#375">375</a>         }
+<a class="jxr_linenumber" name="376" href="#376">376</a>     }
+<a class="jxr_linenumber" name="377" href="#377">377</a> 
+<a class="jxr_linenumber" name="378" href="#378">378</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

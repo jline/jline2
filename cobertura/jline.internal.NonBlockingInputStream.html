@@ -151,12 +151,12 @@
   <td class="src"><pre class="src">&nbsp;<span class="comment">     */</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;74</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> shutdown() {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;75</td>  <td class="nbHitsUncovered"><a title="Line 75: Conditional coverage 75% (3/4) [each condition: 50%, 100%].">&nbsp;380</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 75: Conditional coverage 75% (3/4) [each condition: 50%, 100%].">        <span class="keyword">if</span> (!isShutdown &amp;&amp; nonBlockingEnabled) {</a></span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;76</td>  <td class="nbHitsCovered">&nbsp;318</td>  <td class="src"><pre class="src">&nbsp;            isShutdown = <span class="keyword">true</span>;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;77</td>  <td class="nbHitsCovered">&nbsp;318</td>  <td class="src"><pre class="src">&nbsp;            notify();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;75</td>  <td class="nbHitsUncovered"><a title="Line 75: Conditional coverage 75% (3/4) [each condition: 50%, 100%].">&nbsp;379</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 75: Conditional coverage 75% (3/4) [each condition: 50%, 100%].">        <span class="keyword">if</span> (!isShutdown &amp;&amp; nonBlockingEnabled) {</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;76</td>  <td class="nbHitsCovered">&nbsp;317</td>  <td class="src"><pre class="src">&nbsp;            isShutdown = <span class="keyword">true</span>;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;77</td>  <td class="nbHitsCovered">&nbsp;317</td>  <td class="src"><pre class="src">&nbsp;            notify();</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;78</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;79</td>  <td class="nbHitsCovered">&nbsp;380</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;79</td>  <td class="nbHitsCovered">&nbsp;379</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;80</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    </pre></td></tr>
 <tr>  <td class="numLine">&nbsp;81</td>  <td class="nbHits">&nbsp;</td>
@@ -460,7 +460,7 @@
 <tr>  <td class="numLineCover">&nbsp;261</td>  <td class="nbHitsCovered">&nbsp;332</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">boolean</span> needToRead = <span class="keyword">false</span>;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;262</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        </pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;263</td>  <td class="nbHitsCovered"><a title="Line 263: Conditional coverage 100% (2/2).">&nbsp;3027</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 263: Conditional coverage 100% (2/2).">        <span class="keyword">while</span> (!needToShutdown) {</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;263</td>  <td class="nbHitsCovered"><a title="Line 263: Conditional coverage 100% (2/2).">&nbsp;3021</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 263: Conditional coverage 100% (2/2).">        <span class="keyword">while</span> (!needToShutdown) {</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;264</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            </pre></td></tr>
 <tr>  <td class="numLine">&nbsp;265</td>  <td class="nbHits">&nbsp;</td>
@@ -471,9 +471,9 @@
   <td class="src"><pre class="src">&nbsp;<span class="comment">             * and the accessing thread.</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;268</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;<span class="comment">             */</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;269</td>  <td class="nbHitsCovered">&nbsp;2709</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">synchronized</span> (<span class="keyword">this</span>) {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;270</td>  <td class="nbHitsCovered">&nbsp;2709</td>  <td class="src"><pre class="src">&nbsp;                needToShutdown = <span class="keyword">this</span>.isShutdown;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;271</td>  <td class="nbHitsCovered">&nbsp;2709</td>  <td class="src"><pre class="src">&nbsp;                needToRead     = <span class="keyword">this</span>.threadIsReading;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;269</td>  <td class="nbHitsCovered">&nbsp;2704</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">synchronized</span> (<span class="keyword">this</span>) {</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;270</td>  <td class="nbHitsCovered">&nbsp;2704</td>  <td class="src"><pre class="src">&nbsp;                needToShutdown = <span class="keyword">this</span>.isShutdown;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;271</td>  <td class="nbHitsCovered">&nbsp;2704</td>  <td class="src"><pre class="src">&nbsp;                needToRead     = <span class="keyword">this</span>.threadIsReading;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;272</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                </pre></td></tr>
 <tr>  <td class="numLine">&nbsp;273</td>  <td class="nbHits">&nbsp;</td>
@@ -484,8 +484,8 @@
   <td class="src"><pre class="src">&nbsp;<span class="comment">                     * Nothing to do? Then wait.</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;276</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;<span class="comment">                     */</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;277</td>  <td class="nbHitsCovered"><a title="Line 277: Conditional coverage 100% (4/4) [each condition: 100%, 100%].">&nbsp;2709</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 277: Conditional coverage 100% (4/4) [each condition: 100%, 100%].">                    <span class="keyword">if</span> (!needToShutdown &amp;&amp; !needToRead) {</a></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;278</td>  <td class="nbHitsCovered">&nbsp;1361</td>  <td class="src"><pre class="src">&nbsp;                        wait(0);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;277</td>  <td class="nbHitsCovered"><a title="Line 277: Conditional coverage 100% (4/4) [each condition: 100%, 100%].">&nbsp;2704</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 277: Conditional coverage 100% (4/4) [each condition: 100%, 100%].">                    <span class="keyword">if</span> (!needToShutdown &amp;&amp; !needToRead) {</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;278</td>  <td class="nbHitsCovered">&nbsp;1357</td>  <td class="src"><pre class="src">&nbsp;                        wait(0);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;279</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;280</td>  <td class="nbHits">&nbsp;</td>
@@ -493,8 +493,8 @@
 <tr>  <td class="numLineCover">&nbsp;281</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;                <span class="keyword">catch</span> (InterruptedException e) {</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;282</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                    <span class="comment">/* IGNORED */</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;283</td>  <td class="nbHitsCovered">&nbsp;2695</td>  <td class="src"><pre class="src">&nbsp;                }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;284</td>  <td class="nbHitsCovered">&nbsp;2695</td>  <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;283</td>  <td class="nbHitsCovered">&nbsp;2689</td>  <td class="src"><pre class="src">&nbsp;                }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;284</td>  <td class="nbHitsCovered">&nbsp;2689</td>  <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;285</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            </pre></td></tr>
 <tr>  <td class="numLine">&nbsp;286</td>  <td class="nbHits">&nbsp;</td>
@@ -505,7 +505,7 @@
   <td class="src"><pre class="src">&nbsp;<span class="comment">             * happen while we are holding the lock (which we aren't now).</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;289</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;<span class="comment">             */</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;290</td>  <td class="nbHitsCovered"><a title="Line 290: Conditional coverage 100% (4/4) [each condition: 100%, 100%].">&nbsp;2695</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 290: Conditional coverage 100% (4/4) [each condition: 100%, 100%].">            <span class="keyword">if</span> (!needToShutdown &amp;&amp; needToRead) {</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;290</td>  <td class="nbHitsCovered"><a title="Line 290: Conditional coverage 100% (4/4) [each condition: 100%, 100%].">&nbsp;2689</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 290: Conditional coverage 100% (4/4) [each condition: 100%, 100%].">            <span class="keyword">if</span> (!needToShutdown &amp;&amp; needToRead) {</a></pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;291</td>  <td class="nbHitsCovered">&nbsp;1030</td>  <td class="src"><pre class="src">&nbsp;                <span class="keyword">int</span>          charRead = -2;</pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;292</td>  <td class="nbHitsCovered">&nbsp;1030</td>  <td class="src"><pre class="src">&nbsp;                IOException  failure = <span class="keyword">null</span>;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;293</td>  <td class="nbHits">&nbsp;</td>
@@ -535,12 +535,12 @@
   <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;311</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        </pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;312</td>  <td class="nbHitsCovered">&nbsp;318</td>  <td class="src"><pre class="src">&nbsp;        Log.debug(<span class="string">"NonBlockingInputStream shutdown"</span>);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;313</td>  <td class="nbHitsCovered">&nbsp;318</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;312</td>  <td class="nbHitsCovered">&nbsp;317</td>  <td class="src"><pre class="src">&nbsp;        Log.debug(<span class="string">"NonBlockingInputStream shutdown"</span>);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;313</td>  <td class="nbHitsCovered">&nbsp;317</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;314</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;}</pre></td></tr>
 </table>
 
-<div class="footer">Report generated by <a href="http://cobertura.sourceforge.net/" target="_top">Cobertura</a> 1.9.4.1 on 6/6/14 2:26 PM.</div>
+<div class="footer">Report generated by <a href="http://cobertura.sourceforge.net/" target="_top">Cobertura</a> 1.9.4.1 on 2/9/15 4:56 PM.</div>
 </body>
 </html>
