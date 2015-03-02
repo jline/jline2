@@ -28,14 +28,9 @@ import jline.internal.TerminalLineSettings;
 public class UnixTerminal
     extends TerminalSupport
 {
-    private final TerminalLineSettings settings = new TerminalLineSettings();
-
     public UnixTerminal() throws Exception {
         super(true);
-    }
-
-    protected TerminalLineSettings getSettings() {
-        return settings;
+        TerminalLineSettings.initialize();
     }
 
     /**
@@ -51,8 +46,8 @@ public class UnixTerminal
         // Set the console to be character-buffered instead of line-buffered.
         // Make sure we're distinguishing carriage return from newline.
         // Allow ctrl-s keypress to be used (as forward search)
-        settings.set("-icanon min 1 -icrnl -inlcr -ixon");
-        settings.set("dsusp undef");
+        TerminalLineSettings.set("-icanon min 1 -icrnl -inlcr -ixon");
+        TerminalLineSettings.set("dsusp undef");
 
         setEchoEnabled(false);
     }
@@ -64,7 +59,7 @@ public class UnixTerminal
      */
     @Override
     public void restore() throws Exception {
-        settings.restore();
+        TerminalLineSettings.restore();
         super.restore();
     }
 
@@ -73,7 +68,7 @@ public class UnixTerminal
      */
     @Override
     public int getWidth() {
-        int w = settings.getProperty("columns");
+        int w = TerminalLineSettings.getProperty("columns");
         return w < 1 ? DEFAULT_WIDTH : w;
     }
 
@@ -82,7 +77,7 @@ public class UnixTerminal
      */
     @Override
     public int getHeight() {
-        int h = settings.getProperty("rows");
+        int h = TerminalLineSettings.getProperty("rows");
         return h < 1 ? DEFAULT_HEIGHT : h;
     }
 
@@ -90,10 +85,10 @@ public class UnixTerminal
     public synchronized void setEchoEnabled(final boolean enabled) {
         try {
             if (enabled) {
-                settings.set("echo");
+                TerminalLineSettings.set("echo");
             }
             else {
-                settings.set("-echo");
+                TerminalLineSettings.set("-echo");
             }
             super.setEchoEnabled(enabled);
         }
@@ -108,7 +103,7 @@ public class UnixTerminal
     public void disableInterruptCharacter()
     {
         try {
-            settings.set("intr undef");
+            TerminalLineSettings.set("intr undef");
         }
         catch (Exception e) {
             if (e instanceof InterruptedException) {
@@ -121,7 +116,7 @@ public class UnixTerminal
     public void enableInterruptCharacter()
     {
         try {
-            settings.set("intr ^C");
+            TerminalLineSettings.set("intr ^C");
         }
         catch (Exception e) {
             if (e instanceof InterruptedException) {
