@@ -178,7 +178,7 @@ public final class TerminalLineSettings
 
     private String stty(final String args) throws IOException, InterruptedException {
         checkNotNull(args);
-        return exec(String.format("%s %s < /dev/tty", sttyCommand, args));
+        return exec(String.format("%s -F /dev/tty %s ", sttyCommand, args));
     }
 
     private String exec(final String cmd) throws IOException, InterruptedException {
