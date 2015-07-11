@@ -34,28 +34,21 @@ public final class TerminalLineSettings
 
     public static final String DEFAULT_STTY = "stty";
 
-    public static final String JLINE_SH = "jline.sh";
 
-    public static final String DEFAULT_SH = "sh";
-
-    private String sttyCommand;
-
-    private String shCommand;
-
+    private final String sttyCommand;
     private String config;
-    private String initialConfig;
+    private final String initialConfig;
 
     private long configLastFetched;
 
-    public TerminalLineSettings() throws IOException, InterruptedException {
-        sttyCommand = Configuration.getString(JLINE_STTY, DEFAULT_STTY);
-        shCommand = Configuration.getString(JLINE_SH, DEFAULT_SH);
+    public TerminalLineSettings() throws IOException, InterruptedException {        
+        sttyCommand = Configuration.getString(JLINE_STTY, DEFAULT_STTY);     
         initialConfig = get("-g").trim();
         config = get("-a");
         configLastFetched = System.currentTimeMillis();
 
         Log.debug("Config: ", config);
-
+        
         // sanity check
         if (config.length() == 0) {
             throw new IOException(MessageFormat.format("Unrecognized stty code: {0}", config));
@@ -109,7 +102,7 @@ public final class TerminalLineSettings
             configLastFetched = currentTime;
         }
 
-        return this.getProperty(name, config);
+        return TerminalLineSettings.getProperty(name, config);
     }
 
     /**
@@ -178,12 +171,7 @@ public final class TerminalLineSettings
 
     private String stty(final String args) throws IOException, InterruptedException {
         checkNotNull(args);
-        return exec(String.format("%s %s < /dev/tty", sttyCommand, args));
-    }
-
-    private String exec(final String cmd) throws IOException, InterruptedException {
-        checkNotNull(cmd);
-        return exec(shCommand, "-c", cmd);
+        return exec(sttyCommand, args);
     }
 
     private String exec(final String... cmd) throws IOException, InterruptedException {
@@ -193,8 +181,8 @@ public final class TerminalLineSettings
 
         Log.trace("Running: ", cmd);
 
-        Process p = Runtime.getRuntime().exec(cmd);
-
+        Process p = new ProcessBuilder().redirectInput(ProcessBuilder.Redirect.INHERIT).command(cmd).start();
+        
         InputStream in = null;
         InputStream err = null;
         OutputStream out = null;
