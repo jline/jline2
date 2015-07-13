@@ -954,13 +954,39 @@ public class ConsoleReader
             if (moveup > 0) {
                 printAnsiSequence(moveup + "A");
             }
-            printAnsiSequence((1 + newCol) + "G");
+            //printAnsiSequence((1 + newCol) + "G");
+
+            /* add by bingnan wang
+             * Past: move the cursor backword by one byte, so it can't solve the
+             * characters linke chinese and japanese
+             * Now: check whether the character to deleted is a one width letter or chinese，
+             * use \b to trick the output
+             * Future: can alse use esc-sequence to handle this situation.
+             * */
+
+            String to_delete = buf.buffer.substring(buf.cursor, buf.cursor + num);
+            for (int i = 0; i < num; i++) {
+                char c = to_delete.charAt(i);
+                if (isLetter(c))
+                    print('\b');
+                else {
+                    print('\b');
+                    print('\b');
+                }
+            }
             return;
         }
         print(BACKSPACE, num);
 //        flush();
     }
 
+    /**
+     * Check if the char is one witdh long.
+     */
+    private boolean isLetter(char c) {
+        int k = 0x80;
+        return c / k == 0 ? true: false;
+    }
     /**
      * Flush the console output stream. This is important for printout out single characters (like a backspace or
      * keyboard) that we want the console to handle immediately.
