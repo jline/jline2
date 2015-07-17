@@ -108,7 +108,7 @@ public class ArgumentCompleter
         return completers;
     }
 
-    public int complete(final String buffer, final int cursor, final List<CharSequence> candidates) {
+    public int complete(final String buffer, final int cursor, final List<Completion> candidates) {
         // buffer can be null
         checkNotNull(candidates);
 
@@ -138,7 +138,7 @@ public class ArgumentCompleter
             String[] args = list.getArguments();
             String arg = (args == null || i >= args.length) ? "" : args[i];
 
-            List<CharSequence> subCandidates = new LinkedList<CharSequence>();
+            List<Completion> subCandidates = new LinkedList<Completion>();
 
             if (sub.complete(arg, arg.length(), subCandidates) == -1) {
                 return -1;
@@ -165,13 +165,13 @@ public class ArgumentCompleter
 
         if ((cursor != buffer.length()) && delim.isDelimiter(buffer, cursor)) {
             for (int i = 0; i < candidates.size(); i++) {
-                CharSequence val = candidates.get(i);
+            	CharSequence val = candidates.get(i).getValue();
 
                 while (val.length() > 0 && delim.isDelimiter(val, val.length() - 1)) {
                     val = val.subSequence(0, val.length() - 1);
                 }
 
-                candidates.set(i, val);
+                candidates.set(i, new Completion(val));
             }
         }
 

@@ -35,6 +35,7 @@ import jline.TerminalFactory;
 import jline.UnixTerminal;
 import jline.console.completer.CandidateListCompletionHandler;
 import jline.console.completer.Completer;
+import jline.console.completer.Completion;
 import jline.console.completer.CompletionHandler;
 import jline.console.history.History;
 import jline.console.history.MemoryHistory;
@@ -44,6 +45,7 @@ import jline.internal.Log;
 import jline.internal.NonBlockingInputStream;
 import jline.internal.Nullable;
 import jline.internal.Urls;
+
 import org.fusesource.jansi.AnsiOutputStream;
 
 import static jline.internal.Preconditions.checkNotNull;
@@ -3286,7 +3288,7 @@ public class ConsoleReader
             return false;
         }
 
-        List<CharSequence> candidates = new LinkedList<CharSequence>();
+        List<Completion> candidates = new LinkedList<Completion>();
         String bufstr = buf.buffer.toString();
         int cursor = buf.cursor;
 
@@ -3307,7 +3309,7 @@ public class ConsoleReader
             return;
         }
 
-        List<CharSequence> candidates = new LinkedList<CharSequence>();
+        List<Completion> candidates = new LinkedList<Completion>();
         String bufstr = buf.buffer.toString();
         int cursor = buf.cursor;
 

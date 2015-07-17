@@ -47,7 +47,7 @@ public class FileNameCompleter
         OS_IS_WINDOWS = os.contains("windows");
     }
 
-    public int complete(String buffer, final int cursor, final List<CharSequence> candidates) {
+    public int complete(String buffer, final int cursor, final List<Completion> candidates) {
         // buffer can be null
         checkNotNull(candidates);
 
@@ -102,7 +102,7 @@ public class FileNameCompleter
         return new File(".");
     }
 
-    protected int matchFiles(final String buffer, final String translated, final File[] files, final List<CharSequence> candidates) {
+    protected int matchFiles(final String buffer, final String translated, final File[] files, final List<Completion> candidates) {
         if (files == null) {
             return -1;
         }
@@ -118,7 +118,7 @@ public class FileNameCompleter
         for (File file : files) {
             if (file.getAbsolutePath().startsWith(translated)) {
                 CharSequence name = file.getName() + (matches == 1 && file.isDirectory() ? separator() : " ");
-                candidates.add(render(file, name).toString());
+                candidates.add(render(file, name));
             }
         }
 
@@ -127,7 +127,7 @@ public class FileNameCompleter
         return index + separator().length();
     }
 
-    protected CharSequence render(final File file, final CharSequence name) {
-        return name;
+    protected Completion render(final File file, final CharSequence name) {
+        return new Completion(name);
     }
 }

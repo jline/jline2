@@ -64,19 +64,19 @@ public class AggregateCompleter
     /**
      * Perform a completion operation across all aggregated completers.
      *
-     * @see Completer#complete(String, int, java.util.List)
+     * @see Completer#complete(String, int, List)
      * @return the highest completion return value from all completers
      */
-    public int complete(final String buffer, final int cursor, final List<CharSequence> candidates) {
+    public int complete(final String buffer, final int cursor, final List<Completion> candidates) {
         // buffer could be null
         checkNotNull(candidates);
 
-        List<Completion> completions = new ArrayList<Completion>(completers.size());
+        List<CompletionResult> completions = new ArrayList<CompletionResult>(completers.size());
 
         // Run each completer, saving its completion results
         int max = -1;
         for (Completer completer : completers) {
-            Completion completion = new Completion(candidates);
+            CompletionResult completion = new CompletionResult(candidates);
             completion.complete(completer, buffer, cursor);
 
             // Compute the max cursor position
@@ -86,7 +86,7 @@ public class AggregateCompleter
         }
 
         // Append candidates from completions which have the same cursor position as max
-        for (Completion completion : completions) {
+        for (CompletionResult completion : completions) {
             if (completion.cursor == max) {
                 candidates.addAll(completion.candidates);
             }
@@ -105,15 +105,15 @@ public class AggregateCompleter
             '}';
     }
 
-    private class Completion
+    private class CompletionResult
     {
-        public final List<CharSequence> candidates;
+        public final List<Completion> candidates;
 
         public int cursor;
 
-        public Completion(final List<CharSequence> candidates) {
+        public CompletionResult(final List<Completion> candidates) {
             checkNotNull(candidates);
-            this.candidates = new LinkedList<CharSequence>(candidates);
+            this.candidates = new LinkedList<Completion>(candidates);
         }
 
         public void complete(final Completer completer, final String buffer, final int cursor) {

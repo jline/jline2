@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -35,21 +36,21 @@ public class CandidateListCompletionHandler
 {
     // TODO: handle quotes and escaped quotes && enable automatic escaping of whitespace
 
-    public boolean complete(final ConsoleReader reader, final List<CharSequence> candidates, final int pos) throws
+    public boolean complete(final ConsoleReader reader, final List<Completion> candidates, final int pos) throws
         IOException
     {
         CursorBuffer buf = reader.getCursorBuffer();
 
         // if there is only one completion, then fill in the buffer
         if (candidates.size() == 1) {
-            CharSequence value = candidates.get(0);
+        	Completion value = candidates.get(0);
 
             // fail if the only candidate is the same as the current buffer
-            if (value.equals(buf.toString())) {
+            if (value.getValue().equals(buf.toString())) {
                 return false;
             }
 
-            setBuffer(reader, value, pos);
+            setBuffer(reader, value.getValue(), pos);
 
             return true;
         }
@@ -78,19 +79,22 @@ public class CandidateListCompletionHandler
     }
 
     /**
-     * Print out the candidates. If the size of the candidates is greater than the
+     * Print out the candidates, using their display value. If the size of the candidates is greater than the
      * {@link ConsoleReader#getAutoprintThreshold}, they prompt with a warning.
      *
      * @param candidates the list of candidates to print
      */
-    public static void printCandidates(final ConsoleReader reader, Collection<CharSequence> candidates) throws
+    public static void printCandidates(final ConsoleReader reader, Collection<Completion> candidateCompletions) throws
         IOException
     {
-        Set<CharSequence> distinct = new HashSet<CharSequence>(candidates);
+        Set<CharSequence> labels = new LinkedHashSet<CharSequence>(candidateCompletions.size());
+        for (Completion completion : candidateCompletions) {
+        	labels.add(completion.getLabel());
+        }
 
-        if (distinct.size() > reader.getAutoprintThreshold()) {
+        if (labels.size() > reader.getAutoprintThreshold()) {
             //noinspection StringConcatenation
-            reader.print(Messages.DISPLAY_CANDIDATES.format(candidates.size()));
+            reader.print(Messages.DISPLAY_CANDIDATES.format(candidateCompletions.size()));
             reader.flush();
 
             int c;
@@ -115,21 +119,8 @@ public class CandidateListCompletionHandler
             }
         }
 
-        // copy the values and make them distinct, without otherwise affecting the ordering. Only do it if the sizes differ.
-        if (distinct.size() != candidates.size()) {
-            Collection<CharSequence> copy = new ArrayList<CharSequence>();
-
-            for (CharSequence next : candidates) {
-                if (!copy.contains(next)) {
-                    copy.add(next);
-                }
-            }
-
-            candidates = copy;
-        }
-
         reader.println();
-        reader.printColumns(candidates);
+        reader.printColumns(labels);
     }
 
     /**
@@ -137,13 +128,16 @@ public class CandidateListCompletionHandler
      * or null if there are no commonalities. For example, if the list contains
      * <i>foobar</i>, <i>foobaz</i>, <i>foobuz</i>, the method will return <i>foob</i>.
      */
-    private String getUnambiguousCompletions(final List<CharSequence> candidates) {
+    private String getUnambiguousCompletions(final List<Completion> candidates) {
         if (candidates == null || candidates.isEmpty()) {
             return null;
         }
 
-        // convert to an array for speed
-        String[] strings = candidates.toArray(new String[candidates.size()]);
+        // convert to a String array for speed
+        String[] strings = new String[candidates.size()];
+        for (int i = 0 ; i < strings.length ; i++) {
+        	strings[i] = candidates.get(i).getValue().toString();
+        }
 
         String first = strings[0];
         StringBuilder candidate = new StringBuilder();
