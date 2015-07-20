@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,7 +27,7 @@ import static jline.internal.Preconditions.checkNotNull;
  * @author <a href="mailto:mwp1@cornell.edu">Marc Prud'hommeaux</a>
  * @author <a href="mailto:dwkemp@gmail.com">Dale Kemp</a>
  * @author <a href="mailto:jason@planet57.com">Jason Dillon</a>
- * @author <a href="mailto:jbonofre@apache.org">Jean-Baptiste Onofr��</a>
+ * @author <a href="mailto:jbonofre@apache.org">Jean-Baptiste Onofré</a>
  * @since 2.0
  */
 public final class TerminalLineSettings
@@ -57,6 +59,17 @@ public final class TerminalLineSettings
     private String initialConfig;
 
     private long configLastFetched;
+
+    private static final Map<String, TerminalLineSettings> SETTINGS = new HashMap<String, TerminalLineSettings>();
+
+    public static synchronized TerminalLineSettings getSettings(String device) throws IOException, InterruptedException {
+        TerminalLineSettings settings = SETTINGS.get(device);
+        if (settings == null) {
+            settings = new TerminalLineSettings(device);
+            SETTINGS.put(device, settings);
+        }
+        return settings;
+    }
 
     public TerminalLineSettings() throws IOException, InterruptedException {
     	this("/dev/tty");

@@ -38,7 +38,7 @@ public class UnixTerminal
     
     public UnixTerminal(String ttyDevice) throws Exception {
         super(true);
-        settings = new TerminalLineSettings(ttyDevice);
+        settings = TerminalLineSettings.getSettings(ttyDevice);
     }
 
     protected TerminalLineSettings getSettings() {
