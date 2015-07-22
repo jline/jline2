@@ -2378,7 +2378,7 @@ public class ConsoleReader
                 sb.appendCodePoint(c);
 
                 if (recording) {
-                    macro += new String(new int[]{c}, 0, 1);
+                    macro += new String(Character.toChars(c));
                 }
 
                 Object o;
