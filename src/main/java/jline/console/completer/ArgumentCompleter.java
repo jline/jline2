@@ -140,11 +140,12 @@ public class ArgumentCompleter
 
             List<CharSequence> subCandidates = new LinkedList<CharSequence>();
 
-            if (sub.complete(arg, arg.length(), subCandidates) == -1) {
+            int offset = sub.complete(arg, arg.length(), subCandidates);
+            if (offset == -1) {
                 return -1;
             }
 
-            if (!subCandidates.contains(arg)) {
+            if (!subCandidates.contains(arg.substring(offset))) {
                 return -1;
             }
         }
