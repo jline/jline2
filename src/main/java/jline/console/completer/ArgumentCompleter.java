@@ -131,10 +131,16 @@ public class ArgumentCompleter
         else {
             completer = completers.get(argIndex);
         }
+        if (completer == null) {
+            return -1;
+        }
 
         // ensure that all the previous completers are successful before allowing this completer to pass (only if strict).
         for (int i = 0; isStrict() && (i < argIndex); i++) {
             Completer sub = completers.get(i >= completers.size() ? (completers.size() - 1) : i);
+            if (sub == null) {
+                continue;
+            }
             String[] args = list.getArguments();
             String arg = (args == null || i >= args.length) ? "" : args[i];
 
