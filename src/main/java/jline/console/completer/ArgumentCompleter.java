@@ -293,6 +293,11 @@ public class ArgumentCompleter
                 argpos = arg.length();
             }
             if (arg.length() > 0) {
+                // still in open quote block
+                if (quoteStart >= 0) {
+                    argpos++;
+                    arg.insert(0, buffer.charAt(quoteStart));
+                }
                 args.add(arg.toString());
             }
 
