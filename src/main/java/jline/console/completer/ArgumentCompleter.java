@@ -301,45 +301,39 @@ public class ArgumentCompleter
 
         /**
          * Returns true if the specified character is a whitespace parameter. Check to ensure that the character is not
-         * escaped by any of {@link #getQuoteChars}, and is not escaped by ant of the {@link #getEscapeChars}, and
-         * returns true from {@link #isDelimiterChar}.
+         * escaped by any {@link #getEscapeChars}, and returns true from {@link #isDelimiterChar}.
+         * Whether it delimits arguments or is within a quote context is decided elsewhere.
          *
          * @param buffer    The complete command buffer
          * @param pos       The index of the character in the buffer
          * @return          True if the character should be a delimiter
          */
         public boolean isDelimiter(final CharSequence buffer, final int pos) {
-            return !isQuoted(buffer, pos) && !isEscaped(buffer, pos) && isDelimiterChar(buffer, pos);
-        }
-
-        public boolean isQuoted(final CharSequence buffer, final int pos) {
-            return false;
-        }
-
-        public boolean isQuoteChar(final CharSequence buffer, final int pos) {
             if (pos < 0) {
                 return false;
             }
 
-            for (int i = 0; (quoteChars != null) && (i < quoteChars.length); i++) {
-                if (buffer.charAt(pos) == quoteChars[i]) {
-                    return !isEscaped(buffer, pos);
-                }
-            }
+            return isDelimiterChar(buffer, pos) && !isEscaped(buffer, pos);
+        }
 
-            return false;
+        public boolean isQuoteChar(final CharSequence buffer, final int pos) {
+            return isUnescapedCharInArray(buffer, pos, quoteChars);
         }
 
         /**
          * Check if this character is a valid escape char (i.e. one that has not been escaped)
          */
         public boolean isEscapeChar(final CharSequence buffer, final int pos) {
+            return isUnescapedCharInArray(buffer, pos, escapeChars);
+        }
+
+        protected boolean isUnescapedCharInArray(final CharSequence buffer, final int pos, char[] array) {
             if (pos < 0) {
                 return false;
             }
 
-            for (int i = 0; (escapeChars != null) && (i < escapeChars.length); i++) {
-                if (buffer.charAt(pos) == escapeChars[i]) {
+            for (int i = 0; (array != null) && (i < array.length); i++) {
+                if (buffer.charAt(pos) == array[i]) {
                     return !isEscaped(buffer, pos); // escape escape
                 }
             }
@@ -388,6 +382,9 @@ public class ArgumentCompleter
          */
         @Override
         public boolean isDelimiterChar(final CharSequence buffer, final int pos) {
+            if (pos < 0) {
+                return false;
+            }
             return Character.isWhitespace(buffer.charAt(pos));
         }
     }
