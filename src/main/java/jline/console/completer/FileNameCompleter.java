@@ -38,9 +38,48 @@ import static jline.internal.Preconditions.checkNotNull;
 public class FileNameCompleter
     implements Completer
 {
-    // TODO: Handle files with spaces in them
 
     private static final boolean OS_IS_WINDOWS;
+
+    /**
+     * If true, will not offer non-folders, if false, will always suggest files
+     */
+    private boolean completeFolders = false;
+
+    /**
+     * when no further completion is possible, whether to append a blank
+     */
+    private boolean printSpaceAfterFullCompletion = true;
+
+    /**
+     * when argument to be completed starts with a hyphen, whether to take that into account
+     */
+    private boolean handleLeadingHyphen = false;
+
+
+    public boolean getCompleteFolders() {
+        return completeFolders;
+    }
+
+    public void setCompleteFoldersOnly(boolean completeFolders) {
+        this.completeFolders = completeFolders;
+    }
+
+    public boolean getPrintSpaceAfterFullCompletion() {
+        return printSpaceAfterFullCompletion;
+    }
+
+    public void setPrintSpaceAfterFullCompletion(boolean printSpaceAfterFullCompletion) {
+        this.printSpaceAfterFullCompletion = printSpaceAfterFullCompletion;
+    }
+
+    public boolean getHandleLeadingHyphen() {
+        return handleLeadingHyphen;
+    }
+
+    public void setHandleLeadingHyphen(boolean handleLeadingHyphen) {
+        this.handleLeadingHyphen = handleLeadingHyphen;
+    }
 
     static {
         String os = Configuration.getOsName();
@@ -50,6 +89,7 @@ public class FileNameCompleter
     public int complete(String buffer, final int cursor, final List<CharSequence> candidates) {
         // buffer can be null
         checkNotNull(candidates);
+        String hyphenChar = null;
 
         if (buffer == null) {
             buffer = "";
@@ -60,15 +100,20 @@ public class FileNameCompleter
         }
 
         String translated = buffer;
-
-        File homeDir = getUserHome();
-
-        // Special character: ~ maps to the user's home directory
-        if (translated.startsWith("~" + separator())) {
-            translated = homeDir.getPath() + translated.substring(1);
+        if (handleLeadingHyphen && (translated.startsWith("\'") || translated.startsWith("\""))) {
+            hyphenChar = translated.substring(0, 1);
+            translated = translated.substring(1);
         }
-        else if (translated.startsWith("~")) {
-            translated = homeDir.getParentFile().getAbsolutePath();
+
+        // Special character: ~ maps to the user's home directory in most OSs
+        if (!OS_IS_WINDOWS && translated.startsWith("~")) {
+            File homeDir = getUserHome();
+            if (translated.startsWith("~" + separator())) {
+                translated = homeDir.getPath() + translated.substring(1);
+            }
+            else {
+                translated = homeDir.getParentFile().getAbsolutePath();
+            }
         }
         else if (!(new File(translated).isAbsolute())) {
             String cwd = getUserDir().getAbsolutePath();
@@ -87,7 +132,7 @@ public class FileNameCompleter
 
         File[] entries = dir == null ? new File[0] : dir.listFiles();
 
-        return matchFiles(buffer, translated, entries, candidates);
+        return matchFiles(buffer, translated, entries, candidates, hyphenChar);
     }
 
     protected String separator() {
@@ -102,23 +147,63 @@ public class FileNameCompleter
         return new File(".");
     }
 
-    protected int matchFiles(final String buffer, final String translated, final File[] files, final List<CharSequence> candidates) {
+    protected int matchFiles(final String buffer, final String translated, final File[] files,
+                             final List<CharSequence> candidates, final String hyphenChar) {
         if (files == null) {
             return -1;
         }
 
-        int matches = 0;
 
-        // first pass: just count the matches
         for (File file : files) {
-            if (file.getAbsolutePath().startsWith(translated)) {
-                matches++;
+            if (completeFolders && !file.isDirectory()) {
+                continue;
             }
-        }
-        for (File file : files) {
             if (file.getAbsolutePath().startsWith(translated)) {
-                CharSequence name = file.getName() + (matches == 1 && file.isDirectory() ? separator() : " ");
-                candidates.add(render(file, name).toString());
+                CharSequence name = file.getName();
+                /*
+                 * Basically we need an opening hyphen if there is none yet, or there
+                 * is one that we will overwrite with completion.
+                 *
+                 * We need a closing hyphen when completion is complete (no further path possible)
+                 */
+                String renderedName = render(name, hyphenChar,
+                        /*
+                         * completion should possibly render a beginning hyphen if there is none in the buffer, or
+                         * there is but there is no foldername involved in the path
+                         */
+                        hyphenChar == null || buffer.lastIndexOf(separator()) < 0,
+                        /*
+                         * Completion should possibly render a final hyphen if we complete a file,
+                         * or we complete a folder, we only try to complete folders, and there are no subfolders
+                         */
+                        !file.isDirectory() || (completeFolders && !hasSubfolders(file))).toString();
+                if (file.isDirectory()) {
+                    // add first candidate folder with separator for file/subfolder
+                    if (!completeFolders || hasSubfolders(file)) {
+                        // render separator only if has subfolders
+                        candidates.add(renderedName + separator());
+                    }
+                    // add second candidate (folder itself)
+                    if (completeFolders) {
+                        // add hyphen unless already added before
+                        if (hasSubfolders(file)) {
+                            if (hyphenChar != null) {
+                                renderedName += hyphenChar;
+                            } else if (renderedName.startsWith("'") || renderedName.startsWith("\"")) {
+                                renderedName += renderedName.charAt(0);
+                            }
+                        }
+                        if (printSpaceAfterFullCompletion) {
+                            renderedName += ' ';
+                        }
+                        candidates.add(renderedName);
+                    }
+                } else {
+                    if (printSpaceAfterFullCompletion) {
+                        renderedName += ' ';
+                    }
+                    candidates.add(renderedName);
+                }
             }
         }
 
@@ -127,7 +212,46 @@ public class FileNameCompleter
         return index + separator().length();
     }
 
-    protected CharSequence render(final File file, final CharSequence name) {
+    protected boolean hasSubfolders(File dir) {
+        for (File file : dir.listFiles()) {
+            if (file.isDirectory()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param name
+     * @param hyphenChar force hyphenation with this if not null
+     * @return name in hyphens if it contains a blank
+     */
+    protected static CharSequence render(final CharSequence name, final String hyphenChar,
+                                         final boolean initialHyphen, final boolean finalHyphen) {
+        if (hyphenChar != null) {
+            return escapedNameInHyphens(name, hyphenChar, initialHyphen, finalHyphen);
+        }
+        if (name.toString().contains(" ")) {
+            return escapedNameInHyphens(name, "\'", initialHyphen, finalHyphen);
+        }
         return name;
+    }
+
+    /**
+     *
+     * @return name in hyphens Strings with hyphens and backslashes escaped
+     */
+    private static String escapedNameInHyphens(final CharSequence name, final CharSequence hyphen,
+                                               final boolean initialHyphen, final boolean finalHyphen) {
+        StringBuilder result = new StringBuilder(name.length() + 2 * hyphen.length());
+        if (initialHyphen) {
+            result.append(hyphen);
+        }
+        // need to escape every instance of chartoEscape, and every instance of the escape char backslash
+        result.append(name.toString().replace("\\", "\\\\").replace(hyphen, "\\" + hyphen));
+        if (finalHyphen) {
+            result.append(hyphen);
+        }
+        return result.toString();
     }
 }
