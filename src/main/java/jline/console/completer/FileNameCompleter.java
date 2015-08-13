@@ -151,6 +151,9 @@ public class FileNameCompleter
             if (!completeFiles && !file.isDirectory()) {
                 continue;
             }
+            if (ignoreFile(file)) {
+                continue;
+            }
             if (file.getAbsolutePath().startsWith(prefix)) {
                 String renderedName = render(file, file.getName()).toString();
                 if (file.isDirectory()) {
@@ -178,6 +181,11 @@ public class FileNameCompleter
         final int index = buffer.lastIndexOf(separator());
 
         return index + separator().length();
+    }
+
+    // hook to extend Filename COmpleter to exclude certain files / folders
+    protected boolean ignoreFile(File file) {
+        return false;
     }
 
     protected boolean hasSubfolders(File dir) {

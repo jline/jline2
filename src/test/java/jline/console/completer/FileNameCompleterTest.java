@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Tests for {@link FileNameCompleter}.
@@ -261,6 +261,25 @@ public class FileNameCompleterTest
         // completion must start on hyphen, not after hyphen!
         assertEquals(buffer.length(), completor.complete(buffer, 0, candidates));
         assertEqualSet(Arrays.asList(folder.getName() + File.separator, folder.getName()), candidates);
+    }
+
+    @Test
+    public void testCompletionIgnoreOne() throws IOException {
+        FileNameCompleter completor = new FileNameCompleter() {
+            @Override
+            protected boolean ignoreFile(File file) {
+                return file.getName().endsWith(".pdf");
+            }
+        };
+        String filename = "file.txt";
+        testFolder.newFile(filename);
+        String filename2 = "file.pdf";
+        testFolder.newFile(filename2);
+
+        String buffer = testFolder.getRoot().getAbsolutePath() +  File.separator;
+        List<CharSequence> candidates = new ArrayList<CharSequence>();
+        assertEquals(buffer.length(), completor.complete(buffer, 0, candidates));
+        assertEquals(Collections.singletonList(filename + " "), candidates);
     }
 
     @Test

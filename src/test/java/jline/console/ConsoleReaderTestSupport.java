@@ -116,7 +116,7 @@ public abstract class ConsoleReaderTestSupport
         assertEquals(expected, prevLine);
     }
 
-    protected void assertEqualSet(List l1, List l2) {
+    protected void assertEqualSet(List<?> l1, List<?> l2) {
         assertTrue(l1.containsAll(l2) && l2.containsAll(l1));
     }
 
