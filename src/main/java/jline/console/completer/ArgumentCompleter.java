@@ -155,10 +155,29 @@ public class ArgumentCompleter
             }
         }
 
-        int ret = completer.complete(list.getCursorArgument(), argpos, candidates);
+        List<CharSequence> subCandidates = new LinkedList<CharSequence>();
+        int ret = completer.complete(list.getCursorArgument(), argpos, subCandidates);
 
         if (ret == -1) {
             return -1;
+        }
+        if (list.argHyphen == null) {
+            // Since the completer does not know whether it has to escape or not, assume it has not escaped.
+            // what needs escaping is every char that would cause the completion create more than one argument.
+            for (CharSequence subCandidate : subCandidates) {
+                candidates.add(getDelimiter().escapeArgument(subCandidate));
+            }
+        } else {
+            for (CharSequence subCandidate : subCandidates) {
+                if (getDelimiter().isDelimiter(subCandidate, subCandidate.length() - 1)) {
+                    candidates.add(subCandidate.subSequence(0, subCandidate.length() - 1).toString()
+                            + list.argHyphen + subCandidate.charAt(subCandidate.length() - 1));
+                } else {
+                    // must not add hyphen as completion might not be finished,
+                    // e.g. filepath completion can go into next subfolder
+                    candidates.add(subCandidate.toString());
+                }
+            }
         }
 
         int pos = ret + list.getBufferPosition() - argpos;
@@ -211,6 +230,16 @@ public class ArgumentCompleter
          * @return          True if the character should be a delimiter
          */
         boolean isDelimiter(CharSequence buffer, int pos);
+
+        /**
+         * Returns a modification of argument where escaping characters have been added as necessary
+         * such that isDelimiter() is false for all characters but the last, which may be true or false
+         * (delimiting towards the following argument).
+         *
+         * @param argument  A string that represents an unescaped argument without trailing delimiters.
+         * @return          The argument escaped
+         */
+        CharSequence escapeArgument(CharSequence argument);
     }
 
     /**
@@ -292,11 +321,16 @@ public class ArgumentCompleter
                 // length of the current argument
                 argpos = arg.length();
             }
+            CharSequence argHyphen = null;
             if (arg.length() > 0) {
+                // still in open quote block
+                if (quoteStart >= 0) {
+                    argHyphen = buffer.subSequence(quoteStart, quoteStart + 1);
+                }
                 args.add(arg.toString());
             }
 
-            return new ArgumentList(args.toArray(new String[args.size()]), bindex, argpos, cursor);
+            return new ArgumentList(args.toArray(new String[args.size()]), bindex, argpos, cursor, argHyphen);
         }
 
         /**
@@ -359,6 +393,21 @@ public class ArgumentCompleter
             return isEscapeChar(buffer, pos - 1);
         }
 
+        public CharSequence escapeArgument(CharSequence argument) {
+            if (escapeChars == null || escapeChars.length == 0) {
+                return argument;
+            }
+            StringBuilder builder = new StringBuilder(argument.length());
+            for (int i = 0; (argument != null) && (i < argument.length() - 1); i++) {
+                if ((isDelimiterChar(argument, i)) || isEscapeChar(argument, i) || isQuoteChar(argument, i)) {
+                    builder.append(escapeChars[0]);
+                }
+                builder.append(argument.charAt(i));
+            }
+            builder.append(argument.charAt(argument.length() - 1));
+            return builder.toString();
+        }
+
         /**
          * Returns true if the character at the specified position if a delimiter. This method will only be called if
          * the character is not enclosed in any of the {@link #getQuoteChars}, and is not escaped by ant of the
@@ -396,6 +445,7 @@ public class ArgumentCompleter
      */
     public static class ArgumentList
     {
+
         private String[] arguments;
 
         private int cursorArgumentIndex;
@@ -404,17 +454,25 @@ public class ArgumentCompleter
 
         private int bufferPosition;
 
+        private final CharSequence argHyphen;
+
         /**
          * @param arguments             The array of tokens
          * @param cursorArgumentIndex   The token index of the cursor
          * @param argumentPosition      The position of the cursor in the current token
          * @param bufferPosition        The position of the cursor in the whole buffer
+         * @param argHyphen             The opening hyphen of last argument if not closed, else null
          */
-        public ArgumentList(final String[] arguments, final int cursorArgumentIndex, final int argumentPosition, final int bufferPosition) {
+        public ArgumentList(final String[] arguments, final int cursorArgumentIndex, final int argumentPosition, final int bufferPosition, final CharSequence argHyphen) {
             this.arguments = checkNotNull(arguments);
             this.cursorArgumentIndex = cursorArgumentIndex;
             this.argumentPosition = argumentPosition;
             this.bufferPosition = bufferPosition;
+            this.argHyphen = argHyphen;
+        }
+
+        public ArgumentList(final String[] arguments, final int cursorArgumentIndex, final int argumentPosition, final int bufferPosition) {
+            this(arguments, cursorArgumentIndex, argumentPosition, bufferPosition, null);
         }
 
         public void setCursorArgumentIndex(final int i) {
