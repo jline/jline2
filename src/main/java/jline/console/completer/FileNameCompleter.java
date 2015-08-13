@@ -38,9 +38,47 @@ import static jline.internal.Preconditions.checkNotNull;
 public class FileNameCompleter
     implements Completer
 {
-    // TODO: Handle files with spaces in them
 
     private static final boolean OS_IS_WINDOWS;
+
+    /**
+     * If true, will folders as final completion result
+     */
+    private boolean completeFolders = false;
+
+    /**
+     * If false, will not offer files
+     */
+    private boolean completeFiles = true;
+
+    /**
+     * whether to append a blank after full completion (depending on whether more arguments will follow this one)
+     */
+    private boolean printSpaceAfterFullCompletion = true;
+
+    public boolean getCompleteFolders() {
+        return completeFolders;
+    }
+
+    public void setCompleteFolders(boolean completeFolders) {
+        this.completeFolders = completeFolders;
+    }
+
+    public boolean getCompleteFiles() {
+        return completeFiles;
+    }
+
+    public void setCompleteFiles(boolean completeFiles) {
+        this.completeFiles = completeFiles;
+    }
+
+    public boolean getPrintSpaceAfterFullCompletion() {
+        return printSpaceAfterFullCompletion;
+    }
+
+    public void setPrintSpaceAfterFullCompletion(boolean printSpaceAfterFullCompletion) {
+        this.printSpaceAfterFullCompletion = printSpaceAfterFullCompletion;
+    }
 
     static {
         String os = Configuration.getOsName();
@@ -61,14 +99,15 @@ public class FileNameCompleter
 
         String translated = buffer;
 
-        File homeDir = getUserHome();
-
-        // Special character: ~ maps to the user's home directory
-        if (translated.startsWith("~" + separator())) {
-            translated = homeDir.getPath() + translated.substring(1);
-        }
-        else if (translated.startsWith("~")) {
-            translated = homeDir.getParentFile().getAbsolutePath();
+        // Special character: ~ maps to the user's home directory in most OSs
+        if (!OS_IS_WINDOWS && translated.startsWith("~")) {
+            File homeDir = getUserHome();
+            if (translated.startsWith("~" + separator())) {
+                translated = homeDir.getPath() + translated.substring(1);
+            }
+            else {
+                translated = homeDir.getParentFile().getAbsolutePath();
+            }
         }
         else if (!(new File(translated).isAbsolute())) {
             String cwd = getUserDir().getAbsolutePath();
@@ -102,29 +141,52 @@ public class FileNameCompleter
         return new File(".");
     }
 
-    protected int matchFiles(final String buffer, final String translated, final File[] files, final List<CharSequence> candidates) {
+    protected int matchFiles(final String buffer, final String prefix, final File[] files, final List<CharSequence> candidates) {
         if (files == null) {
             return -1;
         }
 
-        int matches = 0;
 
-        // first pass: just count the matches
         for (File file : files) {
-            if (file.getAbsolutePath().startsWith(translated)) {
-                matches++;
+            if (!completeFiles && !file.isDirectory()) {
+                continue;
             }
-        }
-        for (File file : files) {
-            if (file.getAbsolutePath().startsWith(translated)) {
-                CharSequence name = file.getName() + (matches == 1 && file.isDirectory() ? separator() : " ");
-                candidates.add(render(file, name).toString());
+            if (file.getAbsolutePath().startsWith(prefix)) {
+                String renderedName = render(file, file.getName()).toString();
+                if (file.isDirectory()) {
+                    // add first candidate folder with separator for file/subfolder
+                    if (completeFiles || hasSubfolders(file)) {
+                        // render separator only if has subfolders
+                        candidates.add(renderedName + separator());
+                    }
+                    // add second candidate (folder itself)
+                    if (completeFolders) {
+                        if (printSpaceAfterFullCompletion) {
+                            renderedName += ' ';
+                        }
+                        candidates.add(renderedName);
+                    }
+                } else {
+                    if (printSpaceAfterFullCompletion) {
+                        renderedName += ' ';
+                    }
+                    candidates.add(renderedName);
+                }
             }
         }
 
         final int index = buffer.lastIndexOf(separator());
 
         return index + separator().length();
+    }
+
+    protected boolean hasSubfolders(File dir) {
+        for (File file : dir.listFiles()) {
+            if (file.isDirectory()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected CharSequence render(final File file, final CharSequence name) {
