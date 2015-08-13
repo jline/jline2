@@ -379,6 +379,25 @@ public class FileNameCompleterTest
     }
 
     @Test
+    public void testCompletionIgnoreOne() throws IOException {
+        FileNameCompleter completor = new FileNameCompleter() {
+            @Override
+            protected boolean ignoreFile(File file) {
+                return file.getName().endsWith(".pdf");
+            }
+        };
+        String filename = "file.txt";
+        testFolder.newFile(filename);
+        String filename2 = "file.pdf";
+        testFolder.newFile(filename2);
+
+        String buffer = testFolder.getRoot().getAbsolutePath() +  File.separator;
+        List<CharSequence> candidates = new ArrayList<CharSequence>();
+        assertEquals(buffer.length(), completor.complete(buffer, 0, candidates));
+        assertEquals(Collections.singletonList(filename + " "), candidates);
+    }
+
+    @Test
     public void testMatchFiles_Unix() {
         if(! System.getProperty("os.name").startsWith("Windows")) {
             FileNameCompleter completer = new FileNameCompleter();
