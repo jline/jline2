@@ -669,11 +669,8 @@ public class ConsoleReader
             rawPrint(prompt);
         }
 
-        print(buf.buffer, 0, buf.length(), promptLen);
+        print(buf.buffer, 0, buf.cursor, promptLen);
 
-        if (buf.length() != buf.cursor) { // not at end of line
-            back(buf.length() - buf.cursor - 1);
-        }
         // force drawBuffer to check for weird wrap (after clear screen)
         drawBuffer();
     }
