@@ -32,11 +32,8 @@ public class ConsoleKeys {
 
     public ConsoleKeys(String appName, URL inputrcUrl) {
         keyMaps = KeyMap.keyMaps();
+        setVar("editing-mode", "emacs");
         loadKeys(appName, inputrcUrl);
-    }
-
-    protected boolean isViEditMode() {
-        return keys.isViKeyMap();
     }
 
     protected boolean setKeyMap (String name) {
@@ -58,10 +55,6 @@ public class ConsoleKeys {
 
     protected void setKeys(KeyMap keys) {
         this.keys = keys;
-    }
-
-    protected boolean getViEditMode() {
-        return keys.isViKeyMap ();
     }
 
     protected void loadKeys(String appName, URL inputrcUrl) {
@@ -127,13 +120,8 @@ public class ConsoleKeys {
                         if (args.startsWith("term=")) {
                             // TODO
                         } else if (args.startsWith("mode=")) {
-                            if (args.equalsIgnoreCase("mode=vi")) {
-                                parsing = isViEditMode();
-                            } else if (args.equals("mode=emacs")) {
-                                parsing = !isViEditMode();
-                            } else {
-                                parsing = false;
-                            }
+                            String mode = variables.get("editing-mode");
+                            parsing = args.substring("mode=".length()).equalsIgnoreCase(mode);
                         } else {
                             parsing = args.equalsIgnoreCase(appName);
                         }
