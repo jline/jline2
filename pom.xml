@@ -457,7 +457,7 @@
 					<execution>
 						<id>javadoc</id>
 						<goals>
-							<goal>javadoc:jar</goal>
+							<goal>jar</goal>
 						</goals>
 					</execution>
 				</executions>
