@@ -37,12 +37,27 @@ public class CandidateListCompletionHandler
     private boolean printSpaceAfterFullCompletion = true;
     private boolean stripAnsi;
 
+    /**
+     * if true, existing text after cursor matchinga completion to insert
+     * will not be pushed back behind the completion, but replaced
+     * by the completion
+     */
+    private boolean consumeMatchingSuffix = false;
+
     public boolean getPrintSpaceAfterFullCompletion() {
         return printSpaceAfterFullCompletion;
     }
 
     public void setPrintSpaceAfterFullCompletion(boolean printSpaceAfterFullCompletion) {
         this.printSpaceAfterFullCompletion = printSpaceAfterFullCompletion;
+    }
+
+    public boolean getConsumeMatchingSuffix() {
+        return consumeMatchingSuffix;
+    }
+
+    public void setConsumeMatchingSuffix(boolean consumeMatchingSuffix) {
+        this.consumeMatchingSuffix = consumeMatchingSuffix;
     }
 
     public boolean isStripAnsi() {
@@ -117,15 +132,53 @@ public class CandidateListCompletionHandler
         }
     }
 
-    public static void setBuffer(final ConsoleReader reader, final CharSequence value, final int offset) throws
+    public void setBuffer(final ConsoleReader reader, final CharSequence value, final int offset) throws
         IOException
     {
+        if (getConsumeMatchingSuffix()) {
+            // consume only if prefix matches
+            int commonPrefixLength = greatestCommonPrefixLength(value,
+                    reader.getCursorBuffer().buffer.toString().substring(offset));
+            if (commonPrefixLength == value.length()) {
+                // nothing to do other than advancing the cursor
+                reader.setCursorPosition(offset + value.length());
+                return;
+            }
+        }
+        int suffixStart = 0;
+        // backspace cursor to start of completion
         while ((reader.getCursorBuffer().cursor > offset) && reader.backspace()) {
-            // empty
+            suffixStart++;
+        }
+
+        if (getConsumeMatchingSuffix()) {
+            int currentVirtualPos = offset;
+            String currentBuffer = reader.getCursorBuffer().buffer.toString();
+            while (
+                    suffixStart < value.length() // value still has chars to delete
+                    && currentBuffer.length() > currentVirtualPos // buffer still has chars to delete
+                            // character to delete matches value suffix
+                    && currentBuffer.charAt(currentVirtualPos) == value.charAt(suffixStart)
+                            // do delete
+                    && reader.delete()) {
+                suffixStart ++;
+                currentVirtualPos++;
+            }
         }
 
         reader.putString(value);
         reader.setCursorPosition(offset + value.length());
+    }
+
+    static int greatestCommonPrefixLength(final CharSequence a, final CharSequence b) {
+        int minLength = Math.min(a.length(), b.length());
+        int i = 0;
+        for (; i < minLength; i++) {
+            if (a.charAt(i) != b.charAt(i)) {
+                break;
+            }
+        }
+        return i;
     }
 
     /**
