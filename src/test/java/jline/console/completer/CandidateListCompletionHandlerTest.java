@@ -33,6 +33,40 @@ public class CandidateListCompletionHandlerTest extends ConsoleReaderTestSupport
     }
 
     @Test
+    public void testCompleteOneCandidateInsert() throws Exception {
+        CandidateListCompletionHandler handler = new CandidateListCompletionHandler();
+        List<CharSequence> candidates = new ArrayList<CharSequence>();
+        candidates.add("foobar");
+        console.putString("foo");
+        console.setCursorPosition(0);
+        assertTrue(handler.complete(console, candidates, 0));
+        assertEquals("foobar foo", console.getCursorBuffer().toString());
+    }
+
+    @Test
+    public void testCompleteOneCandidateInsertMiddle() throws Exception {
+        CandidateListCompletionHandler handler = new CandidateListCompletionHandler();
+        List<CharSequence> candidates = new ArrayList<CharSequence>();
+        candidates.add("foo");
+        console.putString("the fis");
+        console.setCursorPosition(5);
+        assertTrue(handler.complete(console, candidates, 4));
+        assertEquals("the foo is", console.getCursorBuffer().toString());
+        assertEquals(8, console.getCursorBuffer().cursor);
+    }
+
+    @Test
+    public void testCompleteOneCandidateInsertMiddleWhitespace() throws Exception {
+        CandidateListCompletionHandler handler = new CandidateListCompletionHandler();
+        List<CharSequence> candidates = new ArrayList<CharSequence>();
+        candidates.add("foo");
+        console.putString("the f is");
+        console.setCursorPosition(5);
+        assertTrue(handler.complete(console, candidates, 4));
+        assertEquals("the foo is", console.getCursorBuffer().toString());
+    }
+
+    @Test
     public void testCompleteOneCandidatePrefix() throws Exception {
         CandidateListCompletionHandler handler = new CandidateListCompletionHandler();
         List<CharSequence> candidates = new ArrayList<CharSequence>();

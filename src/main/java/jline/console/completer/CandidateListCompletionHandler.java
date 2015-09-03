@@ -64,18 +64,25 @@ public class CandidateListCompletionHandler
         if (candidates.size() == 1) {
             String value = Ansi.stripAnsi(candidates.get(0).toString());
 
-            if (buf.cursor == buf.buffer.length()
-                    && printSpaceAfterFullCompletion
+            // no insert if the only candidate is the same as the current buffer
+            if (buf.length() >= pos + value.length() &&
+                    value.equals(buf.toString().substring(pos, pos + value.length()))) {
+                reader.setCursorPosition(pos + value.length());
+            } else {
+                setBuffer(reader, value, pos);
+            }
+
+            if (printSpaceAfterFullCompletion
                     && !value.endsWith(" ")) {
-                value += " ";
+                // at end of buffer or next char is not blank already
+                if ((reader.getCursorBuffer().cursor >= reader.getCursorBuffer().length() ||
+                        reader.getCursorBuffer().buffer.toString().charAt(reader.getCursorBuffer().cursor) != ' ')) {
+                    reader.putString(" ");
+                } else {
+                    // if blank existed, move beyond it
+                    reader.moveCursor(1);
+                }
             }
-
-            // fail if the only candidate is the same as the current buffer
-            if (value.equals(buf.toString())) {
-                return false;
-            }
-
-            setBuffer(reader, value, pos);
 
             return true;
         }
