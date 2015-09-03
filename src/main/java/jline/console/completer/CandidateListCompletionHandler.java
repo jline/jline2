@@ -63,28 +63,7 @@ public class CandidateListCompletionHandler
         // if there is only one completion, then fill in the buffer
         if (candidates.size() == 1) {
             String value = Ansi.stripAnsi(candidates.get(0).toString());
-
-            // no insert if the only candidate is the same as the current buffer
-            if (buf.length() >= pos + value.length() &&
-                    value.equals(buf.toString().substring(pos, pos + value.length()))) {
-                reader.setCursorPosition(pos + value.length());
-            } else {
-                setBuffer(reader, value, pos);
-            }
-
-            if (printSpaceAfterFullCompletion
-                    && !value.endsWith(" ")) {
-                // at end of buffer or next char is not blank already
-                if ((reader.getCursorBuffer().cursor >= reader.getCursorBuffer().length() ||
-                        reader.getCursorBuffer().buffer.toString().charAt(reader.getCursorBuffer().cursor) != ' ')) {
-                    reader.putString(" ");
-                } else {
-                    // if blank existed, move beyond it
-                    reader.moveCursor(1);
-                }
-            }
-
-            return true;
+            return completeSingleCandidate(reader, pos, buf, value);
         }
         else if (candidates.size() > 1) {
             String value = getUnambiguousCompletions(candidates);
@@ -97,6 +76,45 @@ public class CandidateListCompletionHandler
         reader.drawLine();
 
         return true;
+    }
+
+    protected boolean completeSingleCandidate(ConsoleReader reader, int pos, CursorBuffer buf, String value) throws IOException {
+        // no insert if the only candidate is the same as the current buffer
+        if (buf.length() >= pos + value.length() &&
+                value.equals(buf.toString().substring(pos, pos + value.length()))) {
+            reader.setCursorPosition(pos + value.length());
+        } else {
+            setBuffer(reader, value, pos);
+        }
+
+        if (printSpaceAfterFullCompletion
+                && !value.endsWith(" ")) {
+            doPrintSpaceAfterFullCOmpletion(reader);
+        }
+
+        return true;
+    }
+
+    /**
+     * This method is called after completing a candidate that
+     * does not end with a blank, when the option printSpaceAfterFullCompletion is true.
+     *
+     * The standard behavior is to insert a blank unless the next char is a blank,
+     * wherever the cursor is in the buffer, and to move the cursor beyond the
+     * inserted / existing blank.
+     *
+     * @param reader
+     * @throws IOException
+     */
+    protected void doPrintSpaceAfterFullCOmpletion(ConsoleReader reader) throws IOException {
+        // at end of buffer or next char is not blank already
+        if ((reader.getCursorBuffer().cursor >= reader.getCursorBuffer().length() ||
+                reader.getCursorBuffer().buffer.toString().charAt(reader.getCursorBuffer().cursor) != ' ')) {
+            reader.putString(" ");
+        } else {
+            // if blank existed, move beyond it
+            reader.moveCursor(1);
+        }
     }
 
     public static void setBuffer(final ConsoleReader reader, final CharSequence value, final int offset) throws
