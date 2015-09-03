@@ -22,5 +22,13 @@ import java.util.List;
  */
 public interface CompletionHandler
 {
+    /**
+     * execute completion, by showing candidates as alternatives, and possibly
+     * inserting a candidate at position, removing all characters between
+     * position and current cursol location.
+     *
+     * @param position start position in buffer for candidates
+     * @throws IOException
+     */
     boolean complete(ConsoleReader reader, List<CharSequence> candidates, int position) throws IOException;
 }
