@@ -3759,7 +3759,7 @@ public class ConsoleReader
                         showLines = height - 1;
                     }
 
-                    back(resources.getString("DISPLAY_MORE").length());
+                    tputs("carriage_return");
                     if (c == 'q') {
                         // cancel
                         break;
