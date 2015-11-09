@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import jline.internal.Configuration;
 import jline.internal.InfoCmp;
 import jline.internal.Log;
 import jline.internal.TerminalLineSettings;
@@ -81,7 +82,15 @@ public class UnixTerminal
         // Set the console to be character-buffered instead of line-buffered.
         // Make sure we're distinguishing carriage return from newline.
         // Allow ctrl-s keypress to be used (as forward search)
-        settings.set("-icanon min 1 -icrnl -inlcr -ixon");
+        //
+        // Please note that FreeBSD does not seem to support -icrnl and thus
+        // has to be handled separately. Otherwise the console will be "stuck"
+        // and will neither accept input nor print anything to stdout.
+        if (Configuration.getOsName().contains(TerminalFactory.FREEBSD)) {
+            settings.set("-icanon min 1 -inlcr -ixon");
+        } else {
+            settings.set("-icanon min 1 -icrnl -inlcr -ixon");
+        }
         settings.undef("dsusp");
 
         setEchoEnabled(false);
