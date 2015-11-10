@@ -37,6 +37,8 @@ public class TerminalFactory
 
     public static final String WINDOWS = "windows";
 
+    public static final String FREEBSD = "freebsd";
+
     public static final String NONE = "none";
 
     public static final String OFF = "off";
