@@ -47,7 +47,7 @@ Building
 
 ### Requirements
 
-* Maven 2+
+* Maven 3+
 * Java 5+
 
 Check out and build:
