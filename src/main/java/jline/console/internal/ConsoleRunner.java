@@ -12,6 +12,7 @@ import jline.console.ConsoleReader;
 import jline.console.completer.ArgumentCompleter;
 import jline.console.completer.Completer;
 import jline.console.history.FileHistory;
+import jline.console.history.PersistentHistory;
 import jline.internal.Configuration;
 
 import java.io.File;
@@ -80,6 +81,9 @@ public class ConsoleRunner
         finally {
             // just in case this main method is called from another program
             ConsoleReaderInputStream.restoreIn();
+            if (reader.getHistory() instanceof PersistentHistory) {
+                ((PersistentHistory) reader.getHistory()).flush();
+            }
         }
     }
  
