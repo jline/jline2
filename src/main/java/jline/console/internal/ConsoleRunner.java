@@ -51,7 +51,7 @@ public class ConsoleRunner
         String historyFileName = System.getProperty(ConsoleRunner.property, null);
  
         String pExpandEvents = System.getProperty(ConsoleRunner.propertyExpandEvents,
-                                                  null);
+                                                  "true");
 
         String mainClass = argList.remove(0);
         ConsoleReader reader = new ConsoleReader();
