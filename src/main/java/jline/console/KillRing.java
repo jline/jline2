@@ -152,7 +152,7 @@ public final class KillRing {
     private void prev() {
         head--;
         if (head == -1) {
-            int x = (slots.length - 1);
+            int x = slots.length - 1;
             for (; x >= 0; x--) {
                 if (slots[x] != null) {
                     break;

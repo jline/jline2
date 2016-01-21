@@ -174,7 +174,7 @@ public class NonBlockingInputStream
                 notify();
             }
             
-            boolean isInfinite = (timeout <= 0L);
+            boolean isInfinite = timeout <= 0L;
             
             /*
              * So the thread is currently doing the reading for us. So
