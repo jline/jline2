@@ -205,7 +205,7 @@ public class CandidateListCompletionHandler
     /**
      * @return true is all the elements of <i>candidates</i> start with <i>starts</i>
      */
-    private boolean startsWith(final String starts, final String[] candidates) {
+    private static boolean startsWith(final String starts, final String[] candidates) {
         for (String candidate : candidates) {
             if (!candidate.startsWith(starts)) {
                 return false;

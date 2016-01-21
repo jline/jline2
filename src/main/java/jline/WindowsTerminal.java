@@ -199,11 +199,11 @@ public class WindowsTerminal
     //
     // Native Bits
     //
-    private int getConsoleMode() {
+    private static int getConsoleMode() {
         return WindowsSupport.getConsoleMode();
     }
 
-    private void setConsoleMode(int mode) {
+    private static void setConsoleMode(int mode) {
         WindowsSupport.setConsoleMode(mode);
     }
 
@@ -291,15 +291,15 @@ public class WindowsTerminal
         return sb.toString().getBytes();
     }
 
-    private int getConsoleOutputCodepage() {
+    private static int getConsoleOutputCodepage() {
         return Kernel32.GetConsoleOutputCP();
     }
 
-    private int getWindowsTerminalWidth() {
+    private static int getWindowsTerminalWidth() {
         return WindowsSupport.getWindowsTerminalWidth();
     }
 
-    private int getWindowsTerminalHeight() {
+    private static int getWindowsTerminalHeight() {
         return WindowsSupport.getWindowsTerminalHeight();
     }
 
