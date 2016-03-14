@@ -92,7 +92,7 @@ public class CursorBuffer
         cursor += str.length();
 
         if (isOverTyping() && cursor < buffer.length()) {
-            buffer.delete(cursor, (cursor + str.length()));
+            buffer.delete(cursor, cursor + str.length());
         }
     }
 

@@ -148,7 +148,7 @@ public class UnixTerminal
             if (e instanceof InterruptedException) {
                 Thread.currentThread().interrupt();
             }
-            Log.error("Failed to ", (enabled ? "enable" : "disable"), " echo", e);
+            Log.error("Failed to ", enabled ? "enable" : "disable", " echo", e);
         }
     }
 

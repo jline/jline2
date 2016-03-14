@@ -173,7 +173,7 @@ public class ConsoleKeys {
                         && line.charAt(i) != ' ' && line.charAt(i) != '\t'
                         ; i++);
                 keySeq = line.substring(0, i);
-                equivalency = (i + 1 < line.length() && line.charAt(i) == ':' && line.charAt(i + 1) == '=');
+                equivalency = i + 1 < line.length() && line.charAt(i) == ':' && line.charAt(i + 1) == '=';
                 i++;
                 if (equivalency) {
                     i++;

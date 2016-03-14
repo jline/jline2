@@ -478,7 +478,7 @@ public class ConsoleReader
 
     public void setPrompt(final String prompt) {
         this.prompt = prompt;
-        this.promptLen = ((prompt == null) ? 0 : wcwidth(Ansi.stripAnsi(lastLine(prompt)), 0));
+        this.promptLen = (prompt == null) ? 0 : wcwidth(Ansi.stripAnsi(lastLine(prompt)), 0);
     }
 
     public String getPrompt() {
