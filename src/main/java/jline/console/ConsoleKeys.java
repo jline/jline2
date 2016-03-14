@@ -244,7 +244,7 @@ public class ConsoleKeys {
         }
     }
 
-    private String translateQuoted(String keySeq) {
+    private static String translateQuoted(String keySeq) {
         int i;
         String str = keySeq.substring( 1, keySeq.length() - 1 );
         keySeq = "";
@@ -330,7 +330,7 @@ public class ConsoleKeys {
         return keySeq;
     }
 
-    private char getKeyFromName(String name) {
+    private static char getKeyFromName(String name) {
         if ("DEL".equalsIgnoreCase(name) || "Rubout".equalsIgnoreCase(name)) {
             return 0x7f;
         } else if ("ESC".equalsIgnoreCase(name) || "Escape".equalsIgnoreCase(name)) {

@@ -284,7 +284,7 @@ public class ConsoleReader
         }
     }
 
-    private URL getInputRc() throws IOException {
+    private static URL getInputRc() throws IOException {
         String path = Configuration.getString(JLINE_INPUTRC);
         if (path == null) {
             File f = new File(Configuration.getUserHome(), INPUT_RC);
@@ -587,7 +587,7 @@ public class ConsoleReader
      * prompt is returned if no '\n' characters are present.
      * null is returned if prompt is null.
      */
-    private String lastLine(String str) {
+    private static String lastLine(String str) {
         if (str == null) return "";
         int last = str.lastIndexOf("\n");
 
@@ -1429,7 +1429,7 @@ public class ConsoleReader
         return ok;
     }
 
-    private char switchCase(char ch) {
+    private static char switchCase(char ch) {
         if (Character.isUpperCase(ch)) {
             return Character.toLowerCase(ch);
         }
@@ -1843,7 +1843,7 @@ public class ConsoleReader
      * @return 1 is square, 2 curly, 3 parent, or zero for none.  The value
      *   will be negated if it is the closing form of the bracket.
      */
-    private int getBracketType (char ch) {
+    private static int getBracketType (char ch) {
         switch (ch) {
             case '[': return  1;
             case ']': return -1;
@@ -3986,7 +3986,7 @@ public class ConsoleReader
      * @param c     The character to test
      * @return      True if it is a delimiter
      */
-    private boolean isDelimiter(final char c) {
+    private static boolean isDelimiter(final char c) {
         return !Character.isLetterOrDigit(c);
     }
 
@@ -3999,7 +3999,7 @@ public class ConsoleReader
      * @param c The character to check
      * @return true if the character is a whitespace
      */
-    private boolean isWhitespace(final char c) {
+    private static boolean isWhitespace(final char c) {
         return Character.isWhitespace (c);
     }
 
