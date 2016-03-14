@@ -82,6 +82,8 @@ public class ConsoleReader
 
     public static final String DEFAULT_INPUT_RC = "/etc/inputrc";
 
+    public static final String JLINE_EXPAND_EVENTS = "jline.expandevents";
+
     public static final char BACKSPACE = '\b';
 
     public static final char RESET_LINE = '\r';
@@ -108,7 +110,7 @@ public class ConsoleReader
     private String prompt;
     private int    promptLen;
 
-    private boolean expandEvents = true;
+    private boolean expandEvents = Configuration.getBoolean(JLINE_EXPAND_EVENTS, true);
 
     private boolean bellEnabled = !Configuration.getBoolean(JLINE_NOBELL, true);
 
