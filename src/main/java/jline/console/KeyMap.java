@@ -38,6 +38,11 @@ public class KeyMap {
         this(name, new Object[KEYMAP_LENGTH]);
     }
 
+    @Deprecated
+    public KeyMap(String name, boolean unused) {
+        this(name);
+    }
+
     protected KeyMap(String name, Object[] mapping) {
         this.mapping = mapping;
         this.name = name;
