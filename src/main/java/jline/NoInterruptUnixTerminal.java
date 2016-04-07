@@ -10,6 +10,8 @@ package jline;
 
 // Based on Apache Karaf impl
 
+import java.util.Arrays;
+
 /**
  * Non-interruptible (via CTRL-C) {@link UnixTerminal}.
  *
@@ -39,7 +41,7 @@ public class NoInterruptUnixTerminal
     @Override
     public void restore() throws Exception {
         if (intr != null) {
-            getSettings().set("intr", intr);
+            getSettings().set(Arrays.asList("intr", intr));
         }
         super.restore();
     }
