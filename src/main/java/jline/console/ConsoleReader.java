@@ -2421,8 +2421,9 @@ public class ConsoleReader
                 beforeReadLine(prompt, mask);
             }
 
-            if (prompt != null && prompt.length() > 0) {
-                out.write(prompt);
+            if (buffer != null && buffer.length() > 0
+                    || prompt != null && prompt.length() > 0) {
+                drawLine();
                 out.flush();
             }
 
