@@ -119,7 +119,7 @@
         <maven.compiler.source>1.5</maven.compiler.source>
         <maven.compiler.target>1.5</maven.compiler.target>
 
-        <jansi.version>1.11</jansi.version>
+        <jansi.version>1.12</jansi.version>
     </properties>
 
     <prerequisites>
