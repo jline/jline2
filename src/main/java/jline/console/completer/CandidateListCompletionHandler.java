@@ -117,7 +117,7 @@ public class CandidateListCompletionHandler
         if (distinct.size() > reader.getAutoprintThreshold()) {
             //noinspection StringConcatenation
             reader.println();
-            reader.print(Messages.DISPLAY_CANDIDATES.format(candidates.size()));
+            reader.print(Messages.DISPLAY_CANDIDATES.format(distinct.size()));
             reader.flush();
 
             int c;
@@ -207,7 +207,7 @@ public class CandidateListCompletionHandler
      */
     private static boolean startsWith(final String starts, final String[] candidates) {
         for (String candidate : candidates) {
-            if (!candidate.startsWith(starts)) {
+            if (!candidate.toLowerCase().startsWith(starts.toLowerCase())) {
                 return false;
             }
         }
