@@ -15,6 +15,7 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
@@ -70,7 +71,7 @@ import static jline.internal.Preconditions.checkNotNull;
  * @author <a href="mailto:jason@planet57.com">Jason Dillon</a>
  * @author <a href="mailto:gnodet@gmail.com">Guillaume Nodet</a>
  */
-public class ConsoleReader
+public class ConsoleReader implements Closeable
 {
     public static final String JLINE_NOBELL = "jline.nobell";
 
@@ -335,6 +336,13 @@ public class ConsoleReader
         }
     }
 
+    /**
+     * Shuts the console reader down.  The same as {@link #shutdown()}.
+     */
+    public void close() throws IOException {
+        this.shutdown();
+    }
+    
     /**
      * Shuts down the ConsoleReader if the JVM attempts to clean it up.
      */
