@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2012, the original author or authors.
+ * Copyright (c) 2002-2016, the original author or authors.
  *
  * This software is distributable under the BSD license. See the terms of the
  * BSD license in the documentation provided with this software.
@@ -35,5 +35,34 @@ public class ArgumentCompleterTest
         assertBuffer("ba foo", new Buffer("b foo").left().left().left().left().tab());
         assertBuffer("foo ba baz", new Buffer("foo b baz").left().left().left().left().tab());
         assertBuffer("foo foo baz", new Buffer("foo f baz").left().left().left().left().tab());
+    }
+
+    @Test
+    public void testMultiple() throws Exception {
+        ArgumentCompleter argCompleter = new ArgumentCompleter(
+                new StringsCompleter("bar", "baz"),
+                new StringsCompleter("foo"),
+                new StringsCompleter("ree"));
+        console.addCompleter(argCompleter);
+
+        assertBuffer("bar foo ", new Buffer("bar f").tab());
+        assertBuffer("baz foo ", new Buffer("baz f").tab());
+        // co completion of 2nd arg in strict mode when 1st argument is not matched exactly
+        assertBuffer("ba f", new Buffer("ba f").tab());
+        assertBuffer("bar fo r", new Buffer("bar fo r").tab());
+
+        argCompleter.setStrict(false);
+        assertBuffer("ba foo ", new Buffer("ba f").tab());
+        assertBuffer("ba fo ree ", new Buffer("ba fo r").tab());
+    }
+
+    @Test
+    public void test2() throws Exception {
+        console.addCompleter(
+                new ArgumentCompleter(
+                        new StringsCompleter("some", "any"),
+                        new StringsCompleter("foo", "bar", "baz")));
+
+        assertBuffer("some foo ", new Buffer("some fo").tab());
     }
 }

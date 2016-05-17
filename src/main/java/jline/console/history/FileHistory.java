@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2012, the original author or authors.
+ * Copyright (c) 2002-2016, the original author or authors.
  *
  * This software is distributable under the BSD license. See the terms of the
  * BSD license in the documentation provided with this software.
@@ -40,7 +40,7 @@ public class FileHistory
     private final File file;
 
     public FileHistory(final File file) throws IOException {
-        this.file = checkNotNull(file);
+        this.file = checkNotNull(file).getAbsoluteFile();
         load(file);
     }
 
@@ -52,7 +52,15 @@ public class FileHistory
         checkNotNull(file);
         if (file.exists()) {
             Log.trace("Loading history from: ", file);
-            load(new FileReader(file));
+            FileReader reader = null;
+            try{
+                reader = new FileReader(file);
+                load(reader);
+            } finally{
+                if(reader != null){
+                    reader.close();
+                }
+            }
         }
     }
 

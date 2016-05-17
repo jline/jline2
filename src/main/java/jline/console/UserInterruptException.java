@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2012, the original author or authors.
+ * Copyright (c) 2002-2016, the original author or authors.
  *
  * This software is distributable under the BSD license. See the terms of the
  * BSD license in the documentation provided with this software.
@@ -17,6 +17,8 @@ package jline.console;
 public class UserInterruptException
     extends RuntimeException
 {
+    private static final long serialVersionUID = 6172232572140736750L;
+
     private final String partialLine;
 
     public UserInterruptException(String partialLine)

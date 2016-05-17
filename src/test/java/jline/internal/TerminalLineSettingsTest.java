@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2012, the original author or authors.
+ * Copyright (c) 2002-2016, the original author or authors.
  *
  * This software is distributable under the BSD license. See the terms of the
  * BSD license in the documentation provided with this software.
@@ -20,8 +20,6 @@ import static org.junit.Assert.assertEquals;
  */
 public class TerminalLineSettingsTest
 {
-    private TerminalLineSettings settings;
-
     private final String linuxSttySample = "speed 38400 baud; rows 85; columns 244; line = 0;\n" +
             "intr = ^C; quit = ^\\; erase = ^?; kill = ^U; eof = ^D; eol = M-^?; eol2 = M-^?; swtch = M-^?; start = ^Q; stop = ^S; susp = ^Z; rprnt = ^R; werase = ^W; lnext = ^V; flush = ^O; min = 1; time = 0;\n" +
             "-parenb -parodd cs8 hupcl -cstopb cread -clocal -crtscts\n" +
@@ -119,7 +117,7 @@ public class TerminalLineSettingsTest
     @Test
     public void testGetConfig() throws Exception {
         if (!Configuration.getOsName().contains("win")) {
-            TerminalLineSettings settings = new TerminalLineSettings();
+            TerminalLineSettings settings = TerminalLineSettings.getSettings(TerminalLineSettings.DEFAULT_TTY);
             String config = settings.getConfig();
             System.out.println(config);
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2012, the original author or authors.
+ * Copyright (c) 2002-2016, the original author or authors.
  *
  * This software is distributable under the BSD license. See the terms of the
  * BSD license in the documentation provided with this software.
@@ -14,6 +14,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import jline.console.ConsoleReader;
+import jline.console.completer.AnsiStringsCompleter;
+import jline.console.completer.CandidateListCompletionHandler;
 import jline.console.completer.Completer;
 import jline.console.completer.FileNameCompleter;
 import jline.console.completer.StringsCompleter;
@@ -70,7 +72,11 @@ public class Example
                 }
                 else if (args[0].equals("color")) {
                     color = true;
-                    reader.setPrompt("\u001B[1mfoo\u001B[0m@bar\u001B[32m@baz\u001B[0m> ");
+                    reader.setPrompt("\u001B[42mfoo\u001B[0m@bar\u001B[32m@baz\u001B[0m> ");
+                    completors.add(new AnsiStringsCompleter("\u001B[1mfoo\u001B[0m", "bar", "\u001B[32mbaz\u001B[0m"));
+                    CandidateListCompletionHandler handler = new CandidateListCompletionHandler();
+                    handler.setStripAnsi(true);
+                    reader.setCompletionHandler(handler);
                 }
                 else {
                     usage();

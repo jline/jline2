@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright (c) 2002-2012, the original author or authors.
+    Copyright (c) 2002-2016, the original author or authors.
 
     This software is distributable under the BSD license. See the terms of the
     BSD license in the documentation provided with this software.
@@ -16,13 +16,13 @@
     <parent>
         <groupId>org.sonatype.oss</groupId>
         <artifactId>oss-parent</artifactId>
-        <version>7</version>
+        <version>9</version>
     </parent>
 
     <groupId>jline</groupId>
     <artifactId>jline</artifactId>
     <name>JLine</name>
-    <version>2.13-SNAPSHOT</version>
+    <version>2.15-SNAPSHOT</version>
 
     <licenses>
         <license>
@@ -116,12 +116,14 @@
         <build.number />
 
         <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
+        <maven.compiler.source>1.5</maven.compiler.source>
+        <maven.compiler.target>1.5</maven.compiler.target>
 
-        <jansi.version>1.11</jansi.version>
+        <jansi.version>1.12</jansi.version>
     </properties>
 
     <prerequisites>
-        <maven>2.2.1</maven>
+        <maven>3.0.0</maven>
     </prerequisites>
 
     <dependencies>
@@ -129,13 +131,33 @@
             <groupId>org.fusesource.jansi</groupId>
             <artifactId>jansi</artifactId>
             <version>${jansi.version}</version>
-            <!--<scope>provided</scope>-->
         </dependency>
 
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.10</version>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.easymock</groupId>
+            <artifactId>easymock</artifactId>
+            <version>3.3.1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+            <version>1.6.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-easymock</artifactId>
+            <version>1.6.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -146,19 +168,19 @@
             <extension>
                 <groupId>org.apache.maven.scm</groupId>
                 <artifactId>maven-scm-provider-gitexe</artifactId>
-                <version>1.8.1</version>
+                <version>1.9.4</version>
             </extension>
 
             <extension>
                 <groupId>org.apache.maven.scm</groupId>
                 <artifactId>maven-scm-manager-plexus</artifactId>
-                <version>1.8.1</version>
+                <version>1.9.4</version>
             </extension>
 
             <extension>
                 <groupId>com.github.stephenc.wagon</groupId>
                 <artifactId>wagon-gitsite</artifactId>
-                <version>0.4.1</version>
+                <version>0.5</version>
             </extension>
         </extensions>
 
@@ -205,18 +227,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>3.2</version>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.apache.maven.doxia</groupId>
-                            <artifactId>doxia-module-markdown</artifactId>
-                            <version>1.3</version>
-                        </dependency>
-                    </dependencies>
-                    <configuration>
-                        <inputEncoding>UTF-8</inputEncoding>
-                        <outputEncoding>UTF-8</outputEncoding>
-                    </configuration>
+                    <version>3.4</version>
                     <executions>
                         <execution>
                             <id>attach-descriptor</id>
@@ -230,9 +241,38 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.9</version>
+                    <version>2.10.3</version>
+					<configuration>
+	                    <additionalparam>
+							-Xdoclint:none
+	                    </additionalparam>
+						<failOnError>false</failOnError>
+					</configuration>
+                </plugin>
+
+                <plugin>
+                    <!-- This is not a real plugin. It exists only to provide feedback about maven plugins to the Eclipse m2e plugin -->
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
                     <configuration>
-                        <source>1.5</source>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.maven.plugins</groupId>
+                                        <artifactId>maven-enforcer-plugin</artifactId>
+                                        <versionRange>[1.0,)</versionRange>
+                                        <goals>
+                                            <goal>enforce</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
                     </configuration>
                 </plugin>
             </plugins>
@@ -242,7 +282,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.12</version>
+                <version>2.18.1</version>
                 <configuration>
                     <redirectTestOutputToFile>${maven.test.redirectTestOutputToFile}</redirectTestOutputToFile>
                     <!-- force use of property -->
@@ -266,17 +306,21 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.5</version>
+                <version>3.1</version>
                 <configuration>
-                    <source>1.5</source>
-                    <target>1.5</target>
+                    <showWarnings>true</showWarnings>
+                    <compilerArgs>
+                        <arg>-Xlint:all,-options</arg>
+                        <arg>-Werror</arg>
+                    </compilerArgs>
+                    <fork>true</fork>
                 </configuration>
             </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>2.1.2</version>
+                <version>2.4</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -290,7 +334,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>animal-sniffer-maven-plugin</artifactId>
-                <version>1.9</version>
+                <version>1.14</version>
                 <executions>
                     <execution>
                         <goals>
@@ -310,7 +354,7 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
-                <version>2.1.0</version>
+                <version>2.5.4</version>
                 <executions>
                     <execution>
                         <phase>process-classes</phase>
@@ -320,13 +364,12 @@
                         <configuration>
                             <instructions>
                                 <Export-Package>
-                                    jline;jline.console;jline.console.completer;jline.console.history;version:=${project.version};-noimport:=true,
+                                    jline.*;-noimport:=true,
                                     =org.fusesource.jansi;version=${jansi.version}
                                 </Export-Package>
                                 <Import-Package>
-                                    javax.swing;resolution:=optional
+                                    !javax.swing
                                 </Import-Package>
-                                <DynamicImport-Package>*</DynamicImport-Package>
                             </instructions>
                         </configuration>
                     </execution>
@@ -336,7 +379,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
+                <version>2.6</version>
                 <configuration>
                     <archive>
                         <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
@@ -354,14 +397,14 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-scm-plugin</artifactId>
-                <version>1.8.1</version>
+                <version>1.9.4</version>
             </plugin>
 
             <!-- include all the dependencies into the jar so it can run standalone -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>1.6</version>
+                <version>2.4.1</version>
                 <executions>
                     <execution>
                         <goals>
@@ -406,6 +449,19 @@
                     </execution>
                 </executions>
             </plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>javadoc</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 
             <!--
             mvn license:format -N
@@ -456,6 +512,27 @@
                     </mapping>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>1.4.1</version>
+                <executions>
+                    <execution>
+                        <id>enforce-maven</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>3.0</version>
+                                </requireMavenVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -467,7 +544,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>2.6</version>
+                <version>2.8</version>
                 <reportSets>
                     <reportSet>
                         <reports>
@@ -498,12 +575,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9</version>
+                <version>2.10.3</version>
                 <configuration>
                     <docletArtifact>
                         <groupId>com.google.doclava</groupId>
                         <artifactId>doclava</artifactId>
-                        <version>1.0.5</version>
+                        <version>1.0.6</version>
                     </docletArtifact>
                     <doclet>com.google.doclava.Doclava</doclet>
                     <source>1.5</source>
@@ -530,16 +607,13 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
-                <version>2.7.1</version>
-                <configuration>
-                    <targetJdk>1.5</targetJdk>
-                </configuration>
+                <version>3.5</version>
             </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jxr-plugin</artifactId>
-                <version>2.3</version>
+                <version>2.5</version>
                 <configuration>
                     <linkJavadoc>true</linkJavadoc>
                 </configuration>
@@ -556,13 +630,13 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
-                <version>2.5.2</version>
+                <version>3.0.1</version>
             </plugin>
 
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>cobertura-maven-plugin</artifactId>
-                <version>2.5.2</version>
+                <version>2.7</version>
             </plugin>
         </plugins>
     </reporting>

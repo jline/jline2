@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2012, the original author or authors.
+ * Copyright (c) 2002-2016, the original author or authors.
  *
  * This software is distributable under the BSD license. See the terms of the
  * BSD license in the documentation provided with this software.
@@ -49,7 +49,7 @@ class ConsoleReaderInputStream
     }
  
     private static class ConsoleEnumeration
-        implements Enumeration
+        implements Enumeration<InputStream>
     {
         private final ConsoleReader reader;
         private ConsoleLineInputStream next = null;
@@ -59,7 +59,7 @@ class ConsoleReaderInputStream
             this.reader = reader;
         }
  
-        public Object nextElement() {
+        public InputStream nextElement() {
             if (next != null) {
                 InputStream n = next;
                 prev = next;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2012, the original author or authors.
+ * Copyright (c) 2002-2016, the original author or authors.
  *
  * This software is distributable under the BSD license. See the terms of the
  * BSD license in the documentation provided with this software.
@@ -8,14 +8,23 @@
  */
 package jline.console;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 import jline.TerminalFactory;
 import jline.WindowsTerminal;
+import jline.console.completer.AggregateCompleter;
+import jline.console.completer.ArgumentCompleter;
+import jline.console.completer.Completer;
+import jline.console.completer.NullCompleter;
+import jline.console.completer.StringsCompleter;
 import jline.console.history.History;
 import jline.console.history.MemoryHistory;
 import jline.internal.Configuration;
@@ -558,7 +567,7 @@ public class ConsoleReaderTest
         try {
             ConsoleReader consoleReader = createConsole("Bash", new byte[0]);
             assertNotNull(consoleReader);
-            assertNotNull(consoleReader.getKeys().getBound("\u001b" + ((char)('V' - 'A' + 1))));
+            assertNotNull(consoleReader.getKeys().getBound("\u001b" + ((char) ('V' - 'A' + 1))));
 
         } finally {
             System.clearProperty(ConsoleReader.JLINE_INPUTRC);
@@ -571,7 +580,7 @@ public class ConsoleReaderTest
         try {
             ConsoleReader consoleReader = createConsole("Bash", new byte[0]);
             assertNotNull(consoleReader);
-            assertEquals("\u001bb\"\u001bf\"", consoleReader.getKeys().getBound(((char)('X' - 'A' + 1)) + "q"));
+            assertEquals("\u001bb\"\u001bf\"", consoleReader.getKeys().getBound(((char) ('X' - 'A' + 1)) + "q"));
         } finally {
             System.clearProperty(ConsoleReader.JLINE_INPUTRC);
         }
@@ -598,7 +607,74 @@ public class ConsoleReaderTest
         assertEquals("out should have received bell", ConsoleReader.KEYBOARD_BELL, baos.toByteArray()[0]);
     }
 
-    /**
+    @Test
+    public void testCallbacks() throws Exception {
+        final ConsoleReader consoleReader = createConsole("sample stringx\r\n");
+        consoleReader.addTriggeredAction('x', new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                consoleReader.getCursorBuffer().clear();
+            }
+        });
+        String line = consoleReader.readLine();
+        // The line would have "sample stringx" in it, if a callback to clear it weren't mapped to the 'x' key:
+        assertEquals("", line);
+    }
+
+    @Test
+    public void testComplete() throws Exception {
+        PipedInputStream in = new PipedInputStream();
+        PipedOutputStream out = new PipedOutputStream(in);
+        output = new ByteArrayOutputStream();
+
+        ConsoleReader console = new ConsoleReader(in, output);
+        Completer nil = new NullCompleter();
+        Completer read = new StringsCompleter("read");
+        Completer and = new StringsCompleter("and");
+        Completer save = new StringsCompleter("save");
+        Completer aggregator = new AggregateCompleter(
+                new ArgumentCompleter(read, and, save, nil)
+        );
+        console.addCompleter(aggregator);
+
+        out.write("read an\t\n".getBytes());
+
+        assertEquals("read and ", console.readLine());
+
+        out.write("read and\033[D\033[D\t\n".getBytes());
+
+        assertEquals("read andnd", console.readLine());
+
+        out.close();
+    }
+
+    @Test
+    public void testDefaultBuffer() throws Exception {
+        ConsoleReader consoleReader = createConsole("\r\n");
+        assertNotNull(consoleReader);
+        String line = consoleReader.readLine(null, null, "foo");
+        assertEquals("foo", line);
+    }
+
+    @Test
+    public void testReadBinding() throws Exception {
+        ConsoleReader consoleReader = createConsole("abcde");
+        assertNotNull(consoleReader);
+
+        KeyMap map = new KeyMap("custom");
+        map.bind("bc", 1l);
+        map.bind("e", 2l);
+
+        Object b = consoleReader.readBinding(map);
+        assertEquals(1l, b);
+        assertEquals("bc", consoleReader.getLastBinding());
+        b = consoleReader.readBinding(map);
+        assertEquals(2l, b);
+        assertEquals("e", consoleReader.getLastBinding());
+        b = consoleReader.readBinding(map);
+        assertNull(b);
+    }
+
+  /**
      * Windows keys.
      * <p/>
      * Constants copied <tt>wincon.h</tt>.

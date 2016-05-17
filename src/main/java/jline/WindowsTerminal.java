@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2012, the original author or authors.
+ * Copyright (c) 2002-2016, the original author or authors.
  *
  * This software is distributable under the BSD license. See the terms of the
  * BSD license in the documentation provided with this software.
@@ -23,7 +23,6 @@ import static jline.WindowsTerminal.ConsoleMode.ENABLE_ECHO_INPUT;
 import static jline.WindowsTerminal.ConsoleMode.ENABLE_LINE_INPUT;
 import static jline.WindowsTerminal.ConsoleMode.ENABLE_PROCESSED_INPUT;
 import static jline.WindowsTerminal.ConsoleMode.ENABLE_WINDOW_INPUT;
-import static jline.internal.Preconditions.checkNotNull;
 
 /**
  * Terminal implementation for Microsoft Windows. Terminal initialization in
@@ -200,11 +199,11 @@ public class WindowsTerminal
     //
     // Native Bits
     //
-    private int getConsoleMode() {
+    private static int getConsoleMode() {
         return WindowsSupport.getConsoleMode();
     }
 
-    private void setConsoleMode(int mode) {
+    private static void setConsoleMode(int mode) {
         WindowsSupport.setConsoleMode(mode);
     }
 
@@ -227,9 +226,12 @@ public class WindowsTerminal
                 if (keyEvent.uchar > 0) {
                     // support some C1 control sequences: ALT + [@-_] (and [a-z]?) => ESC <ascii>
                     // http://en.wikipedia.org/wiki/C0_and_C1_control_codes#C1_set
-                    int altState = KEY_EVENT_RECORD.LEFT_ALT_PRESSED | KEY_EVENT_RECORD.RIGHT_ALT_PRESSED;
+                    final int altState = KEY_EVENT_RECORD.LEFT_ALT_PRESSED | KEY_EVENT_RECORD.RIGHT_ALT_PRESSED;
+                    // Pressing "Alt Gr" is translated to Alt-Ctrl, hence it has to be checked that Ctrl is _not_ pressed,
+                    // otherwise inserting of "Alt Gr" codes on non-US keyboards would yield errors
+                    final int ctrlState = KEY_EVENT_RECORD.LEFT_CTRL_PRESSED | KEY_EVENT_RECORD.RIGHT_CTRL_PRESSED;
                     if (((keyEvent.uchar >= '@' && keyEvent.uchar <= '_') || (keyEvent.uchar >= 'a' && keyEvent.uchar <= 'z'))
-                        && (keyEvent.controlKeyState & altState) != 0) {
+                        && ((keyEvent.controlKeyState & altState) != 0) && ((keyEvent.controlKeyState & ctrlState) == 0)) {
                         sb.append('\u001B'); // ESC
                     }
 
@@ -289,15 +291,15 @@ public class WindowsTerminal
         return sb.toString().getBytes();
     }
 
-    private int getConsoleOutputCodepage() {
+    private static int getConsoleOutputCodepage() {
         return Kernel32.GetConsoleOutputCP();
     }
 
-    private int getWindowsTerminalWidth() {
+    private static int getWindowsTerminalWidth() {
         return WindowsSupport.getWindowsTerminalWidth();
     }
 
-    private int getWindowsTerminalHeight() {
+    private static int getWindowsTerminalHeight() {
         return WindowsSupport.getWindowsTerminalHeight();
     }
 

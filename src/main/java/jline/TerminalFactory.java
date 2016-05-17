@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2012, the original author or authors.
+ * Copyright (c) 2002-2016, the original author or authors.
  *
  * This software is distributable under the BSD license. See the terms of the
  * BSD license in the documentation provided with this software.
@@ -8,14 +8,13 @@
  */
 package jline;
 
+import java.lang.reflect.Constructor;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
 import jline.internal.Configuration;
 import jline.internal.Log;
-import jline.internal.Preconditions;
-
 import static jline.internal.Preconditions.checkNotNull;
 
 /**
@@ -32,9 +31,13 @@ public class TerminalFactory
 
     public static final String UNIX = "unix";
 
+    public static final String OSV = "osv";
+
     public static final String WIN = "win";
 
     public static final String WINDOWS = "windows";
+
+    public static final String FREEBSD = "freebsd";
 
     public static final String NONE = "none";
 
@@ -45,15 +48,28 @@ public class TerminalFactory
     private static Terminal term = null;
 
     public static synchronized Terminal create() {
+    	return create(null);
+    }
+        
+    public static synchronized Terminal create(String ttyDevice) {
         if (Log.TRACE) {
             //noinspection ThrowableInstanceNeverThrown
             Log.trace(new Throwable("CREATE MARKER"));
         }
 
-        String type = Configuration.getString(JLINE_TERMINAL, AUTO);
-        if ("dumb".equals(System.getenv("TERM"))) {
-            type = "none";
-            Log.debug("$TERM=dumb; setting type=", type);
+        String type  = Configuration.getString(JLINE_TERMINAL);
+        if (type == null) {
+            type = AUTO;
+            if ("dumb".equals(System.getenv("TERM"))) {
+                // emacs communicates with shell through a 'dumb' terminal
+                // but sets these env variables to let programs know
+                // it is ok to send ANSI control sequences
+                String emacs = System.getenv("EMACS");
+                String insideEmacs = System.getenv("INSIDE_EMACS");
+                if (emacs == null || insideEmacs == null) {
+                    type = NONE;
+                }
+            }
         }
 
         Log.debug("Creating terminal; type=", type);
@@ -65,7 +81,10 @@ public class TerminalFactory
             if (tmp.equals(UNIX)) {
                 t = getFlavor(Flavor.UNIX);
             }
-            else if (tmp.equals(WIN) | tmp.equals(WINDOWS)) {
+            else if (tmp.equals(OSV)) {
+                t = getFlavor(Flavor.OSV);
+            }
+            else if (tmp.equals(WIN) || tmp.equals(WINDOWS)) {
                 t = getFlavor(Flavor.WINDOWS);
             }
             else if (tmp.equals(NONE) || tmp.equals(OFF) || tmp.equals(FALSE)) {
@@ -77,8 +96,10 @@ public class TerminalFactory
                     Flavor flavor = Flavor.UNIX;
                     if (os.contains(WINDOWS)) {
                         flavor = Flavor.WINDOWS;
+                    } else if (System.getenv("OSV_CPUS") != null) {
+                        flavor = Flavor.OSV;
                     }
-                    t = getFlavor(flavor);
+                    t = getFlavor(flavor, ttyDevice);
                 }
                 else {
                     try {
@@ -123,6 +144,7 @@ public class TerminalFactory
         AUTO,
         WINDOWS,
         UNIX,
+        OSV,
         NONE
     }
 
@@ -143,7 +165,8 @@ public class TerminalFactory
     public static enum Flavor
     {
         WINDOWS,
-        UNIX
+        UNIX,
+        OSV
     }
 
     private static final Map<Flavor, Class<? extends Terminal>> FLAVORS = new HashMap<Flavor, Class<? extends Terminal>>();
@@ -151,22 +174,46 @@ public class TerminalFactory
     static {
         registerFlavor(Flavor.WINDOWS, AnsiWindowsTerminal.class);
         registerFlavor(Flavor.UNIX, UnixTerminal.class);
+        registerFlavor(Flavor.OSV, OSvTerminal.class);
     }
 
-    public static synchronized Terminal get() {
+    public static synchronized Terminal get(String ttyDevice) {
+    	// The code is assuming we've got only one terminal per process.
+    	// Continuing this assumption, if this terminal is already initialized,
+    	// we don't check if it's using the same tty line either. Both assumptions
+    	// are a bit crude. TODO: check single terminal assumption.
         if (term == null) {
-            term = create();
+            term = create(ttyDevice);
         }
         return term;
     }
+    
+    public static synchronized Terminal get() {
+        return get(null);
+    }
 
     public static Terminal getFlavor(final Flavor flavor) throws Exception {
+    	return getFlavor(flavor, null);
+    }
+    
+    public static Terminal getFlavor(final Flavor flavor, String ttyDevice) throws Exception {
         Class<? extends Terminal> type = FLAVORS.get(flavor);
+        Terminal result = null;
         if (type != null) {
-            return type.newInstance();
+        	if (ttyDevice != null) {
+        		Constructor<?> ttyDeviceConstructor = type.getConstructor(String.class);
+        		if (ttyDeviceConstructor != null) {
+        			result = (Terminal) ttyDeviceConstructor.newInstance(ttyDevice);
+        		} else {
+        			result = type.newInstance();
+        		}
+        	} else {
+                result = type.newInstance();
+        	}
+        } else {
+            throw new InternalError();
         }
-
-        throw new InternalError();
+        return result;
     }
 
     public static void registerFlavor(final Flavor flavor, final Class<? extends Terminal> type) {
