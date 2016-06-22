@@ -8,6 +8,8 @@
     http://www.opensource.org/licenses/bsd-license.php
 
 -->
+[![Build Status](https://travis-ci.org/jline/jline2.svg?branch=master)](https://travis-ci.org/jline/jline2)
+
 Description
 -----------
 
