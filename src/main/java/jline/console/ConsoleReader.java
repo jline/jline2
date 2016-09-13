@@ -2440,8 +2440,8 @@ public class ConsoleReader implements Closeable
                 return readLineSimple();
             }
 
-            if (handleUserInterrupt && (terminal instanceof UnixTerminal)) {
-                ((UnixTerminal) terminal).disableInterruptCharacter();
+            if (handleUserInterrupt) {
+                terminal.disableInterruptCharacter();
             }
             if (handleLitteralNext && (terminal instanceof UnixTerminal)) {
                 ((UnixTerminal) terminal).disableLitteralNextCharacter();
@@ -3197,8 +3197,8 @@ public class ConsoleReader implements Closeable
             if (!terminal.isSupported()) {
                 afterReadLine();
             }
-            if (handleUserInterrupt && (terminal instanceof UnixTerminal)) {
-                ((UnixTerminal) terminal).enableInterruptCharacter();
+            if (handleUserInterrupt) {
+                terminal.enableInterruptCharacter();
             }
         }
     }
