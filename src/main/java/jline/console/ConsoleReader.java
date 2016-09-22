@@ -330,17 +330,20 @@ public class ConsoleReader implements Closeable
      * have completed using the reader as it shuts down and cleans up resources
      * that would otherwise be "leaked".
      */
-    public void shutdown() {
+    @Override
+    public void close() {
         if (in != null) {
             in.shutdown();
         }
     }
 
     /**
-     * Shuts the console reader down.  The same as {@link #shutdown()}.
+     * Shuts the console reader down.  The same as {@link #close()}.
+     * @deprecated Use {@link #close()} instead.
      */
-    public void close() throws IOException {
-        this.shutdown();
+    @Deprecated
+    public void shutdown() {
+        this.close();
     }
     
     /**
@@ -349,7 +352,7 @@ public class ConsoleReader implements Closeable
     @Override
     protected void finalize() throws Throwable {
         try {
-            shutdown();
+            close();
         }
         finally {
             super.finalize();
