@@ -112,6 +112,12 @@ public abstract class TerminalSupport
         Log.debug("Echo enabled: ", enabled);
     }
 
+    public void disableInterruptCharacter() {
+    }
+
+    public void enableInterruptCharacter() {
+    }
+
     public InputStream wrapInIfNeeded(InputStream in) throws IOException {
         return in;
     }
