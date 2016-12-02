@@ -12,6 +12,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.FileNotFoundException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
@@ -49,9 +50,12 @@ public class Configuration
         try {
             loadProperties(url, props);
         }
+        catch (FileNotFoundException e) {
+            // debug here and no stack trace, as this can happen normally if default jline.rc file is missing
+            Log.debug("Unable to read configuration: ", e.toString());
+        }
         catch (IOException e) {
-            // debug here instead of warn, as this can happen normally if default jline.rc file is missing
-            Log.debug("Unable to read configuration from: ", url, e);
+            Log.warn("Unable to read configuration from: ", url, e);
         }
         return props;
     }
