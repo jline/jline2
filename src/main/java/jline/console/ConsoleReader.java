@@ -682,7 +682,7 @@ public class ConsoleReader implements Closeable
             rawPrint(prompt);
         }
 
-        print(buf.buffer, 0, buf.cursor, promptLen);
+        fmtPrint(buf.buffer, 0, buf.cursor, promptLen);
 
         // force drawBuffer to check for weird wrap (after clear screen)
         drawBuffer();
@@ -894,7 +894,7 @@ public class ConsoleReader implements Closeable
         }
         String result = sb.toString();
         if (!str.equals(result)) {
-            print(result);
+            fmtPrint(result, getCursorPosition());
             println();
             flush();
         }
@@ -910,7 +910,7 @@ public class ConsoleReader implements Closeable
         buf.write(str);
         if (mask == null) {
             // no masking
-            print(str, pos);
+            fmtPrint(str, pos);
         } else if (mask == NULL_MASK) {
             // don't print anything
         } else {
@@ -936,7 +936,7 @@ public class ConsoleReader implements Closeable
                     nbChars = 0;
                 }
             } else {
-                print(buf.buffer, buf.cursor, buf.length());
+                fmtPrint(buf.buffer, buf.cursor, buf.length());
             }
         }
         int cursorPos = promptLen + wcwidth(buf.buffer, 0, buf.length(), promptLen);
@@ -3434,20 +3434,18 @@ public class ConsoleReader implements Closeable
     // Printing
     //
 
-    public static final String CR = Configuration.getLineSeparator();
-
     /**
      * Output the specified characters to the output stream without manipulating the current buffer.
      */
-    private int print(final CharSequence buff, int cursorPos) throws IOException {
-        return print(buff, 0, buff.length(), cursorPos);
+    private int fmtPrint(final CharSequence buff, int cursorPos) throws IOException {
+        return fmtPrint(buff, 0, buff.length(), cursorPos);
     }
 
-    private int print(final CharSequence buff, int start, int end) throws IOException {
-        return print(buff, start, end, getCursorPosition());
+    private int fmtPrint(final CharSequence buff, int start, int end) throws IOException {
+        return fmtPrint(buff, start, end, getCursorPosition());
     }
 
-    private int print(final CharSequence buff, int start, int end, int cursorPos) throws IOException {
+    private int fmtPrint(final CharSequence buff, int start, int end, int cursorPos) throws IOException {
         checkNotNull(buff);
         for (int i = start; i < end; i++) {
             char c = buff.charAt(i);
@@ -3477,7 +3475,7 @@ public class ConsoleReader implements Closeable
      * Output the specified string to the output stream (but not the buffer).
      */
     public void print(final CharSequence s) throws IOException {
-        print(s, getCursorPosition());
+        rawPrint(s.toString());
     }
 
     public void println(final CharSequence s) throws IOException {
