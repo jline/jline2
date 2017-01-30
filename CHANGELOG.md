@@ -8,6 +8,14 @@
     http://www.opensource.org/licenses/bsd-license.php
 
 -->
+## Unreleased
+* #277: Allow setting max history-size. `FileHistory` allows delayed
+  init (to allow setMaxSize to take effect) and `ConsoleReader`
+  exposes ability to read inputrc settings.
+
+## [JLine 2.14.3][2_14_3]
+* (unrecorded)
+
 ## [Jline 2.9][2_9]
 [2_9]: https://oss.sonatype.org/content/groups/public/jline/jline/2.9
                                                                      

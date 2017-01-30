@@ -287,7 +287,11 @@ public class ConsoleReader implements Closeable
         }
     }
 
-    private static URL getInputRc() throws IOException {
+    /**
+     * Retrieve the URL for the inputrc configuration file in effect. Intended
+     * use is for instantiating ConsoleKeys, to read inputrc variables.
+     */
+    public static URL getInputRc() throws IOException {
         String path = Configuration.getString(JLINE_INPUTRC);
         if (path == null) {
             File f = new File(Configuration.getUserHome(), INPUT_RC);
