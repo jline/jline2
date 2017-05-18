@@ -202,6 +202,13 @@ public class KeyMap {
         bind( map, "\0340P", Operation.NEXT_HISTORY );
         bind( map, "\0340M", Operation.FORWARD_CHAR );
         bind( map, "\0340K", Operation.BACKWARD_CHAR );
+
+        // Linux
+        bind( map, "\033[1;5D", Operation.BACKWARD_WORD );
+        bind( map, "\033[1;5C", Operation.FORWARD_WORD );
+        bind( map, "\033[1;5A", null );
+        bind( map, "\033[1;5B", null );
+
     }
 
 //    public boolean isConvertMetaCharsToAscii() {
