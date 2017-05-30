@@ -34,4 +34,19 @@ public class InfoCmpTest {
         assertEquals(12, bools.size());
         assertTrue(strings.containsKey("acsc"));
     }
+
+    @Test
+    public void testInfoCmpWithHexa() {
+        Set<String> bools = new HashSet<String>();
+        Map<String, Integer> ints = new HashMap<String, Integer>();
+        Map<String, String> strings = new HashMap<String, String>();
+        String infocmp = "xterm-256color|xterm with 256 colors,\n" +
+                "\tam, bce, ccc, km, mc5i, mir, msgr, npc, xenl,\n" +
+                "\tcolors#0x100, cols#80, it#8, lines#24, pairs#0x7fff,\n" +
+                "\tacsc=``aaffggiijjkkllmmnnooppqqrrssttuuvvwwxxyyzz{{||}}~~,\n" +
+                "\tbel=^G, blink=\\E[5m, bold=\\E[1m, cbt=\\E[Z, civis=\\E[?25l\n";
+        InfoCmp.parseInfoCmp(infocmp, bools, ints, strings);
+        assertEquals(0x100, (int) ints.get("max_colors"));
+        assertEquals(0x7fff, (int) ints.get("max_pairs"));
+    }
 }

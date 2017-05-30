@@ -56,7 +56,12 @@ public class InfoCmp {
                     int index = cap.indexOf('#');
                     String key = cap.substring(0, index);
                     String val = cap.substring(index + 1);
-                    int iVal = Integer.valueOf(val);
+                    int iVal;
+                    if (val.startsWith("0x")) {
+                        iVal = Integer.parseInt(val.substring(2), 16);
+                    } else {
+                        iVal = Integer.parseInt(val);
+                    }
                     for (String name : getNames(key)) {
                         ints.put(name, iVal);
                     }
