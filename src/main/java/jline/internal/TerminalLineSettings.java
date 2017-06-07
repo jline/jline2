@@ -15,7 +15,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -105,8 +109,8 @@ public final class TerminalLineSettings
         this.shCommand = Configuration.getString(JLINE_SH, DEFAULT_SH);
         this.ttyDevice = ttyDevice;
         this.useRedirect = SUPPORTS_REDIRECT && DEFAULT_TTY.equals(ttyDevice);
-        this.initialConfig = get("-g").trim();
-        this.config = get("-a");
+        this.initialConfig = get(Collections.singletonList("-g")).trim();
+        this.config = get(Collections.singletonList("-a"));
         this.configLastFetched = System.currentTimeMillis();
 
         Log.debug("Config: ", config);
@@ -135,27 +139,22 @@ public final class TerminalLineSettings
     }
 
     public void restore() throws IOException, InterruptedException {
-        set(initialConfig);
+        set(Collections.singletonList(initialConfig));
     }
 
-    public String get(final String args) throws IOException, InterruptedException {
+    public String get(final List<String> args) throws IOException, InterruptedException {
         checkNotNull(args);
         return stty(args);
     }
 
-    public void set(final String args) throws IOException, InterruptedException {
-        checkNotNull(args);
-        stty(args.split(" "));
-    }
-
-    public void set(final String... args) throws IOException, InterruptedException {
+    public void set(final List<String> args) throws IOException, InterruptedException {
         checkNotNull(args);
         stty(args);
     }
 
     public void undef(final String name) throws IOException, InterruptedException {
         checkNotNull(name);
-        stty(name, UNDEFINED);
+        stty(Arrays.asList(name, UNDEFINED));
     }
 
     /**
@@ -187,7 +186,7 @@ public final class TerminalLineSettings
         try {
             // tty properties are cached so we don't have to worry too much about getting term width/height
             if (config == null || currentTime - configLastFetched > 1000) {
-                config = get("-a");
+                config = get(Collections.singletonList("-a"));
             }
         } catch (Exception e) {
             if (e instanceof InterruptedException) {
@@ -275,14 +274,23 @@ public final class TerminalLineSettings
         }
     }
 
-    private String stty(final String... args) throws IOException, InterruptedException {
-        String[] s = new String[args.length + 1];
-        s[0] = sttyCommand;
-        System.arraycopy(args, 0, s, 1, args.length);
-        return exec(s);
+    private String stty(final List<String> args) throws IOException, InterruptedException {
+        ArrayList<String> newArgsList = new ArrayList<String>();
+        newArgsList.add(sttyCommand);
+        newArgsList.add(" "); // This is needed to be able to use jline with loadwatch (but it is not clear why).
+        for (String arg : args) {
+            newArgsList.add(arg);
+        }
+        return exec(newArgsList);
     }
 
-    private String exec(final String... cmd) throws IOException, InterruptedException {
+    /**
+     * @param cmd A list of strings. This makes sure the input for the ProcessBuilder() is correctly formatted.
+     * @return The result (as string) from the command that was executed.
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    private String exec(final List<String> cmd) throws IOException, InterruptedException {
         checkNotNull(cmd);
 
         Log.trace("Running: ", cmd);
@@ -296,16 +304,14 @@ public final class TerminalLineSettings
             }
         }
         if (p == null) {
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < cmd.length; i++) {
-                if (i > 0) {
-                    sb.append(' ');
-                }
-                sb.append(cmd[i]);
+            ArrayList<String> cmdList = new ArrayList<String>();
+            cmdList.add(shCommand);
+            cmdList.add("-c");
+            for (String s : cmd) {
+                cmdList.add(s);
             }
-            sb.append(" < ");
-            sb.append(ttyDevice);
-            p = new ProcessBuilder(shCommand, "-c", sb.toString()).start();
+            cmdList.add("< " + ttyDevice);
+            p = new ProcessBuilder(cmdList).start();
         }
 
         String result = waitAndCapture(p);

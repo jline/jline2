@@ -8,6 +8,8 @@
  */
 package jline;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -87,9 +89,9 @@ public class UnixTerminal
         // has to be handled separately. Otherwise the console will be "stuck"
         // and will neither accept input nor print anything to stdout.
         if (Configuration.getOsName().contains(TerminalFactory.FREEBSD)) {
-            settings.set("-icanon min 1 -inlcr -ixon");
+            settings.set(Arrays.asList("-icanon", "min 1", "-inlcr", "-ixon"));
         } else {
-            settings.set("-icanon min 1 -icrnl -inlcr -ixon");
+            settings.set(Arrays.asList("-icanon", "min 1", "-icrnl", "-inlcr", "-ixon"));
         }
         settings.undef("dsusp");
 
@@ -137,10 +139,10 @@ public class UnixTerminal
     public synchronized void setEchoEnabled(final boolean enabled) {
         try {
             if (enabled) {
-                settings.set("echo");
+                settings.set(Collections.singletonList("echo"));
             }
             else {
-                settings.set("-echo");
+                settings.set(Collections.singletonList("-echo"));
             }
             super.setEchoEnabled(enabled);
         }
@@ -173,7 +175,7 @@ public class UnixTerminal
     {
         try {
             if (intr != null) {
-                settings.set("intr", intr);
+                settings.set(Arrays.asList("intr", intr));
             }
         }
         catch (Exception e) {
@@ -205,7 +207,7 @@ public class UnixTerminal
     {
         try {
             if (lnext != null) {
-                settings.set("lnext", lnext);
+                settings.set(Arrays.asList("lnext", lnext));
             }
         }
         catch (Exception e) {
