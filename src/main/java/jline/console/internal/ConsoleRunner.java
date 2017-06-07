@@ -35,6 +35,10 @@ public class ConsoleRunner
 {
     public static final String property = "jline.history";
 
+    // To control expanding events. Disabling allows using '!=' in commands,
+    // which some programs use to mean not equals.
+    public static final String propertyExpandEvents = "jline.expandevents";
+
     // FIXME: This is really ugly... re-write this
 
     public static void main(final String[] args) throws Exception {
@@ -46,6 +50,9 @@ public class ConsoleRunner
  
         String historyFileName = System.getProperty(ConsoleRunner.property, null);
  
+        String pExpandEvents = System.getProperty(ConsoleRunner.propertyExpandEvents,
+                                                  "true");
+
         String mainClass = argList.remove(0);
         ConsoleReader reader = new ConsoleReader();
  
@@ -58,6 +65,15 @@ public class ConsoleRunner
                 String.format(".jline-%s.history", mainClass))));
         }
  
+        if ("true".equalsIgnoreCase(pExpandEvents))
+        {
+            reader.setExpandEvents(true);
+        }
+        else
+        {
+            reader.setExpandEvents(false);
+        }
+
         String completors = System.getProperty(ConsoleRunner.class.getName() + ".completers", "");
         List<Completer> completorList = new ArrayList<Completer>();
  
