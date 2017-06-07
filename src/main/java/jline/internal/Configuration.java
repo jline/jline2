@@ -62,7 +62,13 @@ public class Configuration
 
     private static void loadProperties(final URL url, final Properties props) throws IOException {
         Log.debug("Loading properties from: ", url);
-        InputStream input = url.openStream();
+        InputStream input;
+        try {
+            input = url.openStream();
+        } catch (IOException e) {
+            Log.debug("Could not load properties from " + url + " : " + e.getMessage());
+            return;
+        }
         try {
             props.load(new BufferedInputStream(input));
         }
