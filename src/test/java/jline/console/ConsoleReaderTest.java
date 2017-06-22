@@ -106,6 +106,19 @@ public class ConsoleReaderTest
     }
 
     @Test
+    public void testReadlineOutputsThePlatformLineSeparator() throws Exception {
+        ConsoleReader consoleReader = createConsole("Sample String\r\n");
+        assertNotNull(consoleReader);
+        String line = consoleReader.readLine();
+        String out = output.toString();
+        if (TerminalFactory.get() instanceof WindowsTerminal) {
+            assertEquals("Sample String\r\n", out);
+        } else {
+            assertEquals("Sample String\n", out);
+        }
+    }
+
+    @Test
     public void testReadlineWithUnicode() throws Exception {
         System.setProperty("input.encoding", "UTF-8");
         ConsoleReader consoleReader = createConsole("\u6771\u00E9\u00E8\r\n");

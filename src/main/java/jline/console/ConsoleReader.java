@@ -28,6 +28,7 @@ import java.io.Writer;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.lang.System;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
@@ -3483,12 +3484,13 @@ public class ConsoleReader implements Closeable
         println();
     }
 
+    private static final String LINE_SEPARATOR = System.getProperty("line.separator");
+
     /**
      * Output a platform-dependant newline.
      */
     public void println() throws IOException {
-        tputs("carriage_return");
-        rawPrint('\n');
+        rawPrint(LINE_SEPARATOR);
     }
 
     /**
