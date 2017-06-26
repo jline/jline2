@@ -78,6 +78,8 @@ public interface History
         int index();
 
         CharSequence value();
+        
+        long timestamp();
     }
 
     ListIterator<Entry> entries(int index);

@@ -8,6 +8,7 @@
  */
 package jline.console.history;
 
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
@@ -28,7 +29,9 @@ public class MemoryHistory
     public static final int DEFAULT_MAX_SIZE = 500;
 
     private final LinkedList<CharSequence> items = new LinkedList<CharSequence>();
-
+    private final LinkedList<Long> timestamps = new LinkedList<Long>();
+    private final TimeSource timeSource;
+    
     private int maxSize = DEFAULT_MAX_SIZE;
 
     private boolean ignoreDuplicates = true;
@@ -49,7 +52,24 @@ public class MemoryHistory
 
     private int index = 0;
 
-    public void setMaxSize(final int maxSize) {
+    public MemoryHistory() {
+		this(new TimeSource() {
+			
+			@Override
+			public long currentTimeMillis() {
+				return System.currentTimeMillis();
+			}
+		});
+	}
+    
+    /*
+     * The visibility of this constructor been reduced for testing
+     */
+    MemoryHistory(TimeSource timeSource) {
+		this.timeSource = timeSource;
+	}
+
+	public void setMaxSize(final int maxSize) {
         this.maxSize = maxSize;
         maybeResize();
     }
@@ -88,6 +108,7 @@ public class MemoryHistory
 
     public void clear() {
         items.clear();
+        timestamps.clear();
         offset = 0;
         index = 0;
     }
@@ -117,31 +138,47 @@ public class MemoryHistory
     }
 
     public CharSequence remove(int i) {
-        return items.remove(i);
+        CharSequence item = items.remove(i);
+        timestamps.remove(i);
+        return item;
     }
 
     public CharSequence removeFirst() {
-        return items.removeFirst();
+        CharSequence item = items.removeFirst();
+        timestamps.removeFirst();
+        return item;
     }
 
     public CharSequence removeLast() {
-        return items.removeLast();
+        CharSequence item = items.removeLast();
+        timestamps.removeLast();
+        return item;
     }
 
     protected void internalAdd(CharSequence item) {
         items.add(item);
-
+        timestamps.add(timeSource.currentTimeMillis());
+        
+        maybeResize();
+    }
+    
+    protected void internalAdd(CharSequence item, long timestamp) {
+        items.add(item);
+        timestamps.add(timestamp);
+        
         maybeResize();
     }
 
     public void replace(final CharSequence item) {
         items.removeLast();
+        timestamps.removeLast();
         add(item);
     }
 
     private void maybeResize() {
         while (size() > getMaxSize()) {
             items.removeFirst();
+            timestamps.removeFirst();
             offset++;
         }
 
@@ -167,9 +204,12 @@ public class MemoryHistory
 
         private final CharSequence value;
 
-        public EntryImpl(int index, CharSequence value) {
+		private final long timestamp;
+
+        public EntryImpl(int index, CharSequence value, long timestamp) {
             this.index = index;
             this.value = value;
+			this.timestamp = timestamp;
         }
 
         public int index() {
@@ -179,10 +219,14 @@ public class MemoryHistory
         public CharSequence value() {
             return value;
         }
+        
+        public long timestamp() {
+        	return timestamp;
+        }
 
         @Override
         public String toString() {
-            return String.format("%d: %s", index, value);
+            return String.format("[%s] %d: %s", new Date(timestamp).toString(), index, value);
         }
     }
 
@@ -190,23 +234,25 @@ public class MemoryHistory
         implements ListIterator<Entry>
     {
         private final ListIterator<CharSequence> source;
+		private final ListIterator<Long> timestampsSource;
 
         private EntriesIterator(final int index) {
             source = items.listIterator(index);
+            timestampsSource = timestamps.listIterator(index);
         }
 
         public Entry next() {
             if (!source.hasNext()) {
                 throw new NoSuchElementException();
             }
-            return new EntryImpl(offset + source.nextIndex(), source.next());
+            return new EntryImpl(offset + source.nextIndex(), source.next(), timestampsSource.next());
         }
 
         public Entry previous() {
             if (!source.hasPrevious()) {
                 throw new NoSuchElementException();
             }
-            return new EntryImpl(offset + source.previousIndex(), source.previous());
+            return new EntryImpl(offset + source.previousIndex(), source.previous(), timestampsSource.previous());
         }
 
         public int nextIndex() {

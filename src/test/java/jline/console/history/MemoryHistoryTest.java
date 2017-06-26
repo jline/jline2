@@ -8,6 +8,10 @@
  */
 package jline.console.history;
 
+import java.util.ListIterator;
+
+import jline.console.history.History.Entry;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,10 +26,12 @@ import static org.junit.Assert.*;
 public class MemoryHistoryTest
 {
     private MemoryHistory history;
+    private long timestamp;
 
     @Before
     public void setUp() {
-        history = new MemoryHistory();
+    	timestamp = System.currentTimeMillis();
+        history = new MemoryHistory(new FixedTimeSource(timestamp));
     }
 
     @After
@@ -132,5 +138,13 @@ public class MemoryHistoryTest
         history.removeLast();
 
         assertHistoryContains(0, "a", "b");
+    }
+    
+    @Test
+    public void testTimestamp() {
+    	history.add("a");
+    	
+    	ListIterator<Entry> entries = history.entries();
+    	assertEquals(timestamp, entries.next().timestamp());
     }
 }
