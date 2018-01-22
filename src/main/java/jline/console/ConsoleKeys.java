@@ -34,6 +34,12 @@ public class ConsoleKeys {
         keyMaps = KeyMap.keyMaps();
         setVar("editing-mode", "emacs");
         loadKeys(appName, inputrcUrl);
+        String editingMode = variables.get("editing-mode");
+        if ("vi".equalsIgnoreCase(editingMode)) {
+            keys = keyMaps.get(KeyMap.VI_INSERT);
+        } else if ("emacs".equalsIgnoreCase(editingMode)) {
+            keys = keyMaps.get(KeyMap.EMACS);
+        }
     }
 
     protected boolean setKeyMap (String name) {
@@ -352,12 +358,6 @@ public class ConsoleKeys {
         if ("keymap".equalsIgnoreCase(key)) {
             if (keyMaps.containsKey(val)) {
                 keys = keyMaps.get(val);
-            }
-        } else if ("editing-mode".equals(key)) {
-            if ("vi".equalsIgnoreCase(val)) {
-                keys = keyMaps.get(KeyMap.VI_INSERT);
-            } else if ("emacs".equalsIgnoreCase(key)) {
-                keys = keyMaps.get(KeyMap.EMACS);
             }
         } else if ("blink-matching-paren".equals(key)) {
             if ("on".equalsIgnoreCase(val)) {
