@@ -39,8 +39,29 @@ public class FileHistory
 {
     private final File file;
 
+    /**
+     * Load a history file into memory, truncating to default max size.
+     */
     public FileHistory(final File file) throws IOException {
+        this(file, true);
+    }
+
+    /**
+     * Create a FileHistory, but only initialize if doInit is true. This allows
+     * setting maxSize or other settings; call load() before using if doInit is
+     * false.
+     */
+    public FileHistory(final File file, final boolean doInit) throws IOException {
         this.file = checkNotNull(file).getAbsoluteFile();
+        if (doInit) {
+            load();
+        }
+    }
+
+    /**
+     * Load history from file, e.g. if using delayed init.
+     */
+    public void load() throws IOException {
         load(file);
     }
 
