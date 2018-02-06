@@ -66,7 +66,7 @@ public class TerminalFactory
                 // it is ok to send ANSI control sequences
                 String emacs = System.getenv("EMACS");
                 String insideEmacs = System.getenv("INSIDE_EMACS");
-                if (emacs == null || insideEmacs == null) {
+                if (emacs == null && insideEmacs == null) {
                     type = NONE;
                 }
             }
