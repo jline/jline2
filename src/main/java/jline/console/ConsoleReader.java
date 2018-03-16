@@ -3235,9 +3235,7 @@ public class ConsoleReader implements Closeable
 
             if (i == -1 && buf.buffer.length() == 0) {
               return null;
-            }
-
-            if (i == -1 || i == '\n') {
+            } else if (i == -1 || i == '\n') {
                 return finishBuffer();
             } else if (i == '\r') {
                 skipLF = true;
@@ -3245,7 +3243,7 @@ public class ConsoleReader implements Closeable
             } else {
                 buf.buffer.append((char) i);
             }
-        }
+        }        
     }
 
     //
