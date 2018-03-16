@@ -50,27 +50,15 @@ public class TerminalFactory
     public static synchronized Terminal create() {
     	return create(null);
     }
-        
+
     public static synchronized Terminal create(String ttyDevice) {
         if (Log.TRACE) {
             //noinspection ThrowableInstanceNeverThrown
             Log.trace(new Throwable("CREATE MARKER"));
         }
 
-        String type  = Configuration.getString(JLINE_TERMINAL);
-        if (type == null) {
-            type = AUTO;
-            if ("dumb".equals(System.getenv("TERM"))) {
-                // emacs communicates with shell through a 'dumb' terminal
-                // but sets these env variables to let programs know
-                // it is ok to send ANSI control sequences
-                String emacs = System.getenv("EMACS");
-                String insideEmacs = System.getenv("INSIDE_EMACS");
-                if (emacs == null || insideEmacs == null) {
-                    type = NONE;
-                }
-            }
-        }
+        String defaultType = "dumb".equals(System.getenv("TERM")) ? NONE : AUTO;
+        String type  = Configuration.getString(JLINE_TERMINAL, defaultType);
 
         Log.debug("Creating terminal; type=", type);
 
@@ -88,7 +76,14 @@ public class TerminalFactory
                 t = getFlavor(Flavor.WINDOWS);
             }
             else if (tmp.equals(NONE) || tmp.equals(OFF) || tmp.equals(FALSE)) {
-                t = new UnsupportedTerminal();
+                if (System.getenv("INSIDE_EMACS") != null) {
+                    // emacs requires ansi on and echo off
+
+                    t = new UnsupportedTerminal(true, false);
+                } else  {
+                    // others the other way round
+                    t = new UnsupportedTerminal(false, true);
+                }
             }
             else {
                 if (tmp.equals(AUTO)) {
@@ -187,7 +182,7 @@ public class TerminalFactory
         }
         return term;
     }
-    
+
     public static synchronized Terminal get() {
         return get(null);
     }
@@ -195,7 +190,7 @@ public class TerminalFactory
     public static Terminal getFlavor(final Flavor flavor) throws Exception {
     	return getFlavor(flavor, null);
     }
-    
+
     public static Terminal getFlavor(final Flavor flavor, String ttyDevice) throws Exception {
         Class<? extends Terminal> type = FLAVORS.get(flavor);
         Terminal result = null;
