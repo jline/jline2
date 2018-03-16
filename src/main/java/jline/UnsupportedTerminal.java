@@ -19,8 +19,12 @@ public class UnsupportedTerminal
     extends TerminalSupport
 {
     public UnsupportedTerminal() {
+        this(false, true);
+    }
+
+    public UnsupportedTerminal(boolean ansiSupported, boolean echoEnabled) {
         super(false);
-        setAnsiSupported(false);
-        setEchoEnabled(true);
+        setAnsiSupported(ansiSupported);
+        setEchoEnabled(echoEnabled);
     }
 }
