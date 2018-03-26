@@ -18,7 +18,9 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.powermock.api.easymock.PowerMock.mockStaticPartial;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
@@ -65,26 +67,19 @@ public class TerminalFactoryTest
     }
 
     @Test
-    public void testConfigureDumbTerminalEmacs() {
+    public void testConfigureDumbTerminalInsideEmacs() {
         mockStaticPartial(System.class, "getenv");
-        mockStaticPartial(Configuration.class, "getOsName");
-
-        String osString = System.getProperty("os.name").toLowerCase();
-        String expectedTerminalClassName = osString.contains("windows") ?
-                "jline.AnsiWindowsTerminal" :
-                "jline.UnixTerminal";
-        expect(Configuration.getOsName()).andReturn(osString).anyTimes();
 
         expect(System.getenv("TERM")).andReturn("dumb");
-        expect(System.getenv("EMACS")).andReturn("t");
         expect(System.getenv("INSIDE_EMACS")).andReturn("24.3.1,comint");
-        expect(System.getenv("OSV_CPUS")).andReturn(null);
         replayAll();
 
         Terminal t = TerminalFactory.get();
         verifyAll();
         assertNotNull(t);
-        assertEquals(expectedTerminalClassName, t.getClass().getName());
+        assertEquals(UnsupportedTerminal.class.getName(), t.getClass().getName());
+        assertTrue(t.isAnsiSupported());
+        assertFalse(t.isEchoEnabled());
     }
 
     @Test
@@ -92,7 +87,6 @@ public class TerminalFactoryTest
         mockStaticPartial(System.class, "getenv");
 
         expect(System.getenv("TERM")).andReturn("dumb");
-        expect(System.getenv("EMACS")).andReturn(null);
         expect(System.getenv("INSIDE_EMACS")).andReturn(null);
         replayAll();
 
@@ -100,5 +94,7 @@ public class TerminalFactoryTest
         verifyAll();
         assertNotNull(t);
         assertEquals(UnsupportedTerminal.class.getName(), t.getClass().getName());
+        assertFalse(t.isAnsiSupported());
+        assertTrue(t.isEchoEnabled());
     }
 }
