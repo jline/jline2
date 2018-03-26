@@ -3215,7 +3215,6 @@ public class ConsoleReader implements Closeable
      * Read a line for unsupported terminals.
      */
     private String readLineSimple() throws IOException {
-        StringBuilder buff = new StringBuilder();
 
         if (skipLF) {
             skipLF = false;
@@ -3223,28 +3222,28 @@ public class ConsoleReader implements Closeable
             int i = readCharacter();
 
             if (i == -1 || i == '\r') {
-                return buff.toString();
+                return finishBuffer();
             } else if (i == '\n') {
                 // ignore
             } else {
-                buff.append((char) i);
+                buf.buffer.append((char) i);
             }
         }
 
         while (true) {
             int i = readCharacter();
 
-            if (i == -1 && buff.length() == 0) {
+            if (i == -1 && buf.buffer.length() == 0) {
               return null;
             }
 
             if (i == -1 || i == '\n') {
-                return buff.toString();
+                return finishBuffer();
             } else if (i == '\r') {
                 skipLF = true;
-                return buff.toString();
+                return finishBuffer();
             } else {
-                buff.append((char) i);
+                buf.buffer.append((char) i);
             }
         }
     }
