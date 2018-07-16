@@ -12,6 +12,8 @@
 * #277: Allow setting max history-size. `FileHistory` allows delayed
   init (to allow setMaxSize to take effect) and `ConsoleReader`
   exposes ability to read inputrc settings.
+* #272: Handle `SecurityException` during initialisation if access to
+  the config file is denied.
 
 ## [JLine 2.14.3][2_14_3]
 * (unrecorded)
