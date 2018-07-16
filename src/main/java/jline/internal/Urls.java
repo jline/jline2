@@ -21,6 +21,16 @@ import java.net.URL;
  */
 public class Urls
 {
+    /**
+     * <p>Creates a URL from a string.</p>
+     *
+     * <p>If the string represents a valid URL in a supported protocol, that URL is returned.
+     *    Otherwise, the string is treated as a file path converted to a URL.</p>
+     *
+     * @param file the file path.
+     * @return the URL.
+     * @throws SecurityException if the file path cannot be accessed.
+     */
     public static URL create(final String input) {
         if (input == null) {
             return null;
@@ -33,6 +43,13 @@ public class Urls
         }
     }
 
+    /**
+     * Creates a URL for a file path.
+     *
+     * @param file the file path.
+     * @return the URL.
+     * @throws SecurityException if the file path cannot be accessed.
+     */
     public static URL create(final File file) {
         try {
             return file != null ? file.toURI().toURL() : null;

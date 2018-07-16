@@ -45,17 +45,22 @@ public class Configuration
     private static volatile Properties properties;
 
     private static Properties initProperties() {
-        URL url = determineUrl();
         Properties props = new Properties();
         try {
-            loadProperties(url, props);
-        }
-        catch (FileNotFoundException e) {
-            // debug here and no stack trace, as this can happen normally if default jline.rc file is missing
-            Log.debug("Unable to read configuration: ", e.toString());
-        }
-        catch (IOException e) {
-            Log.warn("Unable to read configuration from: ", url, e);
+            URL url = determineUrl();
+            try {
+                loadProperties(url, props);
+            }
+            catch (FileNotFoundException e) {
+                // debug here and no stack trace, as this can happen normally if default jline.rc file is missing
+                Log.debug("Unable to read configuration: ", e.toString());
+            }
+            catch (IOException e) {
+                Log.warn("Unable to read configuration from: ", url, e);
+            }
+        } catch (SecurityException e) {
+            // Omitting stack trace as it's a fairly normal condition, but I think you'd still want to know about it.
+            Log.info("Security policy denied reading configuration file");
         }
         return props;
     }
@@ -83,6 +88,12 @@ public class Configuration
         }
     }
 
+    /**
+     * Determines the URL to read the configuration from.
+     *
+     * @return the URL.
+     * @throws SecurityException if no override is provided, and access to the user's default config file is denied.
+     */
     private static URL determineUrl() {
         // See if user has customized the configuration location via sysprop
         String tmp = System.getProperty(JLINE_CONFIGURATION);
