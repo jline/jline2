@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
@@ -68,7 +69,7 @@ public class InputStreamReader extends Reader {
         decoder = Charset.defaultCharset().newDecoder().onMalformedInput(
                 CodingErrorAction.REPLACE).onUnmappableCharacter(
                 CodingErrorAction.REPLACE);
-        bytes.limit(0);
+        ((Buffer) bytes).limit(0);
     }
 
     /**
@@ -101,7 +102,7 @@ public class InputStreamReader extends Reader {
             throw (UnsupportedEncodingException)
                     new UnsupportedEncodingException(enc).initCause(e);
         }
-        bytes.limit(0);
+        ((Buffer) bytes).limit(0);
     }
 
     /**
@@ -118,7 +119,7 @@ public class InputStreamReader extends Reader {
         dec.averageCharsPerByte();
         this.in = in;
         decoder = dec;
-        bytes.limit(0);
+        ((Buffer) bytes).limit(0);
     }
 
     /**
@@ -136,7 +137,7 @@ public class InputStreamReader extends Reader {
         decoder = charset.newDecoder().onMalformedInput(
                 CodingErrorAction.REPLACE).onUnmappableCharacter(
                 CodingErrorAction.REPLACE);
-        bytes.limit(0);
+        ((Buffer) bytes).limit(0);
     }
 
     /**
@@ -262,7 +263,7 @@ public class InputStreamReader extends Reader {
                     } else if (was_red == 0) {
                         break;
                     }
-                    bytes.limit(bytes.limit() + was_red);
+                    ((Buffer) bytes).limit(bytes.limit() + was_red);
                     needInput = false;
                 }
 
@@ -273,8 +274,8 @@ public class InputStreamReader extends Reader {
                     // compact the buffer if no space left
                     if (bytes.limit() == bytes.capacity()) {
                         bytes.compact();
-                        bytes.limit(bytes.position());
-                        bytes.position(0);
+                        ((Buffer) bytes).limit(bytes.position());
+                        ((Buffer) bytes).position(0);
                     }
                     needInput = true;
                 } else {
