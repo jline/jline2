@@ -11,6 +11,7 @@ package jline.console;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 import jline.TerminalSupport;
 import org.junit.Before;
@@ -83,7 +84,7 @@ public abstract class ConsoleReaderTestSupport
             // noop
         }
 
-        assertEquals(pos, console.getCursorPosition ());
+        assertEquals(pos, console.getCursorPosition());
     }
 
     /**
@@ -114,6 +115,11 @@ public abstract class ConsoleReaderTestSupport
 
         assertEquals(expected, prevLine);
     }
+
+    protected void assertEqualSet(List<?> l1, List<?> l2) {
+        assertTrue(l1.containsAll(l2) && l2.containsAll(l1));
+    }
+
 
     private String getKeyForAction(final Operation key) {
         switch (key) {

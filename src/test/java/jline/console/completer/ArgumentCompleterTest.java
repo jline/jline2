@@ -13,6 +13,12 @@ import jline.console.completer.ArgumentCompleter;
 import jline.console.completer.StringsCompleter;
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+
+
 /**
  * Tests for {@link jline.console.completer.ArgumentCompleter}.
  *
@@ -64,5 +70,64 @@ public class ArgumentCompleterTest
                         new StringsCompleter("foo", "bar", "baz")));
 
         assertBuffer("some foo ", new Buffer("some fo").tab());
+    }
+
+    @Test
+    public void testQuoted() throws Exception {
+        ArgumentCompleter argCompleter = new ArgumentCompleter(
+                new StringsCompleter("bar"),
+                new StringsCompleter("foo "));
+        console.addCompleter(argCompleter);
+
+        assertBuffer("'bar' 'foo' ", new Buffer("'bar' 'f").tab());
+    }
+
+    @Test
+    public void testArgumentDelimiter() throws Exception {
+        ArgumentCompleter.WhitespaceArgumentDelimiter wsDelimiter = new ArgumentCompleter.WhitespaceArgumentDelimiter();
+        String buffer = "\"a\\\"a2\"'b\\'b2'c\\ c2 d\\\\d2\\e";
+        List<String> expected = Arrays.asList("a\"a2", "b'b2", "c c2", "d\\d2e");
+        assertEquals(expected, Arrays.asList(wsDelimiter.delimit(buffer, buffer.length()).getArguments()));
+        assertEquals("a\\ b\\\"c\\\'d\\\\e", wsDelimiter.escapeArgument("a b\"c'd\\e"));
+        assertEquals("a\\ b\\\"c\\\'d\\\\e ", wsDelimiter.escapeArgument("a b\"c'd\\e "));
+    }
+
+    @Test
+    public void testEscaping() throws Exception {
+        ArgumentCompleter argCompleter = new ArgumentCompleter(
+                new StringsCompleter("bar"),
+                new StringsCompleter("foo foo2"));
+        console.addCompleter(argCompleter);
+
+        assertBuffer("bar foo\\ foo2 ", new Buffer("bar f").tab());
+    }
+
+    @Test
+    public void testEscapingQuoted() throws Exception {
+        ArgumentCompleter argCompleter = new ArgumentCompleter(
+                new StringsCompleter("bar"),
+                new StringsCompleter("foo foo2"));
+        console.addCompleter(argCompleter);
+        boolean backup = ((CandidateListCompletionHandler) console.getCompletionHandler()).getPrintSpaceAfterFullCompletion();
+        try {
+            ((CandidateListCompletionHandler) console.getCompletionHandler()).setPrintSpaceAfterFullCompletion(false);
+            assertBuffer("bar 'foo foo2", new Buffer("bar 'f").tab());
+        } finally {
+            ((CandidateListCompletionHandler) console.getCompletionHandler()).setPrintSpaceAfterFullCompletion(backup);
+        }
+    }
+
+    @Test
+    public void testEscapingQuotedBlank() throws Exception {
+        ArgumentCompleter argCompleter = new ArgumentCompleter(
+                new StringsCompleter("bar"),
+                new StringsCompleter("foo foo2 "));
+        console.addCompleter(argCompleter);
+        boolean backup = ((CandidateListCompletionHandler) console.getCompletionHandler()).getPrintSpaceAfterFullCompletion();
+        try {
+            assertBuffer("bar 'foo foo2' ", new Buffer("bar 'f").tab());
+        } finally {
+            ((CandidateListCompletionHandler) console.getCompletionHandler()).setPrintSpaceAfterFullCompletion(backup);
+        }
     }
 }
