@@ -140,11 +140,29 @@ public class ArgumentCompleter
 
             List<CharSequence> subCandidates = new LinkedList<CharSequence>();
 
-            if (sub.complete(arg, arg.length(), subCandidates) == -1) {
+            int offset = sub.complete(arg, arg.length(), subCandidates);
+            if (offset == -1) {
                 return -1;
             }
 
-            if (!subCandidates.contains(arg)) {
+            // for strict matching, one of the candidates must equal the current argument "arg",
+            // starting from offset within arg, but the suitable candidate may actually also have a
+            // delimiter at then end.
+            boolean candidateMatches = false;
+            for (CharSequence subCandidate: subCandidates) {
+                // each SUbcandidate may end with the delimiter.
+                // That it contains the delimiter is possible, but not plausible.
+                String[] candidateDelimList = delim.delimit(subCandidate, 0).getArguments();
+                if (candidateDelimList.length == 0) {
+                    continue;
+                }
+                String trimmedCand = candidateDelimList[0];
+                if (trimmedCand.equals(arg.substring(offset))) {
+                    candidateMatches = true;
+                    break;
+                }
+            }
+            if (!candidateMatches) {
                 return -1;
             }
         }

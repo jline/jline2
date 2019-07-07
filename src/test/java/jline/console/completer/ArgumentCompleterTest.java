@@ -13,6 +13,8 @@ import jline.console.completer.ArgumentCompleter;
 import jline.console.completer.StringsCompleter;
 import org.junit.Test;
 
+import java.util.List;
+
 /**
  * Tests for {@link jline.console.completer.ArgumentCompleter}.
  *
@@ -64,5 +66,35 @@ public class ArgumentCompleterTest
                         new StringsCompleter("foo", "bar", "baz")));
 
         assertBuffer("some foo ", new Buffer("some fo").tab());
+    }
+
+    @Test
+    public void testMultipleRelative() throws Exception {
+        ArgumentCompleter argCompleter = new ArgumentCompleter(
+                new Completer() {
+                    public int complete(String buffer, int cursor, List<CharSequence> candidates) {
+                        candidates.add("bar");
+                        return 3;
+                    }
+                },
+                new StringsCompleter("foo"));
+        console.addCompleter(argCompleter);
+        assertBuffer("thebar foo ", new Buffer("thebar ").tab());
+        assertBuffer("thebar foo ", new Buffer("thebar f").tab());
+    }
+
+    @Test
+    public void testMultipleRelativeWithDelim() throws Exception {
+        ArgumentCompleter argCompleter = new ArgumentCompleter(
+                new Completer() {
+                    public int complete(String buffer, int cursor, List<CharSequence> candidates) {
+                        candidates.add("bar ");
+                        return 3;
+                    }
+                },
+                new StringsCompleter("foo"));
+        console.addCompleter(argCompleter);
+        assertBuffer("thebar foo ", new Buffer("thebar ").tab());
+        assertBuffer("thebar foo ", new Buffer("thebar f").tab());
     }
 }
