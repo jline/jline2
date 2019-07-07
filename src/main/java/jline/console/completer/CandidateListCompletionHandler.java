@@ -37,12 +37,27 @@ public class CandidateListCompletionHandler
     private boolean printSpaceAfterFullCompletion = true;
     private boolean stripAnsi;
 
+    /**
+     * if true, existing text after cursor matchinga completion to insert
+     * will not be pushed back behind the completion, but replaced
+     * by the completion
+     */
+    private boolean consumeMatchingSuffix = false;
+
     public boolean getPrintSpaceAfterFullCompletion() {
         return printSpaceAfterFullCompletion;
     }
 
     public void setPrintSpaceAfterFullCompletion(boolean printSpaceAfterFullCompletion) {
         this.printSpaceAfterFullCompletion = printSpaceAfterFullCompletion;
+    }
+
+    public boolean getConsumeMatchingSuffix() {
+        return consumeMatchingSuffix;
+    }
+
+    public void setConsumeMatchingSuffix(boolean consumeMatchingSuffix) {
+        this.consumeMatchingSuffix = consumeMatchingSuffix;
     }
 
     public boolean isStripAnsi() {
@@ -63,21 +78,7 @@ public class CandidateListCompletionHandler
         // if there is only one completion, then fill in the buffer
         if (candidates.size() == 1) {
             String value = Ansi.stripAnsi(candidates.get(0).toString());
-
-            if (buf.cursor == buf.buffer.length()
-                    && printSpaceAfterFullCompletion
-                    && !value.endsWith(" ")) {
-                value += " ";
-            }
-
-            // fail if the only candidate is the same as the current buffer
-            if (value.equals(buf.toString())) {
-                return false;
-            }
-
-            setBuffer(reader, value, pos);
-
-            return true;
+            return completeSingleCandidate(reader, pos, buf, value);
         }
         else if (candidates.size() > 1) {
             String value = getUnambiguousCompletions(candidates);
@@ -92,15 +93,92 @@ public class CandidateListCompletionHandler
         return true;
     }
 
-    public static void setBuffer(final ConsoleReader reader, final CharSequence value, final int offset) throws
+    protected boolean completeSingleCandidate(ConsoleReader reader, int pos, CursorBuffer buf, String value) throws IOException {
+        // no insert if the only candidate is the same as the current buffer
+        if (buf.length() >= pos + value.length() &&
+                value.equals(buf.toString().substring(pos, pos + value.length()))) {
+            reader.setCursorPosition(pos + value.length());
+        } else {
+            setBuffer(reader, value, pos);
+        }
+
+        if (printSpaceAfterFullCompletion
+                && !value.endsWith(" ")) {
+            doPrintSpaceAfterFullCOmpletion(reader);
+        }
+
+        return true;
+    }
+
+    /**
+     * This method is called after completing a candidate that
+     * does not end with a blank, when the option printSpaceAfterFullCompletion is true.
+     *
+     * The standard behavior is to insert a blank unless the next char is a blank,
+     * wherever the cursor is in the buffer, and to move the cursor beyond the
+     * inserted / existing blank.
+     *
+     * @param reader
+     * @throws IOException
+     */
+    protected void doPrintSpaceAfterFullCOmpletion(ConsoleReader reader) throws IOException {
+        // at end of buffer or next char is not blank already
+        if ((reader.getCursorBuffer().cursor >= reader.getCursorBuffer().length() ||
+                reader.getCursorBuffer().buffer.toString().charAt(reader.getCursorBuffer().cursor) != ' ')) {
+            reader.putString(" ");
+        } else {
+            // if blank existed, move beyond it
+            reader.moveCursor(1);
+        }
+    }
+
+    public void setBuffer(final ConsoleReader reader, final CharSequence value, final int offset) throws
         IOException
     {
+        if (getConsumeMatchingSuffix()) {
+            // consume only if prefix matches
+            int commonPrefixLength = greatestCommonPrefixLength(value,
+                    reader.getCursorBuffer().buffer.toString().substring(offset));
+            if (commonPrefixLength == value.length()) {
+                // nothing to do other than advancing the cursor
+                reader.setCursorPosition(offset + value.length());
+                return;
+            }
+        }
+        int suffixStart = 0;
+        // backspace cursor to start of completion
         while ((reader.getCursorBuffer().cursor > offset) && reader.backspace()) {
-            // empty
+            suffixStart++;
+        }
+
+        if (getConsumeMatchingSuffix()) {
+            int currentVirtualPos = offset;
+            String currentBuffer = reader.getCursorBuffer().buffer.toString();
+            while (
+                    suffixStart < value.length() // value still has chars to delete
+                    && currentBuffer.length() > currentVirtualPos // buffer still has chars to delete
+                            // character to delete matches value suffix
+                    && currentBuffer.charAt(currentVirtualPos) == value.charAt(suffixStart)
+                            // do delete
+                    && reader.delete()) {
+                suffixStart ++;
+                currentVirtualPos++;
+            }
         }
 
         reader.putString(value);
         reader.setCursorPosition(offset + value.length());
+    }
+
+    static int greatestCommonPrefixLength(final CharSequence a, final CharSequence b) {
+        int minLength = Math.min(a.length(), b.length());
+        int i = 0;
+        for (; i < minLength; i++) {
+            if (a.charAt(i) != b.charAt(i)) {
+                break;
+            }
+        }
+        return i;
     }
 
     /**
